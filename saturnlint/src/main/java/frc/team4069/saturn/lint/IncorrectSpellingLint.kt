@@ -41,7 +41,7 @@ class IncorrectSpellingLint : AbstractKotlinInspection() {
                 checkNode(element, holder)
             } else if (element is LeafPsiElement && element !is PsiWhiteSpace) {
                 for ((wrong, correct) in spellingMap) {
-                    if (element.text.contains(wrong)) {
+                    if (element.text.contains(wrong, true)) {
                         holder.registerProblem(element, "Non-conforming spelling of $correct", SpellingQuickFix(wrong))
                     }
                 }
