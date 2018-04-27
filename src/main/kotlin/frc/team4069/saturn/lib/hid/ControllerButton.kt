@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.command.Command
 /**
  * Represents a button on a human interface device. Constructed from [Controller.button]
  */
-class ControllerButton private constructor(id: Int, joystick: GenericHID) {
+class ControllerButton internal constructor(id: Int, joystick: GenericHID) {
     private val backing = JoystickButton(joystick, id)
 
     /**
