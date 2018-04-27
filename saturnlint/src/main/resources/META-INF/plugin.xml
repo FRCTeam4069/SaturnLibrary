@@ -13,11 +13,9 @@
     <depends>org.jetbrains.kotlin</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-      <!-- Inspection tool provider bit here -->
         <inspectionToolProvider implementation="frc.team4069.saturn.lint.SaturnLintProvider" />
     </extensions>
 
     <actions>
-        <!-- Add your actions here -->
     </actions>
 </idea-plugin>
