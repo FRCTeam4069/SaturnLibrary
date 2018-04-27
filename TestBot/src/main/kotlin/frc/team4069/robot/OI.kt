@@ -11,14 +11,15 @@ object OI {
     private val controlJoystick = Controller(1)
 
     init {
+        // Slow outtake command
         controlJoystick.button(ButtonType.BUMPER_RIGHT)
-                .whenPressed(SetIntakeSpeedCommand(0.7))
+                .whenPressed(SetIntakeSpeedCommand(-0.5))
                 .whenReleased(StopIntakeCommand())
+
     }
 
     val steeringAxis: Double
         get() {
-            //TODO: Check this, this might be where my problem is
             val axis = driveJoystick.getX(GenericHID.Hand.kLeft)
             return if(Math.abs(axis) in 0.0..0.2) {
                 0.0
@@ -29,7 +30,6 @@ object OI {
 
     val driveSpeed: Double
         get() {
-            //TODO: Check this, this might be where my problem is
             val forward = driveJoystick.getRawAxis(3)
             val backward = driveJoystick.getRawAxis(2)
 
