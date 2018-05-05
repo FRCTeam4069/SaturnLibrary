@@ -10,7 +10,7 @@ import frc.team4069.saturn.lib.util.LowPassFilter
 class SaturnSRX(id: Int,
                 private val encoderTicksPerRotation: Int = 4096,
                 reversed: Boolean = false,
-                val filter: LowPassFilter? = null,
+                private val filter: LowPassFilter? = null,
                 vararg slaveIds: Int) : WPI_TalonSRX(id) {
 
     /**
@@ -45,8 +45,7 @@ class SaturnSRX(id: Int,
         when(mode) {
             ControlMode.PercentOutput -> {
                 val clampedValue = value.coerceIn(-1.0..1.0)
-                val outValue = filter?.calculate(clampedValue) ?: clampedValue
-                super.set(mode, outValue)
+                super.set(mode, filter?.calculate(clampedValue) ?: clampedValue)
             }
             else -> super.set(mode, value)
         }
@@ -98,6 +97,30 @@ class SaturnSRX(id: Int,
     val position: Int
         get() = getSelectedSensorPosition(0)
 
+    var forwardSoftLimitThreshold = 0
+        set(value) {
+            field = value
+            configForwardSoftLimitThreshold(value, 0)
+        }
+
+    var forwardSoftLimitEnable = false
+        set(value) {
+            field = value
+            configForwardSoftLimitEnable(field, 0)
+        }
+
+    var reverseSoftLimitThreshold = 0
+        set(value) {
+            field = value
+            configReverseSoftLimitThreshold(value, 0)
+        }
+
+    var reverseSoftLimitEnable = false
+        set(value) {
+            field = value
+            configReverseSoftLimitEnable(value, 0)
+        }
+
     /**
      * Returns the distance traveled in ticks, according to the attached encoder
      */
@@ -107,25 +130,25 @@ class SaturnSRX(id: Int,
     /**
      * PID variables here
      */
-    var kF = 0.0
+    var f = 0.0
         set(value) {
             field = value
             config_kF(0, value, 0)
         }
 
-    var kP = 0.0
+    var p = 0.0
         set(value) {
             field = value
             config_kP(0, value, 0)
         }
 
-    var kI = 0.0
+    var i = 0.0
         set(value) {
             field = value
             config_kI(0, value, 0)
         }
 
-    var kD = 0.0
+    var d = 0.0
         set(value) {
             field = value
             config_kD(0, value, 0)
