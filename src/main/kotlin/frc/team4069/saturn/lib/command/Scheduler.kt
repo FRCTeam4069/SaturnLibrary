@@ -59,6 +59,10 @@ object Scheduler {
         command.initialize()
     }
 
+    fun add(command: CommandGroup) {
+        command.parallelChildren.forEach(Scheduler::add)
+    }
+
     internal fun registerSubsystem(subsystem: Subsystem) {
         subsystems.add(subsystem)
     }
