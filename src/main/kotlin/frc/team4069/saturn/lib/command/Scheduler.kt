@@ -9,6 +9,7 @@ import java.util.*
  */
 object Scheduler {
     private val subsystems = mutableSetOf<Subsystem>()
+    private val buttonSchedulers = mutableSetOf<ButtonScheduler>()
     internal val queuedCommands = LinkedList<Command>()
     internal val suspendedCommands = mutableListOf<Command>()
 
@@ -18,6 +19,7 @@ object Scheduler {
      * Should be used from [IterativeRobot.teleopPeriodic], and [IterativeRobot.autonomousPeriodic]
      */
     fun run() {
+        buttonSchedulers.forEach(ButtonScheduler::execute)
         subsystems.forEach(Subsystem::periodic)
 
         // Run all the queued commands
@@ -61,6 +63,25 @@ object Scheduler {
 
     fun add(command: CommandGroup) {
         command.parallelChildren.forEach(Scheduler::add)
+    }
+
+    fun cancel(command: Command) {
+        if(!queuedCommands.any { it == command }) {
+            throw IllegalArgumentException("No such command running")
+        }
+
+        queuedCommands.remove(command)
+        command.cancelled()
+    }
+
+    fun addButtonScheduler(scheduler: ButtonScheduler) {
+        buttonSchedulers.add(scheduler)
+    }
+
+    fun clear() {
+        queuedCommands.forEach(Command::finished)
+        queuedCommands.clear()
+        suspendedCommands.clear()
     }
 
     internal fun registerSubsystem(subsystem: Subsystem) {

@@ -51,6 +51,13 @@ abstract class Command {
     }
 
     /**
+     * Called when a Command is terminated by the scheduler without [isFinished] necessarily being true.
+     */
+    open fun cancelled() {
+
+    }
+
+    /**
      * Represents the end state of the command. When the return value is true, the command will be finished and discarded in the next iteration of the [Scheduler]
      */
     abstract val isFinished: Boolean
