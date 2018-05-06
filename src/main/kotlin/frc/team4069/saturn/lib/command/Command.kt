@@ -53,5 +53,5 @@ abstract class Command {
     /**
      * Represents the end state of the command. When the return value is true, the command will be finished and discarded in the next iteration of the [Scheduler]
      */
-    abstract fun isFinished(): Boolean
+    abstract val isFinished: Boolean
 }

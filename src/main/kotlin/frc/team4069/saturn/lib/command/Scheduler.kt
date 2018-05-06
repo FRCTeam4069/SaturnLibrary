@@ -9,8 +9,8 @@ import java.util.*
  */
 object Scheduler {
     private val subsystems = mutableSetOf<Subsystem>()
-    private val queuedCommands = LinkedList<Command>()
-    private val suspendedCommands = mutableListOf<Command>()
+    internal val queuedCommands = LinkedList<Command>()
+    internal val suspendedCommands = mutableListOf<Command>()
 
     /**
      * Called frequently to update the state of all commands
@@ -20,19 +20,6 @@ object Scheduler {
     fun run() {
         subsystems.forEach(Subsystem::periodic)
 
-        // Resume any commands that were suspended due to conflicts but can be resumed
-        for(suspendedCommand in suspendedCommands.iterator()) {
-            if(!queuedCommands.any { it.requiredSystems.containsAny(suspendedCommand.requiredSystems) }) {
-                suspendedCommands.remove(suspendedCommand)
-                queuedCommands.add(suspendedCommand)
-                suspendedCommand.resumed()
-            }
-        }
-
-        // Queue default commands for any subsystems not in use
-        subsystems.filterNot { subsystem -> queuedCommands.any { it.requiredSystems.contains(subsystem) } }
-                .forEach { add(it.defaultCommand) }
-
         // Run all the queued commands
         queuedCommands.forEach(Command::periodic)
 
@@ -41,6 +28,20 @@ object Scheduler {
             it.finished()
             queuedCommands.remove(it)
         }
+
+        // Resume any commands that were suspended due to conflicts but can be resumed
+        suspendedCommands.filterNot { command -> queuedCommands.any { it.requiredSystems.containsAny(command.requiredSystems) } }
+                .forEach {
+                    suspendedCommands.remove(it)
+                    queuedCommands.add(it)
+                    it.resumed()
+                }
+
+        // Queue default commands for any subsystems not in use
+        subsystems.filterNot { subsystem -> queuedCommands.any { it.requiredSystems.contains(subsystem) } }
+                .forEach {
+                    add(it.defaultCommand ?: return@forEach)
+                }
     }
 
     /**
@@ -48,7 +49,7 @@ object Scheduler {
      */
     fun add(command: Command) {
         val conflict = queuedCommands.find { it.requiredSystems.containsAny(command.requiredSystems) }
-        if(conflict != null) {
+        if (conflict != null) {
             queuedCommands.remove(conflict)
             suspendedCommands.add(conflict)
             conflict.suspended()

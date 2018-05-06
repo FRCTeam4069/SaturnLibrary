@@ -32,6 +32,7 @@ dependencies {
 
     testCompile "org.jetbrains.spek:spek-api:1.1.5"
     testRuntime "org.jetbrains.spek:spek-junit-platform-engine:1.1.5"
+    testCompile "org.amshove.kluent:kluent:1.38"
 
     compile wpilib()
     compile ctre()
