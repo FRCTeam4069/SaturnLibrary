@@ -25,10 +25,9 @@ class SaturnSRX(id: Int,
         }
 
         // Set up follower motors
-        for(slaveId in slaveIds) {
-            val slave = SaturnSRX(slaveId, encoderTicksPerRotation,
+        slaveIds.mapTo(slaves) {
+            SaturnSRX(it, encoderTicksPerRotation,
                     reversed, filter = filter)
-            slaves.add(slave)
         }
 
         slaves.forEach {

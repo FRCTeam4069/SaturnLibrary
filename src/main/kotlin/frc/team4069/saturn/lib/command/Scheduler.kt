@@ -9,7 +9,7 @@ import java.util.*
  */
 object Scheduler {
     private val subsystems = mutableSetOf<Subsystem>()
-    private val buttonSchedulers = mutableSetOf<ButtonScheduler>()
+    private val buttonSchedulers = mutableSetOf<Runnable>()
     internal val queuedCommands = LinkedList<Command>()
     internal val suspendedCommands = mutableListOf<Command>()
 
@@ -19,7 +19,7 @@ object Scheduler {
      * Should be used from [IterativeRobot.teleopPeriodic], and [IterativeRobot.autonomousPeriodic]
      */
     fun run() {
-        buttonSchedulers.forEach(ButtonScheduler::execute)
+        buttonSchedulers.forEach(Runnable::run)
         subsystems.forEach(Subsystem::periodic)
 
         // Run all the queued commands
@@ -27,16 +27,16 @@ object Scheduler {
 
         // Finish any commands at their threshold
         queuedCommands.filter(Command::isFinished).forEach {
-            it.finished()
+            it.onFinish()
             queuedCommands.remove(it)
         }
 
-        // Resume any commands that were suspended due to conflicts but can be resumed
+        // Resume any commands that were onSuspend due to conflicts but can be onResume
         suspendedCommands.filterNot { command -> queuedCommands.any { it.requiredSystems.containsAny(command.requiredSystems) } }
                 .forEach {
                     suspendedCommands.remove(it)
                     queuedCommands.add(it)
-                    it.resumed()
+                    it.onResume()
                 }
 
         // Queue default commands for any subsystems not in use
@@ -49,37 +49,52 @@ object Scheduler {
     /**
      * Queues a command to be run, suspending any commands with conflicts. By default the newest command is the one to survive
      */
-    fun add(command: Command) {
+    fun add(command: Command) = when (command) {
+            is CommandGroup -> addGroup(command)
+            else -> {
+                val conflict = queuedCommands.find { it.requiredSystems.containsAny(command.requiredSystems) }
+                if (conflict != null) {
+                    queuedCommands.remove(conflict)
+                    suspendedCommands.add(conflict)
+                    conflict.onSuspend()
+                }
+
+                queuedCommands.add(command)
+                command.onCreate()
+            }
+        }
+
+    private fun addGroup(command: CommandGroup) {
+        // Schedule all the parallel children to be run independant
+        command.parallelChildren.forEach(this::add)
+
+        // Add this command like any other, sequential behaviour implemented inside
         val conflict = queuedCommands.find { it.requiredSystems.containsAny(command.requiredSystems) }
         if (conflict != null) {
             queuedCommands.remove(conflict)
             suspendedCommands.add(conflict)
-            conflict.suspended()
+            conflict.onSuspend()
         }
 
         queuedCommands.add(command)
-        command.initialize()
-    }
-
-    fun add(command: CommandGroup) {
-        command.parallelChildren.forEach(Scheduler::add)
+        command.onCreate()
     }
 
     fun cancel(command: Command) {
-        if(!queuedCommands.any { it == command }) {
+        if (!queuedCommands.any { it == command }) {
             throw IllegalArgumentException("No such command running")
         }
 
         queuedCommands.remove(command)
-        command.cancelled()
+        command.onCancelled()
     }
 
-    fun addButtonScheduler(scheduler: ButtonScheduler) {
+    fun addButtonScheduler(scheduler: Runnable) {
         buttonSchedulers.add(scheduler)
     }
 
     fun clear() {
-        queuedCommands.forEach(Command::finished)
+        queuedCommands.forEach(Command::onFinish)
         queuedCommands.clear()
         suspendedCommands.clear()
     }

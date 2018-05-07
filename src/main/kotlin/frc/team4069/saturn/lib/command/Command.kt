@@ -18,7 +18,7 @@ abstract class Command {
     /**
      * Called at the beginning of the command's lifecycle, when it has just been queued in the [Scheduler]
      */
-    open fun initialize() {
+    open fun onCreate() {
 
     }
 
@@ -32,28 +32,28 @@ abstract class Command {
     /**
      * Called when a command is suspended to allow a younger command to run
      */
-    open fun suspended() {
+    open fun onSuspend() {
 
     }
 
     /**
      * Called when a suspended command is able to return to the scheduler
      */
-    open fun resumed() {
+    open fun onResume() {
 
     }
 
     /**
      * Called when [isFinished] returns true. Tail end of the command lifecycle. Reference is discarded after this is called
      */
-    open fun finished() {
+    open fun onFinish() {
 
     }
 
     /**
      * Called when a Command is terminated by the scheduler without [isFinished] necessarily being true.
      */
-    open fun cancelled() {
+    open fun onCancelled() {
 
     }
 

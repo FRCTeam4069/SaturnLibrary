@@ -2,7 +2,6 @@ package frc.team4069.saturn.lib.hid
 
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.buttons.JoystickButton
-import frc.team4069.saturn.lib.command.ButtonScheduler
 import frc.team4069.saturn.lib.command.Command
 import frc.team4069.saturn.lib.command.Scheduler
 
@@ -18,10 +17,10 @@ class ControllerButton internal constructor(id: Int, joystick: GenericHID) {
      */
     fun whenPressed(command: Command): ControllerButton {
 //        backing.whenPressed(command)
-        Scheduler.addButtonScheduler(object : ButtonScheduler(command) {
+        Scheduler.addButtonScheduler(object : Runnable {
             var pressed = false
 
-            override fun execute() {
+            override fun run() {
                 if(backing.get() && !pressed) {
                     pressed = true
                     Scheduler.add(command)
@@ -41,10 +40,10 @@ class ControllerButton internal constructor(id: Int, joystick: GenericHID) {
      */
     fun whenReleased(command: Command): ControllerButton {
 //        backing.whenReleased(command)
-        Scheduler.addButtonScheduler(object : ButtonScheduler(command) {
+        Scheduler.addButtonScheduler(object : Runnable {
             var pressed = false
 
-            override fun execute() {
+            override fun run() {
                 if(backing.get()) {
                     if(!pressed) {
                         pressed = true
