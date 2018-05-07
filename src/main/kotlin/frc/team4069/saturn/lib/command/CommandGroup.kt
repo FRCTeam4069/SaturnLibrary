@@ -1,5 +1,6 @@
 package frc.team4069.saturn.lib.command
 
+import frc.team4069.saturn.lib.util.removeOrNull
 import java.util.*
 
 open class CommandGroup : Command() {
@@ -16,7 +17,7 @@ open class CommandGroup : Command() {
     }
 
     override fun onCreate() {
-        currentCommand = sequentialChildren.remove()
+        currentCommand = sequentialChildren.removeOrNull()
         currentCommand?.requiredSystems?.forEach(this::requires)
     }
 
@@ -36,7 +37,7 @@ open class CommandGroup : Command() {
     override fun periodic() {
         if(currentCommand == null) {
             this.requiredSystems.clear()
-            currentCommand = sequentialChildren.remove()
+            currentCommand = sequentialChildren.removeOrNull()
             currentCommand?.requiredSystems?.forEach(this::requires)
         }
         currentCommand?.periodic()
