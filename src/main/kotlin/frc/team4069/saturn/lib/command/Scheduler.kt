@@ -31,7 +31,7 @@ object Scheduler {
             queuedCommands.remove(it)
         }
 
-        // Resume any commands that were onSuspend due to conflicts but can be onResume
+        // Resume any commands that were suspended due to conflicts but can be resumed
         suspendedCommands.filterNot { command -> queuedCommands.any { it.requiredSystems.containsAny(command.requiredSystems) } }
                 .forEach {
                     suspendedCommands.remove(it)
@@ -65,7 +65,7 @@ object Scheduler {
         }
 
     private fun addGroup(command: CommandGroup) {
-        // Schedule all the parallel children to be run independant
+        // Schedule all the parallel children to be run independent
         command.parallelChildren.forEach(this::add)
 
         // Add this command like any other, sequential behaviour implemented inside

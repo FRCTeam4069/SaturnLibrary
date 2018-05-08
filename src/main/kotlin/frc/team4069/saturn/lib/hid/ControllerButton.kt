@@ -25,7 +25,9 @@ class ControllerButton internal constructor(id: Int, joystick: GenericHID) {
                     pressed = true
                     Scheduler.add(command)
                 }else if(!backing.get() && pressed) {
-                    Scheduler.cancel(command)
+                    if(Scheduler.queuedCommands.contains(command)) {
+                        Scheduler.cancel(command)
+                    }
                 }
             }
         })
