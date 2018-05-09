@@ -2,6 +2,7 @@ package frc.team4069.saturn.test
 
 import frc.team4069.saturn.lib.command.Command
 import frc.team4069.saturn.lib.command.CommandGroup
+import frc.team4069.saturn.lib.command.DelayCommand
 import frc.team4069.saturn.lib.command.Scheduler
 import frc.team4069.saturn.test.robot.CommandA
 import frc.team4069.saturn.test.robot.CommandB
@@ -123,6 +124,22 @@ object CommandSystemTest : Spek({
             Scheduler.run()
             Scheduler.queuedCommands.shouldBeEmpty()
             Scheduler.clear()
+        }
+    }
+
+    describe("A delay command") {
+        Scheduler.clear()
+        Scheduler.clearButtons()
+
+        val command = DelayCommand(1)
+
+        it("Should exist in the scheduler until the correct time has passed") {
+            Scheduler.add(command)
+            Scheduler.run()
+            Thread.sleep(1000)
+            Scheduler.queuedCommands shouldContain command
+            Scheduler.run()
+            Scheduler.queuedCommands.shouldBeEmpty()
         }
     }
 })

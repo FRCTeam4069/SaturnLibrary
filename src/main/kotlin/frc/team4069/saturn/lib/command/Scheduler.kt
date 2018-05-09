@@ -82,7 +82,7 @@ object Scheduler {
 
     fun cancel(command: Command) {
         if (!queuedCommands.any { it == command }) {
-            throw IllegalArgumentException("No such command running")
+            return
         }
 
         queuedCommands.remove(command)
@@ -94,9 +94,13 @@ object Scheduler {
     }
 
     fun clear() {
-        queuedCommands.forEach(Command::onFinish)
+        queuedCommands.forEach(Command::onCancelled)
         queuedCommands.clear()
         suspendedCommands.clear()
+    }
+
+    internal fun clearButtons() {
+        buttonSchedulers.clear()
     }
 
     internal fun registerSubsystem(subsystem: Subsystem) {
