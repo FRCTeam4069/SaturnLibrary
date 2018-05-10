@@ -1,10 +1,13 @@
 package frc.team4069.saturn.lib
 
-import edu.wpi.first.wpilibj.command.Command
-import edu.wpi.first.wpilibj.command.InstantCommand
+import frc.team4069.saturn.lib.command.Command
 
-inline fun command(crossinline method: () -> Unit): Command = object : InstantCommand() {
-    override fun initialize() {
+
+inline fun command(crossinline method: () -> Unit): Command = object : Command() {
+
+    override fun onCreate() {
         method()
     }
+
+    override val isFinished = true
 }

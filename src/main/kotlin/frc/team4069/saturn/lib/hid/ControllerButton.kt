@@ -21,13 +21,12 @@ class ControllerButton internal constructor(id: Int, joystick: GenericHID) {
             var pressed = false
 
             override fun run() {
-                if(backing.get() && !pressed) {
+                if (backing.get() && !pressed) {
                     pressed = true
                     Scheduler.add(command)
-                }else if(!backing.get() && pressed) {
-                    if(Scheduler.queuedCommands.contains(command)) {
-                        Scheduler.cancel(command)
-                    }
+                } else if (!backing.get() && pressed) {
+                    Scheduler.cancel(command)
+                    pressed = false
                 }
             }
         })
@@ -46,14 +45,15 @@ class ControllerButton internal constructor(id: Int, joystick: GenericHID) {
             var pressed = false
 
             override fun run() {
-                if(backing.get()) {
-                    if(!pressed) {
+                if (backing.get()) {
+                    if (!pressed) {
                         pressed = true
-                    }else {
+                    } else {
                         Scheduler.cancel(command)
                     }
-                }else if(!backing.get() && pressed) {
+                } else if (!backing.get() && pressed) {
                     Scheduler.add(command)
+                    pressed = false
                 }
             }
         })
