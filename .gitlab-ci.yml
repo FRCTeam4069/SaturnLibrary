@@ -1,0 +1,15 @@
+image: gradle:4.8.0-jdk8
+
+stages:
+    - build
+    - test
+
+job1:
+    stage: build
+    script: ./gradlew clean assemble
+
+job2:
+    stage: test
+    script: ./gradlew clean test
+    only:
+        - master@Redrield/SaturnShell
