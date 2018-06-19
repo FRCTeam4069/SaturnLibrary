@@ -6,7 +6,7 @@ stages:
 
 job1:
     stage: build
-    script: ./gradlew clean assemble shadowJar
+    script: ./gradlew clean assemble
 
 job2:
     stage: test
