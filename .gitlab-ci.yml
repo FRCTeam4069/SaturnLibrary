@@ -1,3 +1,5 @@
+image:gradle:4.8.0-jdk8
+
 stages:
     - build
     - test
