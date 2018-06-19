@@ -1,0 +1,13 @@
+stages:
+    - build
+    - test
+
+job1:
+    stage: build
+    script: ./gradlew clean assemble shadowJar
+
+job2:
+    stage: test
+    script: ./gradlew clean test
+    only:
+        - master@Redrield/SaturnShell
