@@ -11,5 +11,7 @@ enum class ButtonType(val id: Int) {
     BUMPER_LEFT(5),
     BUMPER_RIGHT(6),
     BACK(7),
-    START(8)
+    START(8),
+    LEFT_STICK(9),
+    RIGHT_STICK(10)
 }

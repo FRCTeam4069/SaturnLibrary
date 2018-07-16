@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.Encoder
 /**
  * Small wrapper around wpilib [Encoder]
  */
-class SaturnEncoder(private val encoderTicksPerRotation: Int = 256,
+class SaturnEncoder(val encoderTicksPerRotation: Int = 256,
                     port1: Int,
                     port2: Int) : Encoder(port1, port2) {
 
