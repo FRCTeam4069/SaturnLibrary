@@ -25,36 +25,22 @@ class PID(constants: PIDConstants, target: Double, val deadband: Double = 0.01, 
         }
 
     private var integral = 0.0
+    private var derivative = 0.0
 
-    private var lastTime = Double.NaN
-    private var lastError = Double.NaN
+    private var lastTime = 0.0
+    private var lastError = 0.0
 
-    private var lastDerivative = Double.NaN
-
-    private var derivativeAverage = MovingAverage(15)
-
-    fun update(value: Double, derivative: Double = Double.NaN): Double {
+    fun update(value: Double): Double {
         // Calculate error
         val error = target - value
 
         // Calculate delta time
-        val dt = (systemTimeMillis / 1000.0) - lastTime
-        lastTime = systemTimeMillis / 1000.0
+        val time = systemTimeMillis / 1000.0
+        val dt = time - lastTime
+        lastTime = time
 
-        // Calculate derivative
-        val _derivative: Double =
-                if (derivative == Double.NaN) {
-                    if (lastTime == Double.NaN || lastError == Double.NaN) {
-                        0.0 // No derivative in first iteration
-                    } else {
-                        (error - lastError) / dt // Calculate derivative
-                    }
-                } else {
-                    derivative // Pre-calculated derivative (from sensor usually)
-                }
-        var lastError = error
-
-        derivativeAverage.add(_derivative)
+        // If we've had at least one iteration, calculate derivative
+        derivative = (error - lastError) * dt
 
         // Calculate integral
         integral += error * dt
@@ -65,10 +51,10 @@ class PID(constants: PIDConstants, target: Double, val deadband: Double = 0.01, 
         // Calculate output
         val output = constants.kP * error
                    + constants.kI * integral
-                   + constants.kD * derivativeAverage.average
+                   + constants.kD * derivative
                    + constants.kF * target
 
-        lastDerivative = derivativeAverage.average
+        lastError = error
 
         return output
     }
@@ -81,8 +67,6 @@ class PID(constants: PIDConstants, target: Double, val deadband: Double = 0.01, 
         integral = 0.0
         lastTime = Double.NaN
         lastError = Double.NaN
-        lastDerivative = Double.NaN
-        derivativeAverage.clear()
     }
 
     /**
@@ -95,7 +79,7 @@ class PID(constants: PIDConstants, target: Double, val deadband: Double = 0.01, 
      * Returns whether the PID controller is currently at a steady-state (derivative is near zero)
      */
     val atTargetD: Boolean
-        get() = Math.abs(lastDerivative) < (deadband / 10.0)
+        get() = Math.abs(derivative) < (deadband / 10.0)
 
     /**
      * Returns whether the PID controller is currently at a steady-state at the target (both error and derivative are near zero)
