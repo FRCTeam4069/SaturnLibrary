@@ -6,10 +6,10 @@ stages:
 
 job1:
     stage: build
-    script: ./gradlew clean assemble
+    script: gradle clean assemble
 
 job2:
     stage: test
-    script: ./gradlew clean test
+    script: gradle clean test
     only:
         - master@Redrield/SaturnShell
