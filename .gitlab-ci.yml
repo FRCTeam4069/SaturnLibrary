@@ -8,7 +8,7 @@ job1:
     stage: build
     script: gradle clean assemble
     after_script: 
-    - mv build/libs/SaturnShell-0.0.5.jar build/libs/SaturnShell.jar
+    - mv build/libs/saturnshell-0.0.5.jar build/libs/SaturnShell.jar
     artifacts:
         paths:
         - build/libs/SaturnShell.jar
