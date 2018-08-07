@@ -1,16 +1,13 @@
 package frc.team4069.saturn.lib.command
 
-/**
- * Represents a subsystem to be used by Commands
- */
-abstract class Subsystem {
-    abstract val defaultCommand: Command?
+import java.util.concurrent.atomic.AtomicLong
 
-    init {
-        @Suppress("LeakingThis")
-        Scheduler.registerSubsystem(this)
+abstract class Subsystem(val name: String) {
+    companion object {
+        val ID = AtomicLong()
     }
 
-    open fun periodic() {
-    }
+    constructor() : this("Subsystem ${ID.incrementAndGet()}")
+
+    open var defaultCommand: Command? = null
 }
