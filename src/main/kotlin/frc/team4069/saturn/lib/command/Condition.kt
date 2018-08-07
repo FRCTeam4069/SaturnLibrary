@@ -14,7 +14,7 @@ fun condition(command: Command) = object : Condition() {
         }
     }
 
-    override suspend fun isMet() = command.didComplete
+    override suspend fun isMet() = command.state.finished
 }
 
 abstract class Condition {

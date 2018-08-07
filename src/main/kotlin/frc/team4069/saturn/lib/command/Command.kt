@@ -16,17 +16,7 @@ abstract class Command(_freq: Int = DEFAULT_FREQUENCY) {
     internal val exposedCondition: Condition
         get() = finishCondition
 
-    var didComplete = false
-        internal set
-
-    var didFinish = false
-        internal set
-
-    var isActive = false
-        internal set
-
-    var queuedStart = false
-        internal set
+    internal var state = State.READY
 
     suspend fun isFinished() = finishCondition.isMet()
 
@@ -38,7 +28,6 @@ abstract class Command(_freq: Int = DEFAULT_FREQUENCY) {
     open suspend fun dispose() {}
 
     suspend fun start() {
-        queuedStart = true
         CommandHandler.start(this)
     }
 
@@ -75,6 +64,13 @@ abstract class Command(_freq: Int = DEFAULT_FREQUENCY) {
         operator fun plusAssign(cond: Condition) {
             currentCondition = currentCondition or cond
         }
+    }
+
+    enum class State(val finished: Boolean) {
+        READY(false),
+        RUNNING(false),
+        FINISHED(true),
+        CANCELLED(true)
     }
 
     companion object {

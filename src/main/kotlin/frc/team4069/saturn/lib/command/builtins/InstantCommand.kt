@@ -9,7 +9,7 @@ abstract class InstantCommand : Command() {
     }
 }
 
-class InstantRunnableCommand(private val runnable: suspend () -> Unit) : InstantCommand() {
+open class InstantRunnableCommand(private val runnable: suspend () -> Unit) : InstantCommand() {
     override suspend fun initialize() {
         super.initialize()
         runnable()

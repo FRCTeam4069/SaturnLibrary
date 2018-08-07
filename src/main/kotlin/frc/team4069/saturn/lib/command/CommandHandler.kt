@@ -52,7 +52,7 @@ object CommandHandler {
             is CommandEvent.StopEvent -> {
                 val command = event.command
                 command.dispose()
-                tasks.removeIf { it == command}
+                tasks.removeIf { it == command }
                 val subsystems = subsystemTasks.filterValues { it == command }.keys
 
                 for(subsystem in subsystems) {
@@ -88,9 +88,8 @@ object CommandHandler {
 
         suspend fun initialize() = commandMux.withLock {
             started = true
-            command.didComplete = false
-            command.didFinish = false
-            command.isActive = true
+            command.state = Command.State.RUNNING
+
             finishHandle = command.exposedCondition.invokeOnCompletion {
                 stop()
             }
@@ -129,10 +128,12 @@ object CommandHandler {
             if(!started) return
             val isFinished = this.isFinished ?: command.isFinished()
             updater.cancel()
-            command.didComplete = true
-            command.didFinish = isFinished
-            command.isActive = false
-            command.queuedStart = false
+            command.state = if(isFinished) {
+                Command.State.FINISHED
+            }else {
+                Command.State.CANCELLED
+            }
+
             finishHandle.dispose()
             command.dispose()
 
