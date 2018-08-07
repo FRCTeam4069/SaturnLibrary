@@ -47,7 +47,7 @@ abstract class Condition {
     infix fun and(block: suspend () -> Boolean) = this and condition(block)
     infix fun and(command: Command) = this and condition(command)
 
-    private inline fun conditionGroup(firstCondition: Condition, secondCondition: Condition, crossinline condition: (Boolean, Boolean) -> Boolean) = object : Condition() {
+    private fun conditionGroup(firstCondition: Condition, secondCondition: Condition, condition: (Boolean, Boolean) -> Boolean) = object : Condition() {
         init {
             firstCondition.invokeOnCompletion {
                 if(condition(true, secondCondition.isMet())) {

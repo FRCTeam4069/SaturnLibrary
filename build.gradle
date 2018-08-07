@@ -3,7 +3,6 @@ buildscript {
 
     repositories {
         mavenCentral()
-        maven { url "http://dl.bintray.com/kotlin/kotlin-eap" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -42,9 +41,6 @@ dependencies {
 
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions {
-        languageVersion = "1.3"
-    }
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
