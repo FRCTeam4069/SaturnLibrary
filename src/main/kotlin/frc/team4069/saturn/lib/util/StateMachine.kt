@@ -7,7 +7,7 @@ import kotlin.properties.Delegates
 typealias Transition<S> = Pair<S, S>
 typealias TransitionListener = suspend () -> Unit
 
-class StateMachine<S>(val states: Set<S>, initialState: S, val anyState: S? = null) {
+class StateMachine<S>(initialState: S, val anyState: S? = null) {
 
     var currentState: S by Delegates.observable(initialState) { _, old, new ->
         runBlocking {
@@ -37,8 +37,8 @@ class StateMachine<S>(val states: Set<S>, initialState: S, val anyState: S? = nu
     }
 
     suspend fun start() {
-        update(anyState)
         handleTransition(null, currentState)
+        handleEntry(anyState ?: return)
     }
 
     fun update(inState: S?) {

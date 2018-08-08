@@ -18,7 +18,7 @@ class StateMachineTest : Spek({
     val exitCalls = hashMapOf(*State.values().map { it to 0 }.toTypedArray())
 
     given("A state machine") {
-        val stateMachine = StateMachine(State.values().toSet(), initialState = State.A).apply {
+        val stateMachine = StateMachine(initialState = State.A).apply {
             onEnter(State.A) {
                 entryCalls[State.A] = entryCalls[State.A]!! + 1
             }

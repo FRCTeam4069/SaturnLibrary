@@ -19,7 +19,7 @@ abstract class SaturnRobot : RobotBase() {
         TEST
     }
 
-    val stateMachine = StateMachine(State.values().toSet(), initialState = State.NONE, anyState = State.ANY)
+    val stateMachine = StateMachine(initialState = State.NONE, anyState = State.ANY)
 
     override fun startCompetition() = runBlocking {
         LiveWindow.setEnabled(false)
