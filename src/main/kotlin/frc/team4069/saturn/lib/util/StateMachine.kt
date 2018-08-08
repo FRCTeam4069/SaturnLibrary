@@ -48,9 +48,9 @@ class StateMachine<S>(initialState: S, val anyState: S? = null) {
     }
 
     private suspend fun handleTransition(old: S?, new: S) {
-        handleEntry(new)
         handleExit(old)
         transitionListeners.filterKeys { it == old to new }.values.flatten().forEach { it() }
+        handleEntry(new)
     }
 
     private suspend fun handleEntry(new: S) {
