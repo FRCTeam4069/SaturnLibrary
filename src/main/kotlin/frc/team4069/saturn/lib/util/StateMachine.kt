@@ -1,60 +1,56 @@
 package frc.team4069.saturn.lib.util
 
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.cancelAndJoin
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.sync.Mutex
-import kotlinx.coroutines.experimental.sync.withLock
+import kotlinx.coroutines.experimental.*
 import java.util.concurrent.TimeUnit
+import kotlin.properties.Delegates
 
 typealias Transition<S> = Pair<S, S>
 typealias TransitionListener = suspend () -> Unit
 
 class StateMachine<S>(val states: Set<S>, initialState: S, val anyState: S? = null) {
-    var currentState = initialState
 
-    val mux = Mutex()
-    val transitionListeners = MultiMap<Transition<S>, TransitionListener>()
-    val entryListeners = MultiMap<S, TransitionListener>()
-    val exitListeners = MultiMap<S, TransitionListener>()
-    val whileListeners = mutableListOf<WhileListener>()
+    var currentState: S by Delegates.observable(initialState) { _, old, new ->
+        runBlocking {
+            handleTransition(old, new)
+        }
+    }
 
-    suspend fun onEnter(state: S, listener: TransitionListener) = mux.withLock {
+    private val transitionListeners = MultiMap<Transition<S>, TransitionListener>()
+    private val entryListeners = MultiMap<S, TransitionListener>()
+    private val exitListeners = MultiMap<S, TransitionListener>()
+    private val whileListeners = mutableListOf<WhileListener>()
+
+    fun onEnter(state: S, listener: TransitionListener) {
         entryListeners.putSingle(state, listener)
     }
 
-    suspend fun onExit(state: S, listener: TransitionListener) = mux.withLock {
+    fun onExit(state: S, listener: TransitionListener) {
         exitListeners.putSingle(state, listener)
     }
 
-    suspend fun onTransition(oldState: S, newState: S, listener: TransitionListener) = mux.withLock {
+    fun onTransition(oldState: S, newState: S, listener: TransitionListener) {
         transitionListeners.putSingle(oldState to newState, listener)
     }
 
-    suspend fun onWhile(state: S, frequency: Long = 50, listener: TransitionListener) = mux.withLock {
+    fun onWhile(state: S, frequency: Long = 50, listener: TransitionListener) {
         whileListeners.add(WhileListener(state, frequency, listener))
     }
 
     suspend fun start() {
-        update(currentState)
-        update(anyState ?: return)
+        update(anyState)
+        handleTransition(null, currentState)
     }
 
-    suspend fun update(inState: S) {
-        if (inState != currentState) {
-            handleTransition(currentState, inState)
+    fun update(inState: S?) {
+        if (inState != currentState && inState != null) {
+            currentState = inState
         }
-
-        currentState = inState
     }
 
-    private suspend fun handleTransition(old: S, new: S) {
+    private suspend fun handleTransition(old: S?, new: S) {
         handleEntry(new)
         handleExit(old)
-        mux.withLock {
-            transitionListeners.filterKeys { it == old to new }.values.flatten().forEach { it() }
-        }
+        transitionListeners.filterKeys { it == old to new }.values.flatten().forEach { it() }
     }
 
     private suspend fun handleEntry(new: S) {
@@ -78,7 +74,7 @@ class StateMachine<S>(val states: Set<S>, initialState: S, val anyState: S? = nu
         }
     }
 
-    private suspend fun handleExit(old: S) {
+    private suspend fun handleExit(old: S?) {
         exitListeners.filterKeys { it == old }.values.flatten().forEach { it() }
         whileListeners.filter { it.state == old }.forEach { it.job.cancelAndJoin() }
     }
