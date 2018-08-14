@@ -26,16 +26,40 @@ abstract class SaturnRobot : RobotBase() {
 
         stateMachine.apply {
             onWhile(State.DISABLED) { HAL.observeUserProgramDisabled() }
-            onWhile(State.AUTONOMOUS) { HAL.observeUserProgramAutonomous() }
-            onWhile(State.TELEOP) { HAL.observeUserProgramTeleop() }
-            onWhile(State.TEST) { HAL.observeUserProgramTest() }
+            onWhile(State.AUTONOMOUS) {
+                HAL.observeUserProgramAutonomous()
+                autonomousPeriodic()
+            }
+            onWhile(State.TELEOP) {
+                HAL.observeUserProgramTeleop()
+                teleoperatedPeriodic()
+            }
+            onWhile(State.TEST) {
+                HAL.observeUserProgramTest()
+                testPeriodic()
+            }
 
-            onEnter(State.TEST) { LiveWindow.setEnabled(true) }
+            onEnter(State.TEST) {
+                LiveWindow.setEnabled(true)
+                testInit()
+            }
             onExit(State.TEST) { LiveWindow.setEnabled(false) }
+
+            onEnter(State.AUTONOMOUS) {
+                autonomousInit()
+            }
+
+            onEnter(State.TELEOP) {
+                teleoperatedInit()
+            }
 
             onWhile(State.ANY) {
                 LiveWindow.updateValues()
                 SmartDashboard.updateValues()
+            }
+
+            onTransition(State.TELEOP, State.DISABLED) {
+                disabled()
             }
         }
 
@@ -66,6 +90,16 @@ abstract class SaturnRobot : RobotBase() {
 
     abstract suspend fun initialize()
 
+    open suspend fun autonomousInit() {}
+    open suspend fun teleoperatedInit() {}
+    open suspend fun testInit() {}
 
-    protected suspend operator fun Subsystem.unaryPlus() = SubsystemHandler.addSubsystem(this)
+    open suspend fun autonomousPeriodic() {}
+    open suspend fun teleoperatedPeriodic() {}
+    open suspend fun testPeriodic() {}
+
+    open suspend fun disabled() {}
+
+
+    protected suspend operator fun SubsystemHandler.plusAssign(subsystem: Subsystem) = SubsystemHandler.addSubsystem(subsystem)
 }

@@ -37,6 +37,7 @@ dependencies {
 
     compile wpilib()
     compile ctre()
+    compile pathfinder()
 }
 
 compileKotlin {
