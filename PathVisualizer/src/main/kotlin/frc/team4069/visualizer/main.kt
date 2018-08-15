@@ -12,7 +12,7 @@ import java.io.File
 
 fun main(args: Array<String>) {
     val root = File(".")
-    val path = Pathfinder.readFromCSV(File(root, "test-profile-imperial_source_Jaci.csv"))
+    val path = Pathfinder.readFromCSV(File(root, "test-profile-insane_source_Jaci.csv"))
 
     val xs = path.segments.map(Trajectory.Segment::x)
     val ys = path.segments.map(Trajectory.Segment::y)
@@ -25,20 +25,40 @@ fun main(args: Array<String>) {
     val first = path[0]
     val pose = Pose2d(first.x, first.y, 0.0)
 
+    val skrrtVelocity = 12.0
+    val skrrtPose = Pose2d(first.x, first.y, 0.0)
+
+    val skrrtXs = mutableListOf<Double>()
+    val skrrtYs = mutableListOf<Double>()
+
     val dt = 0.02
+    var i = 0
 
     while(!follower.isFinished) {
         ramseteXs += pose.x
         ramseteYs += pose.y
 
-        val (v, w) = follower.update(pose)
+        skrrtXs += skrrtPose.x
+        skrrtYs += skrrtPose.y
 
-        pose.theta += w * dt
-        pose.x += v * dt * cos(pose.theta)
-        pose.y += v * dt * sin(pose.theta)
+        val twist = follower.update(pose)
+
+        println("Iteration $i")
+        val (left, right) = twist.inverseKinematics(1.464)
+        println("Left: $left")
+        println("Right: $right")
+
+
+        pose.theta += twist.w * dt
+        pose.x += twist.v * dt * cos(pose.theta)
+        pose.y += twist.v * dt * sin(pose.theta)
+        skrrtPose.x += skrrtVelocity * dt
+
+        i++
     }
 
     figure(1)
     plot(xs.toDoubleArray(), ys.toDoubleArray(), color = "b", lineLabel = "Pathfinder Path")
     plot(ramseteXs.toDoubleArray(), ramseteYs.toDoubleArray(), color = "o", lineLabel = "Robot Position")
+//    plot(skrrtXs.toDoubleArray(), skrrtYs.toDoubleArray(), color = "r", lineLabel = "REAL Programmers")
 }
