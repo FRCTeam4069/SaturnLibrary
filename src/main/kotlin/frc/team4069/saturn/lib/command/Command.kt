@@ -5,8 +5,8 @@ import kotlinx.coroutines.experimental.disposeOnCancellation
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import java.util.concurrent.CopyOnWriteArrayList
 
-abstract class Command(_freq: Int = DEFAULT_FREQUENCY) {
-    var updateFrequency = _freq
+abstract class Command(updateFrequency: Int = DEFAULT_FREQUENCY) {
+    var updateFrequency = updateFrequency
         protected set
 
     internal open val requiredSubsystems = mutableListOf<Subsystem>()
