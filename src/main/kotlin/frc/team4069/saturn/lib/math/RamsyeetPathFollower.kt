@@ -14,8 +14,7 @@ import kotlin.math.sqrt
  */
 class RamsyeetPathFollower(private val trajectory: Trajectory,
                            private val zeta: Double,
-                           private val b: Double,
-                           private val driveBaseWidth: Double) {
+                           private val b: Double) {
     var segment = 0
 
     init {
@@ -65,8 +64,6 @@ class RamsyeetPathFollower(private val trajectory: Trajectory,
                     (k1(segment.velocity, wDesired) * thetaError)
             angularVelocity = angularVelocity.coerceIn(-safeW, safeW)
             this.segment++
-
-            // Convert calculated linear and angular velocities into PercentOutput values for motor controllers
 
             return Twist2d(velocity, angularVelocity)
 

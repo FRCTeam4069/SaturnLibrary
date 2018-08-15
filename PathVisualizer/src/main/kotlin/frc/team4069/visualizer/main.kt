@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
     val ramseteXs = mutableListOf<Double>()
     val ramseteYs = mutableListOf<Double>()
 
-    val follower = RamsyeetPathFollower(path, 0.8, 0.75, 0.0)
+    val follower = RamsyeetPathFollower(path, 0.8, 0.75)
 
     val first = path[0]
     val pose = Pose2d(first.x, first.y, 0.0)
