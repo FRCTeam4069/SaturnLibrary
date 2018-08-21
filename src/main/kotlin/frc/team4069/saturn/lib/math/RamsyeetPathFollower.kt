@@ -18,7 +18,7 @@ class RamsyeetPathFollower(private val trajectory: Trajectory,
     var segment = 0
 
     init {
-        if (zeta !in 0..1) {
+        if (zeta !in 0.0..1.0) {
             throw IllegalArgumentException("zeta must be in (0, 1)")
         }
 

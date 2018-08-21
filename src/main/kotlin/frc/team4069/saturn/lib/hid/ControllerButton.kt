@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.GenericHID
 import frc.team4069.saturn.lib.command.Command
 import frc.team4069.saturn.lib.command.builtins.InstantRunnableCommand
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.newFixedThreadPoolContext
 
@@ -14,6 +13,10 @@ import kotlinx.coroutines.experimental.newFixedThreadPoolContext
 class ControllerButton internal constructor(val id: Int, val joystick: GenericHID) {
 
     private val listeners = mutableListOf<Job>()
+
+    suspend fun update() {
+
+    }
 
     /**
      * Updates the command to be run when the button is pressed in the backing field.
@@ -34,6 +37,7 @@ class ControllerButton internal constructor(val id: Int, val joystick: GenericHI
 //                }
 //            }
 //        })
+        pressed(command)
 
         return this
     }
@@ -67,11 +71,15 @@ class ControllerButton internal constructor(val id: Int, val joystick: GenericHI
 
     fun pressed(command: Command) {
         val job = launch(buttonListenerPool) {
+            var enabled = false
             while(isActive) {
-                if(joystick.getRawButtonPressed(id)) {
+                if(joystick.getRawButton(id) && !enabled) {
+                    println("Comamnd should start")
                     command.start()
+                    enabled = true
+                }else if(enabled) {
+                    enabled = false
                 }
-                delay(20)
             }
         }
 

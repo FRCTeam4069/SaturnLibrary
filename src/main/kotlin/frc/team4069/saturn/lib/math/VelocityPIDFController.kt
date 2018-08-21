@@ -12,7 +12,7 @@ class VelocityPIDFController(private val p: Double = 0.0,
                              private val iLimit: Double = 0.0,
                              private val deadband: Double = 0.1,
                              private val currentVelocity: () -> Double) {
-    private var lastError = 0.0
+    var lastError = 0.0
     private var derivative = 0.0
     private var integral = 0.0
 
@@ -25,10 +25,10 @@ class VelocityPIDFController(private val p: Double = 0.0,
         val current = currentVelocity()
 
         val time = System.currentTimeMillis()
-        dt = if(lastCallTime < 0) {
+        dt = if (lastCallTime < 0) {
             lastCallTime = time
-            0L
-        }else {
+            return 0.0
+        } else {
             time - lastCallTime
         }
 
@@ -37,10 +37,10 @@ class VelocityPIDFController(private val p: Double = 0.0,
         integral += error * dt
         derivative += (error - lastError) / dt
 
-        if(integral > iLimit && iLimit != 0.0)
+        if (integral > iLimit && iLimit != 0.0)
             integral = iLimit
 
-        if(abs(targetVel) < deadband) return 0.0
+        if (abs(targetVel) < deadband) return 0.0
 
         val output = p * error + i * integral + d * derivative +
                 v * targetVel + a * targetAcc + s * sign(targetVel)

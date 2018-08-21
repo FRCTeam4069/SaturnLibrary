@@ -37,4 +37,4 @@ val Double.`in`
     get() = Inches(this, preferences)
 
 val Double.ft
-    get() = Inches(this, preferences)
+    get() = Feet(this, preferences)

@@ -1,18 +1,50 @@
 package frc.team4069.saturn.lib.hid
 
-import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj.GenericHID
+import frc.team4069.saturn.lib.command.Command
+import frc.team4069.saturn.lib.hid.HIDButton.Companion.DEFAULT_THRESHOLD
 
-class Controller(port: Int) : XboxController(port) {
+fun <T: GenericHID> controller(hid: T, block: SaturnHIDBuilder<T>.() -> Unit): SaturnHID<T> {
+    return SaturnHIDBuilder(hid).apply(block).build()
+}
 
-    fun button(button: ButtonType) = ControllerButton(button.id, this)
+class SaturnHIDBuilder<T : GenericHID>(private val inner: T) {
+    private val controlBuilders = mutableListOf<SaturnHIDControlBuilder>()
 
-    fun button(button: ButtonType, block: ControllerButton.() -> Unit): ControllerButton {
-        return ControllerButton(button.id, this).apply(block)
+    fun button(buttonId: Int, block: HIDButtonBuilder.() -> Unit) = button(HIDButtonSource(inner, buttonId), block = block)
+
+    fun button(src: HIDButtonSource, threshold: Double = DEFAULT_THRESHOLD, block: HIDButtonBuilder.() -> Unit): HIDButtonBuilder {
+        val builder = HIDButtonBuilder(src, threshold)
+        controlBuilders.add(builder)
+        builder.block()
+        return builder
+    }
+
+    fun build(): SaturnHID<T> {
+        val controls = controlBuilders.map { it.build() }
+        return SaturnHID(inner, controls)
     }
 }
 
-inline fun controller(port: Int, block: Controller.() -> Unit): Controller {
-    return Controller(port).apply(block)
+interface SaturnHIDControlBuilder {
+    fun build(): HIDControl
 }
 
+class HIDButtonBuilder(private val src: HIDSource, private val threshold: Double) : SaturnHIDControlBuilder {
+    private val changeOn = mutableListOf<HIDListener>()
+    private val changeOff = mutableListOf<HIDListener>()
 
+    fun pressed(command: Command) = changeOn.add { command.start() }
+    fun released(command: Command) = changeOff.add { command.start() }
+
+    override fun build() = HIDButton(src, threshold, changeOn.toList(), changeOff.toList())
+}
+
+class SaturnHID<T : GenericHID>(val inner: T, private val controls: List<HIDControl>) {
+    fun getRawAxis(axisId: Int) = HIDAxisSource(inner, axisId)
+    fun getRawButton(buttonId: Int) = HIDButtonSource(inner, buttonId)
+
+    suspend fun update() {
+        controls.forEach { it.update() }
+    }
+}

@@ -25,34 +25,18 @@ fun main(args: Array<String>) {
     val first = path[0]
     val pose = Pose2d(first.x, first.y, 0.0)
 
-    val skrrtVelocity = 12.0
-    val skrrtPose = Pose2d(first.x, first.y, 0.0)
-
-    val skrrtXs = mutableListOf<Double>()
-    val skrrtYs = mutableListOf<Double>()
-
     val dt = 0.02
     var i = 0
 
-    while(!follower.isFinished) {
+    while (!follower.isFinished) {
         ramseteXs += pose.x
         ramseteYs += pose.y
 
-        skrrtXs += skrrtPose.x
-        skrrtYs += skrrtPose.y
-
         val twist = follower.update(pose)
-
-        println("Iteration $i")
-        val (left, right) = twist.inverseKinematics(1.464)
-        println("Left: $left")
-        println("Right: $right")
-
 
         pose.theta += twist.w * dt
         pose.x += twist.v * dt * cos(pose.theta)
         pose.y += twist.v * dt * sin(pose.theta)
-        skrrtPose.x += skrrtVelocity * dt
 
         i++
     }
@@ -60,5 +44,4 @@ fun main(args: Array<String>) {
     figure(1)
     plot(xs.toDoubleArray(), ys.toDoubleArray(), color = "b", lineLabel = "Pathfinder Path")
     plot(ramseteXs.toDoubleArray(), ramseteYs.toDoubleArray(), color = "o", lineLabel = "Robot Position")
-//    plot(skrrtXs.toDoubleArray(), skrrtYs.toDoubleArray(), color = "r", lineLabel = "REAL Programmers")
 }
