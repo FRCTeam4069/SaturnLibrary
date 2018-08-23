@@ -19,21 +19,21 @@ class ControllerButton internal constructor(val id: Int, val joystick: GenericHI
     }
 
     /**
-     * Updates the command to be run when the button is pressed in the backing field.
+     * Updates the command to be run when the button is changeOn in the backing field.
      * Returns `this` for easy chaining
      */
     fun whenPressed(command: Command): ControllerButton {
 //        backing.whenPressed(command)
 //        Scheduler.addButtonScheduler(object : Runnable {
-//            var pressed = false
+//            var changeOn = false
 //
 //            override fun run() {
-//                if (backing.get() && !pressed) {
-//                    pressed = true
+//                if (backing.get() && !changeOn) {
+//                    changeOn = true
 //                    Scheduler.add(command)
-//                } else if (!backing.get() && pressed) {
+//                } else if (!backing.get() && changeOn) {
 //                    Scheduler.cancel(command)
-//                    pressed = false
+//                    changeOn = false
 //                }
 //            }
 //        })
@@ -43,25 +43,25 @@ class ControllerButton internal constructor(val id: Int, val joystick: GenericHI
     }
 
     /**
-     * Updates the command to be run when the button is released in the backing field.
+     * Updates the command to be run when the button is changeOff in the backing field.
      *
      * Returns `this` for easy chaining
      */
     fun whenReleased(command: Command): ControllerButton {
 //        backing.whenReleased(command)
 //        Scheduler.addButtonScheduler(object : Runnable {
-//            var pressed = false
+//            var changeOn = false
 //
 //            override fun run() {
 //                if (backing.get()) {
-//                    if (!pressed) {
-//                        pressed = true
+//                    if (!changeOn) {
+//                        changeOn = true
 //                    } else {
 //                        Scheduler.cancel(command)
 //                    }
-//                } else if (!backing.get() && pressed) {
+//                } else if (!backing.get() && changeOn) {
 //                    Scheduler.add(command)
-//                    pressed = false
+//                    changeOn = false
 //                }
 //            }
 //        })
@@ -114,7 +114,7 @@ class ControllerButton internal constructor(val id: Int, val joystick: GenericHI
     }
 
     /**
-     * Returns the raw value of the button; whether it is pressed or not.
+     * Returns the raw value of the button; whether it is changeOn or not.
      */
     val value: Boolean get() = joystick.getRawButton(id)
 

@@ -7,12 +7,16 @@ import frc.team4069.saturn.lib.util.Source
 typealias HIDSource = Source<Double>
 
 class HIDButtonSource(private val dev: GenericHID, private val buttonId: Int) : HIDSource {
-    val source = object : BooleanSource {
-        override val value = dev.getRawButton(buttonId)
+    private val source = object : BooleanSource {
+        override val value: Boolean
+            get() {
+                val value = dev.getRawButton(buttonId)
+                return value
+            }
     }
 
     override val value
-        get() = if(source.value) 1.0 else 0.0
+        get() = if (source.value) 1.0 else 0.0
 }
 
 class HIDAxisSource(private val dev: GenericHID, private val axis: Int) : HIDSource {

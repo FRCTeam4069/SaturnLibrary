@@ -19,7 +19,7 @@ interface DistanceUnit {
     operator fun unaryMinus() = NativeUnits(-this.stu, settings)
 }
 
-val preferences = UnitPreferences(256, 8.0)
+val preferences = UnitPreferences(256, 3.6875)
 
 val Int.stu
     get() = NativeUnits(this, preferences)

@@ -102,8 +102,6 @@ object CommandHandler {
                 }
                 val delta = TimeUnit.SECONDS.toNanos(1) / frequency // Time between updates
 
-                var nextNS = System.nanoTime() + delta
-
                 while(isActive) {
                     if(command.isFinished()) {
                         isFinished = true
@@ -118,9 +116,7 @@ object CommandHandler {
                     }
                 }
 
-                val delayValue = nextNS - System.nanoTime()
-                nextNS += delta
-                delay(delayValue, TimeUnit.NANOSECONDS)
+                delay(delta, TimeUnit.NANOSECONDS)
             }
         }
 

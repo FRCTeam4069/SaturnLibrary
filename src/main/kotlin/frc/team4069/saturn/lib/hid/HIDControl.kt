@@ -13,11 +13,12 @@ class HIDButton(private val source: HIDSource,
     private var lastValue = source.value >= threshold
 
     override suspend fun update() {
-        val newValue = source.value >= threshold
+        val value = source.value
+        val newValue = value >= threshold
         if(lastValue != newValue) {
-            println("The value is changed")
             if(newValue) {
-                changeOn.forEach { it() }
+                println("Changing on")
+                changeOn.forEach { println("Calling $it"); it() }
             }else {
                 changeOff.forEach { it() }
             }
