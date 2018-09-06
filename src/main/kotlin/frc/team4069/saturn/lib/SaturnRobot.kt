@@ -1,6 +1,7 @@
 package frc.team4069.saturn.lib
 
 import edu.wpi.first.wpilibj.RobotBase
+import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.hal.HAL
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
@@ -10,7 +11,7 @@ import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.util.StateMachine
 import kotlinx.coroutines.experimental.runBlocking
 
-abstract class SaturnRobot : RobotBase() {
+abstract class SaturnRobot(val wpi: Boolean) : RobotBase() {
     enum class State {
         NONE,
         ANY,
@@ -57,6 +58,9 @@ abstract class SaturnRobot : RobotBase() {
             onWhile(State.ANY) {
                 LiveWindow.updateValues()
                 SmartDashboard.updateValues()
+                if(wpi) {
+                    Scheduler.getInstance().run()
+                }
             }
 
             onTransition(State.TELEOP, State.DISABLED) {

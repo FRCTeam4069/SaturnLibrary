@@ -60,15 +60,15 @@ class StateMachine<S>(initialState: S, val anyState: S? = null) {
             listener.job = launch {
                 val frequency = listener.frequency
                 if (frequency < 0) throw IllegalArgumentException("While frequency cannot be negative!")
-                val timeBetweenUpdate = TimeUnit.SECONDS.toNanos(1) / frequency
-
-                var nextNS = System.nanoTime() + timeBetweenUpdate
+                val dt = TimeUnit.SECONDS.toNanos(1) / frequency
+//
+//                var nextNS = System.nanoTime() + timeBetweenUpdate
                 while (isActive) {
                     listener.listener()
 
-                    val delayNeeded = nextNS - System.nanoTime()
-                    nextNS += timeBetweenUpdate
-                    delay(delayNeeded, TimeUnit.NANOSECONDS)
+//                    val delayNeeded = nextNS - System.nanoTime()
+//                    nextNS += timeBetweenUpdate
+                    delay(dt, TimeUnit.NANOSECONDS)
                 }
             }
         }

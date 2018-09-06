@@ -10,9 +10,9 @@ buildscript {
 
     }
 }
-plugins {
-    id "jaci.openrio.gradle.GradleRIO" version "2018.03.06" apply false
-}
+//plugins {
+//    id "jaci.openrio.gradle.GradleRIO" version "2018.03.06" apply false
+//}
 
 group 'frc.team4069'
 version '0.0.5-SNAPSHOT'
