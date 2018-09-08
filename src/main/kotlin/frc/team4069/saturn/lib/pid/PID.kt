@@ -1,8 +1,6 @@
 package frc.team4069.saturn.lib.pid
 
 import frc.team4069.saturn.lib.util.systemTimeMillis
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.withContext
 
 /**
  * Standard synchronous PID controller (must be manually controlled)
@@ -30,7 +28,7 @@ class PID(constants: PIDConstants, target: Double, val deadband: Double = 0.01, 
     private var lastTime = 0.0
     private var lastError = 0.0
 
-    suspend fun update(value: Double) = withContext(CommonPool) {
+    fun update(value: Double): Double {
         // Calculate error
         val error = target - value
 
@@ -56,7 +54,7 @@ class PID(constants: PIDConstants, target: Double, val deadband: Double = 0.01, 
 
         lastError = error
 
-        output
+        return output
     }
 
     fun clearIntegral() {
