@@ -1,19 +1,13 @@
 package frc.team4069.saturn.lib
 
-import edu.wpi.first.wpilibj.RobotBase
-import edu.wpi.first.wpilibj.command.Scheduler
-import edu.wpi.first.wpilibj.hal.HAL
-import edu.wpi.first.wpilibj.livewindow.LiveWindow
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import edu.wpi.first.wpilibj.IterativeRobot
 import frc.team4069.saturn.lib.command.Subsystem
 import frc.team4069.saturn.lib.command.SubsystemHandler
-import frc.team4069.saturn.lib.hid.SaturnHID
-import frc.team4069.saturn.lib.util.StateMachine
+import frc.team4069.saturn.lib.util.MultiMap
 import kotlinx.coroutines.experimental.runBlocking
 
-abstract class SaturnRobot(val wpi: Boolean) : RobotBase() {
+abstract class SaturnRobot : IterativeRobot() {
     enum class State {
-        NONE,
         ANY,
         DISABLED,
         AUTONOMOUS,
@@ -21,92 +15,97 @@ abstract class SaturnRobot(val wpi: Boolean) : RobotBase() {
         TEST
     }
 
-    val stateMachine = StateMachine(initialState = State.NONE, anyState = State.ANY)
-
-    override fun startCompetition() = runBlocking {
-        LiveWindow.setEnabled(false)
-
-        stateMachine.apply {
-            onWhile(State.DISABLED) { HAL.observeUserProgramDisabled() }
-            onWhile(State.AUTONOMOUS) {
-                HAL.observeUserProgramAutonomous()
-                autonomousPeriodic()
-            }
-            onWhile(State.TELEOP) {
-                HAL.observeUserProgramTeleop()
-                teleoperatedPeriodic()
-            }
-            onWhile(State.TEST) {
-                HAL.observeUserProgramTest()
-                testPeriodic()
-            }
-
-            onEnter(State.TEST) {
-                LiveWindow.setEnabled(true)
-                testInit()
-            }
-            onExit(State.TEST) { LiveWindow.setEnabled(false) }
-
-            onEnter(State.AUTONOMOUS) {
-                autonomousInit()
-            }
-
-            onEnter(State.TELEOP) {
-                teleoperatedInit()
-            }
-
-            onWhile(State.ANY) {
-                LiveWindow.updateValues()
-                SmartDashboard.updateValues()
-                if(wpi) {
-                    Scheduler.getInstance().run()
-                }
-            }
-
-            onTransition(State.TELEOP, State.DISABLED) {
-                disabled()
-            }
-        }
-
-
-        initialize()
-        SubsystemHandler.startDefaultCommands()
-
-        stateMachine.start()
-
-        HAL.observeUserProgramStarting()
-
-        while(isActive) {
-            m_ds.waitForData()
-
-            val newState = when {
-                isDisabled -> State.DISABLED
-                isAutonomous -> State.AUTONOMOUS
-                isOperatorControl -> State.TELEOP
-                isTest -> State.TEST
-                else -> throw IllegalStateException("Robot is in invalid state")
-            }
-
-            stateMachine.update(newState)
-
-        }
+    private enum class Edge {
+        ENTER,
+        WHILE,
     }
 
+    private val stateHandlers = MultiMap<Pair<State, Edge>, suspend () -> Unit>()
 
     abstract suspend fun initialize()
 
-    open suspend fun autonomousInit() {}
-    open suspend fun teleoperatedInit() {}
-    open suspend fun testInit() {}
+    fun onEnter(state: State, callback: suspend () -> Unit) {
+        stateHandlers.putSingle(state to Edge.ENTER, callback)
+    }
 
-    open suspend fun autonomousPeriodic() {}
-    open suspend fun teleoperatedPeriodic() {}
-    open suspend fun testPeriodic() {}
+    fun whileIn(state: State, callback: suspend () -> Unit) {
+        stateHandlers.putSingle(state to Edge.WHILE, callback)
+    }
 
-    open suspend fun disabled() {}
+    // Stupid repetitive overrides to glue everything together
+    override fun robotInit() {
+        runBlocking {
+            initialize()
 
+//            SubsystemHandler.subsystemActor.send(SubsystemHandler.Message.Start)
+        }
+    }
 
-//    protected suspend operator fun SubsystemHandler.plusAssign(subsystem: Subsystem) = SubsystemHandler.addSubsystem(subsystem)
-    protected suspend operator fun Subsystem.unaryPlus() = SubsystemHandler.addSubsystem(this)
-    protected suspend operator fun SaturnHID<*>.unaryPlus() = stateMachine.onWhile(State.TELEOP) { update() }
+    override fun teleopInit() {
+        runBlocking {
+            stateHandlers.filterKeys { (state, edge) -> state == State.TELEOP || state == State.ANY && edge == Edge.ENTER }
+                    .flatMap { (_, callbacks) -> callbacks }
+                    .forEach { it() }
+        }
+    }
+
+    override fun teleopPeriodic() {
+        runBlocking {
+            stateHandlers.filterKeys { (state, edge) -> state == State.TELEOP || state == State.ANY && edge == Edge.WHILE }
+                    .flatMap { (_, callbacks) -> callbacks }
+                    .forEach { it() }
+        }
+    }
+
+    override fun autonomousInit() {
+        runBlocking {
+            stateHandlers.filterKeys { (state, edge) -> state == State.AUTONOMOUS || state == State.ANY && edge == Edge.ENTER }
+                    .flatMap { (_, callbacks) -> callbacks }
+                    .forEach { it() }
+        }
+    }
+
+    override fun autonomousPeriodic() {
+        runBlocking {
+            stateHandlers.filterKeys { (state, edge) -> state == State.AUTONOMOUS || state == State.ANY && edge == Edge.WHILE }
+                    .flatMap { (_, callbacks) -> callbacks }
+                    .forEach { it() }
+        }
+    }
+
+    override fun testInit() {
+        runBlocking {
+            stateHandlers.filterKeys { (state, edge) -> state == State.TEST || state == State.ANY && edge == Edge.ENTER }
+                    .flatMap { (_, callbacks) -> callbacks }
+                    .forEach { it() }
+        }
+    }
+
+    override fun testPeriodic() {
+        runBlocking {
+            stateHandlers.filterKeys { (state, edge) -> state == State.TEST || state == State.ANY && edge == Edge.WHILE }
+                    .flatMap { (_, callbacks) -> callbacks }
+                    .forEach { it() }
+        }
+    }
+
+    override fun disabledInit() {
+        runBlocking {
+            stateHandlers.filterKeys { (state, edge) -> state == State.DISABLED || state == State.ANY && edge == Edge.ENTER }
+                    .flatMap { (_, callbacks) -> callbacks }
+                    .forEach { it() }
+        }
+    }
+
+    override fun disabledPeriodic() {
+        runBlocking {
+            stateHandlers.filterKeys { (state, edge) -> state == State.DISABLED || state == State.ANY && edge == Edge.WHILE }
+                    .flatMap { (_, callbacks) -> callbacks }
+                    .forEach { it() }
+        }
+    }
+
+    suspend operator fun Subsystem.unaryPlus() {
+        SubsystemHandler.subsystemActor.send(SubsystemHandler.Message.Register(this))
+    }
 }

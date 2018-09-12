@@ -1,143 +1,120 @@
 package frc.team4069.saturn.lib.command
 
 import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.actor
-import kotlinx.coroutines.experimental.sync.Mutex
-import kotlinx.coroutines.experimental.sync.withLock
-import java.util.concurrent.TimeUnit
 
 object CommandHandler {
-    private val commandPool = newFixedThreadPoolContext(4, "Command")
+    val COMMAND_CTX = newFixedThreadPoolContext(4, "Command")
 
-    private val subsystemTasks = mutableMapOf<Subsystem, CommandTaskImpl>()
-    private val tasks = mutableListOf<CommandTaskImpl>()
+    internal val runningCommands = mutableMapOf<Subsystem, CommandHandle>()
 
-    private sealed class CommandEvent {
-        data class StartEvent(val command: Command) : CommandEvent()
-        data class StopCommandEvent(val command: Command) : CommandEvent()
-        data class StopEvent(val command: CommandTask, val startDefault: (Subsystem) -> Boolean) : CommandEvent()
+    sealed class Message {
+        data class Start(val cmd: Command, val handle: CompletableDeferred<CommandHandle>? = null) : Message()
+        data class Stop(val cmd: CommandHandle) : Message()
     }
 
-    private val commandActor = actor<CommandEvent>(context = commandPool, capacity = Channel.UNLIMITED) {
-        for(evt in channel) {
-            handleEvent(evt)
-        }
-    }
-
-    private suspend fun handleEvent(event: CommandEvent) {
-        when(event) {
-            is CommandEvent.StartEvent -> {
-                val command = event.command
-                val subsystems = command.requiredSubsystems
-
-                val commandsToStop = subsystemTasks.filterKeys { subsystems.contains(it) }.values.toSet()
-                commandsToStop.forEach { stopCommand ->
-                    handleEvent(CommandEvent.StopEvent(stopCommand) {
-                        !subsystems.contains(it)
-                    })
-                }
-                val task = CommandTaskImpl(command)
-                for(subsystem in subsystems) {
-                    subsystemTasks[subsystem] = task
-                }
-
-                tasks.add(task)
-                task.initialize()
-            }
-            is CommandEvent.StopCommandEvent -> {
-                val task = tasks.find { it.command == event.command } ?: return
-                handleEvent(CommandEvent.StopEvent(task) { true })
-            }
-            is CommandEvent.StopEvent -> {
-                val command = event.command
-                command.dispose()
-                tasks.removeIf { it == command }
-                val subsystems = subsystemTasks.filterValues { it == command }.keys
-
-                for(subsystem in subsystems) {
-                    if(event.startDefault(subsystem)) {
-                        handleEvent(CommandEvent.StartEvent(subsystem.defaultCommand ?: continue))
+    val commandActor = actor<Message> {
+        while (isActive) {
+            for (msg in channel) {
+                when (msg) {
+                    is Message.Start -> {
+                        val handle = startCommand(msg.cmd)
+                        msg.handle?.complete(handle)
                     }
+                    is Message.Stop -> stopCommand(msg.cmd)
                 }
             }
         }
     }
 
-    suspend fun start(command: Command) {
-        command.requiredSubsystems.filterNot { SubsystemHandler.isRegistered(it) }
-                .forEach {
-                    throw IllegalStateException("A command required an unregistered subsystem. Command: ${command::class.java.simpleName}. Subsystem: ${it.name} ${it::class.java.name}")
+    private suspend fun startCommand(cmd: Command): CommandHandle {
+        val commandsToStop = runningCommands.filterKeys { it in cmd.requiredSubsystems }
+
+        commandsToStop.forEach { (subsystem, cmd) ->
+                    stopCommand(cmd)
+                    runningCommands.remove(subsystem)
                 }
-        commandActor.send(CommandEvent.StartEvent(command))
+
+        val task = CommandHandle(cmd)
+        cmd.requiredSubsystems.forEach { runningCommands[it] = task }
+
+        return task
     }
 
-    suspend fun stop(command: Command) = commandActor.send(CommandEvent.StopCommandEvent(command))
-
-    private open class CommandTaskImpl(command: Command) : CommandTask(command) {
-        override suspend fun stop() = stop(command)
+    private suspend fun stopCommand(cmd: CommandHandle) {
+        cmd.handle.cancelAndJoin()
+        cmd.inner.requiredSubsystems.mapNotNull(Subsystem::defaultCommand)
+                .map { Message.Start(it) }
+                .forEach { commandActor.send(it) }
+        when (cmd.state) {
+            CommandHandle.State.FINISHED -> cmd.inner.dispose(Command.FinishType.NORMAL)
+            CommandHandle.State.CANCELED -> cmd.inner.dispose(Command.FinishType.CANCELED)
+            else -> println("ERR: CommandHandler: Command task $cmd finished with exceptional state ${cmd.state}")
+        }
     }
 
-    abstract class CommandTask(val command: Command) {
-        private val commandMux = Mutex()
-        private lateinit var updater: Job
-        private lateinit var finishHandle: DisposableHandle
+    class CommandHandle(val inner: Command, var onComplete: (suspend () -> Unit)? = null) {
 
-        private var isFinished: Boolean? = null
-        private var started = false
+        var state = State.READY
 
-        suspend fun initialize() = commandMux.withLock {
-            started = true
-            command.state = Command.State.RUNNING
+        val handle = launch(context = COMMAND_CTX) {
+            val delayTime = 1000 / inner.updateFrequency
 
-            finishHandle = command.exposedCondition.invokeOnCompletion {
-                stop()
+            inner.initialize()
+            state = State.LOOPING
+
+            while (isActive) {
+                inner.execute()
+
+                if (inner.isFinished) {
+                    break
+                }
+
+                delay(delayTime)
             }
-            command.initialize()
-            updater = launch(context = commandPool) {
-                val frequency = command.updateFrequency
-                when {
-                    frequency == 0 -> return@launch
-                    frequency < 0 -> throw IllegalArgumentException("Command frequency cannot be less than 0")
-                }
-                val delta = TimeUnit.SECONDS.toNanos(1) / frequency // Time between updates
+        }
 
-                while(isActive) {
-                    if(command.isFinished()) {
-                        isFinished = true
-                        // Stop if we're finished
-                        stop()
-                        return@launch
+        init {
+            handle.invokeOnCompletion {
+                runBlocking {
+                    state = if (it != null || !inner.isFinished) {
+                        State.CANCELED
+                    } else {
+                        State.FINISHED
                     }
-                    commandMux.withLock {
-                        if(!isActive) return@launch
 
-                        command.execute() // Tick
-                    }
+                    commandActor.send(Message.Stop(this@CommandHandle))
+
+                    onComplete?.invoke()
                 }
-
-                delay(delta, TimeUnit.NANOSECONDS)
             }
         }
 
-        suspend fun dispose() = commandMux.withLock {
-            if(!started) return
-            val isFinished = this.isFinished ?: command.isFinished()
-            updater.cancel()
-            command.state = if(isFinished) {
-                Command.State.FINISHED
-            }else {
-                Command.State.CANCELLED
-            }
-
-            finishHandle.dispose()
-            command.dispose()
-
-            for(listener in command.completionListeners) {
-                listener(command)
-            }
+        fun invokeOnCompletion(block: suspend () -> Unit) {
+            onComplete = block
         }
 
-        abstract suspend fun stop()
+        enum class State {
+            READY,
+            LOOPING,
+            FINISHED,
+            CANCELED
+        }
     }
+}
+
+suspend fun Command.start(): Deferred<CommandHandler.CommandHandle> {
+    val future = CompletableDeferred<CommandHandler.CommandHandle>()
+    CommandHandler.commandActor.send(CommandHandler.Message.Start(this, future))
+    return future
+}
+
+suspend fun CommandHandler.CommandHandle.stop() {
+    CommandHandler.commandActor.send(CommandHandler.Message.Stop(this))
+}
+
+suspend fun Command.stop() {
+    val handle = CommandHandler.runningCommands
+            .values.find { it.inner == this } ?: return
+    handle.stop()
 }

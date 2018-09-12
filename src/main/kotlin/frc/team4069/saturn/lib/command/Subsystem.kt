@@ -1,13 +1,20 @@
 package frc.team4069.saturn.lib.command
 
-import java.util.concurrent.atomic.AtomicLong
+/**
+ * Represents a physical subsystem on the robot
+ */
+abstract class Subsystem {
+    /**
+     * The command that will be run when nothing else is running that requires this subsystem
+     */
+    open val defaultCommand: Command? = null
 
-abstract class Subsystem(val name: String) {
-    companion object {
-        val ID = AtomicLong()
+    /**
+     * The frequency at which [periodic] is called, in hertz
+      */
+    open val updateFrequency = 50
+
+    open suspend fun periodic() {
+
     }
-
-    constructor() : this("Subsystem ${ID.incrementAndGet()}")
-
-    open var defaultCommand: Command? = null
 }
