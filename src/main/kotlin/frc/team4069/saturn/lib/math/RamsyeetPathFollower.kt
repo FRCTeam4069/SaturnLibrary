@@ -15,7 +15,7 @@ import kotlin.math.sqrt
 class RamsyeetPathFollower(private val trajectory: Trajectory,
                            private val zeta: Double,
                            private val b: Double) {
-    var segment = 0
+    private var segment = 0
 
     init {
         if (zeta !in 0.0..1.0) {
@@ -69,6 +69,8 @@ class RamsyeetPathFollower(private val trajectory: Trajectory,
 
         } else return Twist2d(0.0, 0.0)
     }
+
+    fun getCurrentSegment() = trajectory.segments.getOrNull(this.segment)
 
     /**
      * Gain function as described in eq 5.12
