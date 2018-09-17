@@ -1,12 +1,12 @@
 package frc.team4069.saturn.lib
 
-import edu.wpi.first.wpilibj.IterativeRobot
+import edu.wpi.first.wpilibj.TimedRobot
 import frc.team4069.saturn.lib.command.Subsystem
 import frc.team4069.saturn.lib.command.SubsystemHandler
 import frc.team4069.saturn.lib.util.MultiMap
 import kotlinx.coroutines.experimental.runBlocking
 
-abstract class SaturnRobot : IterativeRobot() {
+abstract class SaturnRobot : TimedRobot() {
     enum class State {
         ANY,
         DISABLED,
