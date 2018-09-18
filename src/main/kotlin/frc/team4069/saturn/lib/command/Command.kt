@@ -1,79 +1,66 @@
 package frc.team4069.saturn.lib.command
 
-import kotlinx.coroutines.experimental.DisposableHandle
-import kotlinx.coroutines.experimental.disposeOnCancellation
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
-import java.util.concurrent.CopyOnWriteArrayList
+import frc.team4069.saturn.lib.util.launchFrequency
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.cancelAndJoin
+import kotlinx.coroutines.experimental.newFixedThreadPoolContext
 
-abstract class Command(updateFrequency: Int = DEFAULT_FREQUENCY) {
-    var updateFrequency = updateFrequency
+abstract class Command(val requiredSubsystems: List<Subsystem>) {
+
+    var frequency = DEFAULT_FREQUENCY
         protected set
-
-    internal open val requiredSubsystems = mutableListOf<Subsystem>()
-    internal val completionListeners = CopyOnWriteArrayList<suspend (Command) -> Unit>()
-
-    protected val finishCondition = CommandCondition(Condition.FALSE)
-    internal val exposedCondition: Condition
-        get() = finishCondition
 
     internal var state = State.READY
 
-    suspend fun isFinished() = finishCondition.isMet()
-
-    protected operator fun Subsystem.unaryPlus() = requires(this)
-    protected fun requires(subsystem: Subsystem) = requiredSubsystems.add(subsystem)
-
     open suspend fun initialize() {}
+
     open suspend fun execute() {}
+
     open suspend fun dispose() {}
 
+    abstract val isFinished: Boolean
+
+    private var executor: Job? = null
+
+    internal suspend fun initialize0() {
+        initialize()
+        state = State.RUNNING
+
+        if(!isFinished) {
+            executor = launchFrequency(frequency, COMMAND_CTX) {
+                execute()
+            }
+        }
+    }
+
+    internal suspend fun dispose0() {
+        executor?.cancelAndJoin()
+        executor = null
+        dispose()
+
+        state = if(isFinished) {
+            State.FINISHED
+        }else {
+            State.CANCELED
+        }
+    }
+
     suspend fun start() {
-        CommandHandler.start(this)
+
     }
 
-    suspend fun stop() = CommandHandler.stop(this)
-
-    fun invokeOnCompletion(block: suspend (Command) -> Unit): DisposableHandle {
-        completionListeners.add(block)
-        return object : DisposableHandle {
-            override fun dispose() {
-                completionListeners.remove(block)
-            }
-        }
-    }
-
-    suspend fun await() = suspendCancellableCoroutine<Unit> { cont ->
-        cont.disposeOnCancellation(invokeOnCompletion {
-            cont.resume(Unit)
-        })
-    }
-
-    protected class CommandCondition(currentCondition: Condition) : Condition() {
-        private val listener: suspend (Condition) -> Unit = { invokeCompletionListeners() }
-        private var handle = currentCondition.invokeOnCompletion(listener)
-
-        private var currentCondition = currentCondition
-            set(value) {
-                handle.dispose()
-                handle = value.invokeOnCompletion(listener)
-                field = value
-            }
-
-        override suspend fun isMet() = currentCondition.isMet()
-
-        operator fun plusAssign(cond: Condition) {
-            currentCondition = currentCondition or cond
-        }
-    }
-
-    enum class State(val finished: Boolean) {
-        READY(false),
-        RUNNING(false),
-        FINISHED(true),
-        CANCELLED(true)
-    }
+    constructor(vararg subsystems: Subsystem) : this(subsystems.toList())
 
     companion object {
         const val DEFAULT_FREQUENCY = 50
+        protected val COMMAND_CTX = newFixedThreadPoolContext(2, "Command")
+    }
+
+    enum class State {
+        READY,
+        QUEUED,
+        RUNNING,
+        FINISHED,
+        CANCELED
     }
 }
