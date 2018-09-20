@@ -1,8 +1,6 @@
 package frc.team4069.saturn.lib
 
 import edu.wpi.first.wpilibj.TimedRobot
-import frc.team4069.saturn.lib.command.Subsystem
-import frc.team4069.saturn.lib.command.SubsystemHandler
 import frc.team4069.saturn.lib.util.MultiMap
 import kotlinx.coroutines.experimental.runBlocking
 
@@ -36,8 +34,6 @@ abstract class SaturnRobot : TimedRobot() {
     override fun robotInit() {
         runBlocking {
             initialize()
-
-//            SubsystemHandler.subsystemActor.send(SubsystemHandler.Message.Start)
         }
     }
 
@@ -103,9 +99,5 @@ abstract class SaturnRobot : TimedRobot() {
                     .flatMap { (_, callbacks) -> callbacks }
                     .forEach { it() }
         }
-    }
-
-    suspend operator fun Subsystem.unaryPlus() {
-        SubsystemHandler.subsystemActor.send(SubsystemHandler.Message.Register(this))
     }
 }

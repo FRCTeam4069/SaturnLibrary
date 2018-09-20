@@ -1,45 +1,31 @@
 package frc.team4069.saturn.lib.command
 
-fun parallel(block: ParallelGroupBuilder.() -> Unit): ParallelCommandGroup {
-    return ParallelGroupBuilder().apply(block).build()
+import edu.wpi.first.wpilibj.command.Command
+import edu.wpi.first.wpilibj.command.CommandGroup
+
+inline fun commandGroup(block: CommandGroupBuilder.() -> Unit): CommandGroup {
+    return CommandGroupBuilder().apply(block).build()
 }
 
-fun sequential(block: SequentialGroupBuilder.() -> Unit): SequentialCommandGroup {
-    return SequentialGroupBuilder().apply(block).build()
-}
-
-class ParallelGroupBuilder {
-    val commands = mutableListOf<Command>()
-
-    operator fun Command.unaryPlus() {
-        commands += this
+class CommandGroupBuilder {
+    private enum class Type {
+        SEQUENTIAL,
+        PARALLEL
     }
 
-    fun parallel(block: ParallelGroupBuilder.() -> Unit): ParallelCommandGroup {
-        return ParallelGroupBuilder().apply(block).build()
+    private val commands = mutableListOf<Pair<Command, Type>>()
+
+    operator fun Command.unaryPlus() = commands.add(this to Type.SEQUENTIAL)
+    operator fun Command.unaryMinus() = commands.add(this to Type.PARALLEL)
+
+    fun build() = object : CommandGroup() {
+        init {
+            commands.forEach { (cmd, ty) ->
+                when(ty) {
+                    Type.SEQUENTIAL -> addSequential(cmd)
+                    Type.PARALLEL -> addParallel(cmd)
+                }
+            }
+        }
     }
-
-    fun sequential(block: SequentialGroupBuilder.() -> Unit): SequentialCommandGroup {
-        return SequentialGroupBuilder().apply(block).build()
-    }
-
-    internal fun build(): ParallelCommandGroup = ParallelCommandGroup(commands)
-}
-
-class SequentialGroupBuilder {
-    val commands = mutableListOf<Command>()
-
-    operator fun Command.unaryPlus() {
-        commands += this
-    }
-
-    fun parallel(block: ParallelGroupBuilder.() -> Unit): ParallelCommandGroup {
-        return ParallelGroupBuilder().apply(block).build()
-    }
-
-    fun sequential(block: SequentialGroupBuilder.() -> Unit): SequentialCommandGroup {
-        return SequentialGroupBuilder().apply(block).build()
-    }
-
-    internal fun build() = SequentialCommandGroup(commands)
 }

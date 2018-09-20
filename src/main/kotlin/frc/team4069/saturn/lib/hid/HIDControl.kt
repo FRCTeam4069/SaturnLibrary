@@ -1,33 +1,34 @@
 package frc.team4069.saturn.lib.hid
 
-typealias HIDListener = suspend () -> Unit
+import edu.wpi.first.wpilibj.GenericHID
+import edu.wpi.first.wpilibj.buttons.JoystickButton
+import edu.wpi.first.wpilibj.command.Command
+import edu.wpi.first.wpilibj.command.InstantCommand
 
-class HIDButton(private val source: HIDSource,
-                private val threshold: Double = DEFAULT_THRESHOLD,
-                private val changeOn: List<HIDListener>,
-                private val changeOff: List<HIDListener>) : HIDControl{
-    companion object {
-        const val DEFAULT_THRESHOLD = 0.5
+class HIDButton(id: XboxButton, joystick: GenericHID) {
+    private val backing = JoystickButton(joystick, id.value)
+
+    fun pressed(command: Command) {
+        backing.whenPressed(command)
     }
 
-    private var lastValue = source.value >= threshold
-
-    override suspend fun update() {
-        val value = source.value
-        val newValue = value >= threshold
-        if(lastValue != newValue) {
-            if(newValue) {
-                println("Changing on")
-                changeOn.forEach { println("Calling $it"); it() }
-            }else {
-                changeOff.forEach { it() }
+    inline fun pressed(crossinline block: () -> Unit) {
+        pressed(object : InstantCommand() {
+            override fun initialize() {
+                block()
             }
-        }
-
-        lastValue = newValue
+        })
     }
-}
 
-interface HIDControl {
-    suspend fun update()
+    fun released(command: Command) {
+        backing.whenReleased(command)
+    }
+
+    inline fun released(crossinline block: () -> Unit) {
+        released(object : InstantCommand() {
+            override fun initialize() {
+                block()
+            }
+        })
+    }
 }
