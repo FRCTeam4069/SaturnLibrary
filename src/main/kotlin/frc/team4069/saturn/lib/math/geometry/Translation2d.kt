@@ -1,6 +1,6 @@
 package frc.team4069.saturn.lib.math.geometry
 
-data class Translation2d(val x: Double, val y: Double) {
+data class Translation2d(var x: Double, var y: Double) {
 
     constructor(other: Translation2d) : this(other.x, other.y)
     constructor(start: Translation2d, end: Translation2d) : this(end.x - start.x, end.y - start.y)

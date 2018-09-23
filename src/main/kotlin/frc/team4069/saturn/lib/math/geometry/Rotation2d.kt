@@ -5,9 +5,9 @@ import kotlin.math.absoluteValue
 import kotlin.math.cos
 import kotlin.math.sin
 
-data class Rotation2d(val radians: Double) {
-    val cos = cos(radians)
-    val sin = sin(radians)
+data class Rotation2d(var radians: Double) {
+    val cos get() = cos(radians)
+    val sin get() = sin(radians)
 
     val tan by lazy {
         if (cos.absoluteValue < epsilon) {
