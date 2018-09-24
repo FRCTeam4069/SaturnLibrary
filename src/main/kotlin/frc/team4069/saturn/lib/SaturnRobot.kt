@@ -1,15 +1,16 @@
 package frc.team4069.saturn.lib
 
+import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.RobotBase
-import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.hal.HAL
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team4069.saturn.lib.hid.SaturnHID
+import frc.team4069.saturn.lib.command.Subsystem
+import frc.team4069.saturn.lib.command.SubsystemHandler
 import frc.team4069.saturn.lib.util.StateMachine
 import kotlinx.coroutines.experimental.runBlocking
 
-abstract class SaturnRobot(val wpi: Boolean) : RobotBase() {
+abstract class SaturnRobot : RobotBase() {
     enum class State {
         NONE,
         ANY,
@@ -19,61 +20,63 @@ abstract class SaturnRobot(val wpi: Boolean) : RobotBase() {
         TEST
     }
 
-    val stateMachine = StateMachine(initialState = State.NONE, anyState = State.ANY)
+    private val stateMachine = StateMachine(State.NONE, anyState = State.ANY)
+
+    private val looper = Notifier {
+        runBlocking {
+
+        }
+    }
 
     override fun startCompetition() = runBlocking {
         LiveWindow.setEnabled(false)
 
         stateMachine.apply {
-            onWhile(State.DISABLED) { HAL.observeUserProgramDisabled() }
+            onEnter(State.DISABLED) { disabledInit() }
+            onWhile(State.DISABLED) {
+                HAL.observeUserProgramDisabled()
+                disabledPeriodic()
+            }
+
+            onEnter(State.AUTONOMOUS) { autonomousInit() }
             onWhile(State.AUTONOMOUS) {
                 HAL.observeUserProgramAutonomous()
                 autonomousPeriodic()
             }
+
+            onEnter(State.TELEOP) { teleoperatedInit() }
             onWhile(State.TELEOP) {
                 HAL.observeUserProgramTeleop()
                 teleoperatedPeriodic()
             }
-            onWhile(State.TEST) {
-                HAL.observeUserProgramTest()
-                testPeriodic()
-            }
 
             onEnter(State.TEST) {
-                LiveWindow.setEnabled(true)
                 testInit()
+                LiveWindow.setEnabled(true)
             }
-            onExit(State.TEST) { LiveWindow.setEnabled(false) }
-
-            onEnter(State.AUTONOMOUS) {
-                autonomousInit()
+            onWhile(State.TEST) {
+                testPeriodic()
+                LiveWindow.updateValues()
             }
-
-            onEnter(State.TELEOP) {
-                teleoperatedInit()
+            onLeave(State.TEST) {
+                LiveWindow.setEnabled(false)
             }
 
             onWhile(State.ANY) {
-                LiveWindow.updateValues()
                 SmartDashboard.updateValues()
-                if(wpi) {
-                    Scheduler.getInstance().run()
-                }
-            }
-
-            onTransition(State.TELEOP, State.DISABLED) {
-                disabled()
             }
         }
 
+        robotInit()
 
-        initialize()
+        SubsystemHandler.startDefaultCommands()
+        HAL.observeUserProgramStarting()
 
         stateMachine.start()
 
-        HAL.observeUserProgramStarting()
+        looper.startPeriodic(0.02)
 
-        while(isActive) {
+        while (isActive) {
             m_ds.waitForData()
 
             val newState = when {
@@ -84,25 +87,24 @@ abstract class SaturnRobot(val wpi: Boolean) : RobotBase() {
                 else -> throw IllegalStateException("Robot is in invalid state")
             }
 
-            stateMachine.update(newState)
-
+            stateMachine.feed(newState)
         }
     }
 
 
-    abstract suspend fun initialize()
+    abstract suspend fun robotInit()
 
     open suspend fun autonomousInit() {}
     open suspend fun teleoperatedInit() {}
+    open suspend fun disabledInit() {}
     open suspend fun testInit() {}
 
     open suspend fun autonomousPeriodic() {}
     open suspend fun teleoperatedPeriodic() {}
+    open suspend fun disabledPeriodic() {}
     open suspend fun testPeriodic() {}
 
-    open suspend fun disabled() {}
 
-
-//    protected suspend operator fun SubsystemHandler.plusAssign(subsystem: Subsystem) = SubsystemHandler.addSubsystem(subsystem)
-    protected suspend operator fun SaturnHID<*>.unaryPlus() = stateMachine.onWhile(State.TELEOP) { update() }
+    protected suspend operator fun Subsystem.unaryPlus() = SubsystemHandler.addSubsystem(this)
+//    protected suspend operator fun SaturnHID<*>.unaryPlus() = stateMachine.onWhile(State.TELEOP) { update() }
 }

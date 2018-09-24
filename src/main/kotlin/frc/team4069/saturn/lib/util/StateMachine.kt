@@ -1,85 +1,84 @@
 package frc.team4069.saturn.lib.util
 
-import kotlinx.coroutines.experimental.*
-import java.util.concurrent.TimeUnit
-import kotlin.properties.Delegates
+import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.DisposableHandle
+import kotlinx.coroutines.experimental.Job
 
-typealias Transition<S> = Pair<S, S>
-typealias TransitionListener = suspend () -> Unit
+typealias SingleListener<T> = suspend (T) -> Unit
+typealias TransListener<T> = suspend (from: T, to: T) -> Unit
 
-class StateMachine<S>(initialState: S, val anyState: S? = null) {
+class StateMachine<T>(val initState: T, val anyState: T? = null) {
 
-    var currentState: S by Delegates.observable(initialState) { _, old, new ->
-        runBlocking {
-            handleTransition(old, new)
-        }
+    val entryListeners = MultiMap<T, SingleListener<T>>()
+    val exitListeners = MultiMap<T, SingleListener<T>>()
+    val transitionListeners = MultiMap<Pair<T, T>, TransListener<T>>()
+    val whileListeners = MultiMap<T, Pair<Job, DisposableHandle>>()
+
+    var currentState = initState
+
+    suspend fun start() {
+        entryListeners.filterKeys { it == anyState || it == initState }
+            .forEach {  (k, v) ->
+                v.forEach { it(k) }
+            }
+        transitionListeners.filterKeys { (_, v) -> v == anyState || v == initState }
+            .forEach { (k, v) ->
+                val (from, to) = k
+                v.forEach { it(from, to) }
+            }
     }
 
-    private val transitionListeners = MultiMap<Transition<S>, TransitionListener>()
-    private val entryListeners = MultiMap<S, TransitionListener>()
-    private val exitListeners = MultiMap<S, TransitionListener>()
-    private val whileListeners = mutableListOf<WhileListener>()
-
-    fun onEnter(state: S, listener: TransitionListener) {
+    fun onEnter(state: T, listener: SingleListener<T>) {
         entryListeners.putSingle(state, listener)
     }
 
-    fun onExit(state: S, listener: TransitionListener) {
+    fun onLeave(state: T, listener: SingleListener<T>) {
         exitListeners.putSingle(state, listener)
     }
 
-    fun onTransition(oldState: S, newState: S, listener: TransitionListener) {
-        transitionListeners.putSingle(oldState to newState, listener)
+    fun onTransition(from: T, to: T, listener: TransListener<T>) {
+        transitionListeners.putSingle(from to to, listener)
     }
 
-    fun onWhile(state: S, frequency: Long = 50, listener: TransitionListener) {
-        whileListeners.add(WhileListener(state, frequency, listener))
-    }
-
-    suspend fun start() {
-        handleTransition(null, currentState)
-        handleEntry(anyState ?: return)
-    }
-
-    fun update(inState: S?) {
-        if (inState != currentState && inState != null) {
-            currentState = inState
+    fun onWhile(state: T, freq: Int = 50, listener: SingleListener<T>) {
+        val job = launchFrequency(freq, start = CoroutineStart.LAZY) {
+            listener(currentState)
         }
-    }
 
-    private suspend fun handleTransition(old: S?, new: S) {
-        handleExit(old)
-        transitionListeners.filterKeys { it == old to new || it == anyState to new }.values.flatten().forEach { it() }
-        handleEntry(new)
-    }
-
-    private suspend fun handleEntry(new: S) {
-        entryListeners.filterKeys { it == new }.values.flatten().forEach { it() }
-
-        whileListeners.filter { it.state == new || it.state == anyState }.forEach { listener ->
-            listener.job = launch {
-                val frequency = listener.frequency
-                if (frequency < 0) throw IllegalArgumentException("While frequency cannot be negative!")
-                val dt = TimeUnit.SECONDS.toNanos(1) / frequency
-//
-//                var nextNS = System.nanoTime() + timeBetweenUpdate
-                while (isActive) {
-                    listener.listener()
-
-//                    val delayNeeded = nextNS - System.nanoTime()
-//                    nextNS += timeBetweenUpdate
-                    delay(dt, TimeUnit.NANOSECONDS)
-                }
+        val handle = object : DisposableHandle {
+            override fun dispose() {
+                job.cancel()
             }
         }
+
+        whileListeners.putSingle(state, job to handle)
     }
 
-    private suspend fun handleExit(old: S?) {
-        exitListeners.filterKeys { it == old }.values.flatten().forEach { it() }
-        whileListeners.filter { it.state == old }.forEach { it.job.cancelAndJoin() }
-    }
+    suspend fun feed(state: T) {
+        if(state != currentState) {
+            exitListeners.filterKeys { it == currentState }
+                .flatMap { (_, v) -> v }
+                .forEach { it(state) }
+            entryListeners.filterKeys { it == state }
+                .flatMap { (_, v) -> v }
+                .forEach { it(state) }
 
-    inner class WhileListener(val state: S, val frequency: Long, val listener: suspend () -> Unit) {
-        lateinit var job: Job
+            transitionListeners.filterKeys { (from, to) -> from == currentState && to == state }
+                .flatMap { (_, v) -> v }
+                .forEach { it(currentState, state) }
+
+            whileListeners.filterKeys { it == currentState }
+                .flatMap { (_, v) -> v }
+                .map { (_, handle) -> handle }
+                .forEach(DisposableHandle::dispose)
+
+            whileListeners.filterKeys { it == state }
+                .flatMap { (_, v) -> v}
+                .map { (job, _) -> job }
+                .forEach { it.start() }
+        }
+
+        currentState = state
     }
 }
+

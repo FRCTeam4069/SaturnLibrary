@@ -5,7 +5,8 @@ import java.util.concurrent.TimeUnit
 
 class DelayCommand(delay: Long, unit: TimeUnit = TimeUnit.MILLISECONDS) : Command() {
     constructor(delaySeconds: Long) : this(delaySeconds * 1000, TimeUnit.MILLISECONDS)
-    val timeout = System.currentTimeMillis() + unit.toMillis(delay)
+
+    private val timeout = System.currentTimeMillis() + unit.toMillis(delay)
 
     init {
         executeFrequency = 0
