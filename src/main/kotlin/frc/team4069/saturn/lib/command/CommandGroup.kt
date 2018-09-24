@@ -12,6 +12,7 @@ open class CommandGroup(private val groupType: GroupType,
 
     protected var parentCommandGroup: CommandGroup? = null
     private lateinit var commandGroupHandler: CommandGroupHandler
+//    private val tasksToRun: MutableSet<CommandGroupTask>
     private lateinit var tasksToRun: MutableSet<CommandGroupTask>
 
     override val isFinished
@@ -23,13 +24,13 @@ open class CommandGroup(private val groupType: GroupType,
             .forEach {
                 it.parentCommandGroup = this
             }
+
     }
 
     override suspend fun initialize() {
         commandGroupHandler = if(parentCommandGroup == null) ParentCommandGroupHandler() else ChildCommandGroupHandler()
-        commands.mapTo(tasksToRun) {
-            CommandGroupTask(it)
-        }
+        @Suppress("ConvertCallChainIntoSequence")
+        tasksToRun = commands.map { CommandGroupTask(it) }.toMutableSet()
 
         synchronized(tasksToRun) {
             if(groupType == GroupType.PARALLEL) {

@@ -44,10 +44,10 @@ abstract class SaturnRobot : RobotBase() {
                 autonomousPeriodic()
             }
 
-            onEnter(State.TELEOP) { teleoperatedInit() }
+            onEnter(State.TELEOP) { teleopInit() }
             onWhile(State.TELEOP) {
                 HAL.observeUserProgramTeleop()
-                teleoperatedPeriodic()
+                teleopPeriodic()
             }
 
             onEnter(State.TEST) {
@@ -95,12 +95,12 @@ abstract class SaturnRobot : RobotBase() {
     abstract suspend fun robotInit()
 
     open suspend fun autonomousInit() {}
-    open suspend fun teleoperatedInit() {}
+    open suspend fun teleopInit() {}
     open suspend fun disabledInit() {}
     open suspend fun testInit() {}
 
     open suspend fun autonomousPeriodic() {}
-    open suspend fun teleoperatedPeriodic() {}
+    open suspend fun teleopPeriodic() {}
     open suspend fun disabledPeriodic() {}
     open suspend fun testPeriodic() {}
 

@@ -1,5 +1,6 @@
 package frc.team4069.saturn.lib.command
 
+import frc.team4069.saturn.lib.command.builtins.DelayCommand
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.sync.Mutex
@@ -15,6 +16,10 @@ open class CommandTask(val command: Command, private val onFinish: (CommandTask)
     suspend fun _start() {
         assert(state == State.CREATED) { "You cannot reuse tasks." }
         state = State.RUNNING
+
+        if(command is DelayCommand) {
+            println("Starting delay command task")
+        }
 
         command._initialize()
         completeHandle = command.finishedObservable.filter { it }

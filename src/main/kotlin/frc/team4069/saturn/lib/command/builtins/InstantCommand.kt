@@ -1,8 +1,9 @@
 package frc.team4069.saturn.lib.command.builtins
 
 import frc.team4069.saturn.lib.command.Command
+import frc.team4069.saturn.lib.command.Subsystem
 
-abstract class InstantCommand : Command() {
+abstract class InstantCommand(vararg requiredSubsystems: Subsystem) : Command(requiredSubsystems.toList()) {
     override val isFinished = true
 
     init {

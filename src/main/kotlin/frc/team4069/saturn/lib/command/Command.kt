@@ -25,14 +25,14 @@ abstract class Command(val requiredSubsystems: List<Subsystem>) {
     var executeFrequency = DEFAULT_FREQUENCY
         protected set
 
-    internal val finishedObservable = Observable.interval((1000 / executeFrequency).toLong(), TimeUnit.MILLISECONDS)
+    internal val finishedObservable = Observable.interval(50, TimeUnit.MILLISECONDS)
         .map { isFinished }
 
-    internal var state by Delegates.observable(CommandState.READY) { _, _, newValue ->
+    private var state by Delegates.observable(CommandState.READY) { _, _, newValue ->
         observableState.onNext(newValue)
     }
 
-    internal val observableState = PublishSubject.create<CommandState>()
+    private val observableState = PublishSubject.create<CommandState>()
 
     /** Handle to the executing command */
     private var executor: Job? = null
@@ -60,11 +60,16 @@ abstract class Command(val requiredSubsystems: List<Subsystem>) {
 
 
     suspend fun start() {
+        if(state != CommandState.READY) {
+            println("Cannot start a command that isn't pending. $state")
+        }
 
+        state = CommandState.QUEUED
+        CommandHandler.start(this)
     }
 
     suspend fun stop() {
-
+        CommandHandler.stop(this)
     }
 
     suspend fun await() = suspendCancellableCoroutine<Unit> { cont ->
@@ -80,6 +85,9 @@ abstract class Command(val requiredSubsystems: List<Subsystem>) {
         RUNNING,
         FINISHED
     }
+
+//    inner class FinishCondition(override var value: Boolean = false) : ObservableProperty<Boolean>() {
+//    }
 
     companion object {
         const val DEFAULT_FREQUENCY = 50
