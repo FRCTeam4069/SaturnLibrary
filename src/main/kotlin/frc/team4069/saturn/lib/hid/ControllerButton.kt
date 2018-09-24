@@ -1,7 +1,6 @@
 package frc.team4069.saturn.lib.hid
 
 import edu.wpi.first.wpilibj.GenericHID
-import frc.team4069.saturn.lib.command.Command
 import frc.team4069.saturn.lib.command.builtins.InstantRunnableCommand
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch

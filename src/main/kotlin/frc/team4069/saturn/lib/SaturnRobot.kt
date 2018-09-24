@@ -5,8 +5,6 @@ import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.hal.HAL
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team4069.saturn.lib.command.Subsystem
-import frc.team4069.saturn.lib.command.SubsystemHandler
 import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.util.StateMachine
 import kotlinx.coroutines.experimental.runBlocking
@@ -70,7 +68,6 @@ abstract class SaturnRobot(val wpi: Boolean) : RobotBase() {
 
 
         initialize()
-        SubsystemHandler.startDefaultCommands()
 
         stateMachine.start()
 
@@ -107,6 +104,5 @@ abstract class SaturnRobot(val wpi: Boolean) : RobotBase() {
 
 
 //    protected suspend operator fun SubsystemHandler.plusAssign(subsystem: Subsystem) = SubsystemHandler.addSubsystem(subsystem)
-    protected suspend operator fun Subsystem.unaryPlus() = SubsystemHandler.addSubsystem(this)
     protected suspend operator fun SaturnHID<*>.unaryPlus() = stateMachine.onWhile(State.TELEOP) { update() }
 }
