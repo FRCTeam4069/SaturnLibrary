@@ -1,7 +1,5 @@
 package frc.team4069.saturn.lib.util
 
-import kotlinx.coroutines.experimental.CoroutineStart
-import kotlinx.coroutines.experimental.DisposableHandle
 import kotlinx.coroutines.experimental.Job
 
 typealias SingleListener<T> = suspend (T) -> Unit
@@ -12,7 +10,9 @@ class StateMachine<T>(val initState: T, val anyState: T? = null) {
     val entryListeners = MultiMap<T, SingleListener<T>>()
     val exitListeners = MultiMap<T, SingleListener<T>>()
     val transitionListeners = MultiMap<Pair<T, T>, TransListener<T>>()
-    val whileListeners = MultiMap<T, Pair<Job, DisposableHandle>>()
+
+    val whileListenerBlocks = MultiMap<T, Pair<SingleListener<T>, Int>>()
+    val whileListeners = MultiMap<T, Job>()
 
     var currentState = initState
 
@@ -41,17 +41,7 @@ class StateMachine<T>(val initState: T, val anyState: T? = null) {
     }
 
     fun onWhile(state: T, freq: Int = 50, listener: SingleListener<T>) {
-        val job = launchFrequency(freq, start = CoroutineStart.LAZY) {
-            listener(currentState)
-        }
-
-        val handle = object : DisposableHandle {
-            override fun dispose() {
-                job.cancel()
-            }
-        }
-
-        whileListeners.putSingle(state, job to handle)
+        whileListenerBlocks.putSingle(state, listener to freq)
     }
 
     suspend fun feed(state: T) {
@@ -69,13 +59,18 @@ class StateMachine<T>(val initState: T, val anyState: T? = null) {
 
             whileListeners.filterKeys { it == currentState }
                 .flatMap { (_, v) -> v }
-                .map { (_, handle) -> handle }
-                .forEach(DisposableHandle::dispose)
+                .forEach {
+                    it.cancel()
+                }
+            whileListeners.clear()
 
-            whileListeners.filterKeys { it == state }
-                .flatMap { (_, v) -> v}
-                .map { (job, _) -> job }
-                .forEach { it.start() }
+            whileListenerBlocks.filterKeys { it == state }
+                .flatMap { (_, v) -> v }
+                .forEach { (listener, freq) ->
+                    whileListeners.putSingle(state, launchFrequency(freq) {
+                        listener(state)
+                    })
+                }
         }
 
         currentState = state

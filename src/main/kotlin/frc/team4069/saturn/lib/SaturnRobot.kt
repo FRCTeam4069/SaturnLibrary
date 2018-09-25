@@ -1,6 +1,5 @@
 package frc.team4069.saturn.lib
 
-import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.hal.HAL
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
@@ -22,12 +21,6 @@ abstract class SaturnRobot : RobotBase() {
     }
 
     private val stateMachine = StateMachine(State.NONE, anyState = State.ANY)
-
-    private val looper = Notifier {
-        runBlocking {
-
-        }
-    }
 
     override fun startCompetition() = runBlocking {
         LiveWindow.setEnabled(false)
@@ -74,8 +67,6 @@ abstract class SaturnRobot : RobotBase() {
         HAL.observeUserProgramStarting()
 
         stateMachine.start()
-
-        looper.startPeriodic(0.02)
 
         while (isActive) {
             m_ds.waitForData()
