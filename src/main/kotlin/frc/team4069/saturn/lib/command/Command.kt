@@ -53,6 +53,7 @@ abstract class Command(val requiredSubsystems: List<Subsystem>) {
 
     internal suspend fun _dispose() {
         executor?.cancelAndJoin()
+
         executor = null
         dispose()
         state = CommandState.FINISHED

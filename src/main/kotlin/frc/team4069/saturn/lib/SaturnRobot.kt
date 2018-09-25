@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team4069.saturn.lib.command.Subsystem
 import frc.team4069.saturn.lib.command.SubsystemHandler
+import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.util.StateMachine
 import kotlinx.coroutines.experimental.runBlocking
 
@@ -106,5 +107,5 @@ abstract class SaturnRobot : RobotBase() {
 
 
     protected suspend operator fun Subsystem.unaryPlus() = SubsystemHandler.addSubsystem(this)
-//    protected suspend operator fun SaturnHID<*>.unaryPlus() = stateMachine.onWhile(State.TELEOP) { update() }
+    protected suspend operator fun SaturnHID<*>.unaryPlus() = stateMachine.onWhile(State.TELEOP) { update() }
 }
