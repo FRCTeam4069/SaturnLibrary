@@ -4,6 +4,9 @@ import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.experimental.*
 import kotlin.coroutines.experimental.CoroutineContext
 
+/**
+ * Creates a new freestanding coroutine that calls [block] at a rate of [frequency] hertz.
+ */
 fun launchFrequency(
     frequency: Int = 50,
     context: CoroutineContext = CommonPool,

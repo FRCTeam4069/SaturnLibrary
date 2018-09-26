@@ -3,6 +3,16 @@ package frc.team4069.saturn.lib.math
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
+/**
+ * implementation of a PID controller designed to close the loop on velocity
+ *
+ * Feedback gains are [p], [i], and [d]. Feedforward gains are
+ * Velocity feedforward [v]
+ * Acceleration feedforward [a]
+ * Static feedforward [s]
+ *
+ * [currentVelocity] is used to get the actual velocity of the robot for calculations
+ */
 class VelocityPIDFController(private val p: Double = 0.0,
                              private val i: Double = 0.0,
                              private val d: Double = 0.0,
