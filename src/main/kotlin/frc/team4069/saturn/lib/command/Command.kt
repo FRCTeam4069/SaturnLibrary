@@ -61,6 +61,9 @@ abstract class Command(val requiredSubsystems: List<Subsystem>) {
 
 
     suspend fun start() {
+        if(state == CommandState.FINISHED) {
+            state = CommandState.READY // hack
+        }
         if(state != CommandState.READY) {
             println("Cannot start a command that isn't pending. $state")
         }
