@@ -3,6 +3,7 @@ package frc.team4069.saturn.lib.motor
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import frc.team4069.saturn.lib.util.LowPassFilter
+import kotlin.properties.Delegates
 
 /**
  * Standard Talon SRX motor
@@ -75,50 +76,55 @@ class SaturnSRX(id: Int,
             return quadPos / encoderTicksPerRotation.toDouble()
         }
 
-    var invertSensorPhase = false
-        set(value) {
-            field = value
-            setSensorPhase(value)
-        }
+    var invertSensorPhase by Delegates.observable(false) { _, _, value ->
+        setSensorPhase(value)
+    }
 
-    var motionAcceleration = -1
-        set(value) {
-            field = value
-            configMotionAcceleration(value, 0)
-        }
+    var motionAcceleration by Delegates.observable(-1) { _, _, value ->
+        configMotionAcceleration(value, 0)
+    }
 
-    var motionCruiseVelocity = -1
-        set(value) {
-            field = value
-            configMotionCruiseVelocity(value, 0)
-        }
+    var motionCruiseVelocity by Delegates.observable(-1) { _, _, value ->
+        configMotionCruiseVelocity(value, 0)
+    }
 
     val position: Int
         get() = getSelectedSensorPosition(0)
 
-    var forwardSoftLimitThreshold = 0
-        set(value) {
-            field = value
-            configForwardSoftLimitThreshold(value, 0)
-        }
 
-    var forwardSoftLimitEnable = false
-        set(value) {
-            field = value
-            configForwardSoftLimitEnable(field, 0)
-        }
+    var forwardSoftLimitThreshold by Delegates.observable(0) { _, _, value ->
+        configForwardSoftLimitThreshold(value, 0)
+    }
 
-    var reverseSoftLimitThreshold = 0
-        set(value) {
-            field = value
-            configReverseSoftLimitThreshold(value, 0)
-        }
 
-    var reverseSoftLimitEnable = false
-        set(value) {
-            field = value
-            configReverseSoftLimitEnable(value, 0)
-        }
+    var forwardSoftLimitEnabled by Delegates.observable(false) { _, _, value ->
+        configForwardSoftLimitEnable(value, 0)
+    }
+
+    var reverseSoftLimitThreshold by Delegates.observable(0) { _, _, value ->
+        configReverseSoftLimitThreshold(value, 0)
+    }
+
+
+    var reverseSoftLimitEnabled by Delegates.observable(false) { _, _, value ->
+        configReverseSoftLimitEnable(value, 0)
+    }
+
+    var continuousCurrentLimit by Delegates.observable(0) { _, _, value ->
+        configContinuousCurrentLimit(value, 0)
+    }
+
+    var currentLimitEnabled by Delegates.observable(false) { _, _, value ->
+        enableCurrentLimit(value)
+    }
+
+    var peakCurrentLimit by Delegates.observable(0) { _, _, value ->
+        configPeakCurrentLimit(value, 0)
+    }
+
+    var peakCurrentDuration by Delegates.observable(0) { _, _, value ->
+        configPeakCurrentDuration(value, 0)
+    }
 
     /**
      * Returns the distance traveled in ticks, according to the attached encoder
@@ -129,27 +135,20 @@ class SaturnSRX(id: Int,
     /**
      * PID variables here
      */
-    var f = 0.0
-        set(value) {
-            field = value
-            config_kF(0, value, 0)
-        }
+    var f by Delegates.observable(0.0) { _, _, value ->
+        config_kF(0, value, 0)
+    }
 
-    var p = 0.0
-        set(value) {
-            field = value
-            config_kP(0, value, 0)
-        }
 
-    var i = 0.0
-        set(value) {
-            field = value
-            config_kI(0, value, 0)
-        }
+    var p by Delegates.observable(0.0) { _, _, value ->
+        config_kP(0, value, 0)
+    }
 
-    var d = 0.0
-        set(value) {
-            field = value
-            config_kD(0, value, 0)
-        }
+    var i by Delegates.observable(0.0) { _, _, value ->
+        config_kI(0, value, 0)
+    }
+
+    var d by Delegates.observable(0.0) { _, _, value ->
+        config_kD(0, value, 0)
+    }
 }

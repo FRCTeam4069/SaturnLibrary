@@ -1,22 +1,12 @@
 package frc.team4069.saturn.lib.math.geometry
 
-import frc.team4069.saturn.lib.math.uom.distance.DistanceUnit
-import frc.team4069.saturn.lib.util.MotorOutputs
-import kotlin.math.hypot
-
-data class Twist2d(val dx: Double, val dy: Double, val dtheta: Double) {
-
-    operator fun times(scalar: Double) = Twist2d(dx * scalar, dy * scalar, dtheta * scalar)
-
-    fun norm(): Double {
-        return if (dy == 0.0) dx else hypot(dx, dy)
+data class Twist2d(val dx: Double = 0.0, val dy: Double = 0.0, val dtheta: Double = 0.0) {
+    fun scaled(scale: Double): Twist2d {
+        return Twist2d(dx * scale, dy * scale, dtheta * scale)
     }
 
-    fun inverseKinematics(wheelBase: DistanceUnit): MotorOutputs {
-        val left = ((-wheelBase.ft * dtheta + 2 * dx) / 2)
-        val right = ((wheelBase.ft * dtheta + 2 * dx) / 2)
-
-
-        return MotorOutputs(left, right)
+    fun norm(): Double {
+        // Common case of dy == 0
+        return if (dy == 0.0) Math.abs(dx) else Math.hypot(dx, dy)
     }
 }

@@ -49,7 +49,7 @@ class RamsyeetPathFollower(private val trajectory: Trajectory,
             // Determine error in the robot's heading given the current postures
             // At least 1E-9 to prevent division by 0 errors
             val thetaError = (segment.heading - pose.theta).bounded()
-                    .let { if (it epsilonEquals 0.0) epsilon else it } // Ensure thetaError > 0 as to not cause division by 0 errors in the algorithm
+                    .let { if (it epsilonEquals 0.0) EPSILON else it } // Ensure thetaError > 0 as to not cause division by 0 errors in the algorithm
 
 
             // v = v_d * cos(theta_d - theta) + k1(v_d, w_d)(cos(theta)(x_d-x) + sin(theta)(y_d-y))
