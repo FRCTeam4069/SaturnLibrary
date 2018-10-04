@@ -1,34 +1,42 @@
 package frc.team4069.saturn.lib.hid
 
-import edu.wpi.first.wpilibj.GenericHID
-import edu.wpi.first.wpilibj.buttons.JoystickButton
-import edu.wpi.first.wpilibj.command.Command
-import edu.wpi.first.wpilibj.command.InstantCommand
 
-class HIDButton(id: XboxButton, joystick: GenericHID) {
-    private val backing = JoystickButton(joystick, id.value)
+class HIDButton(private val source: HIDSource,
+                private val threshold: Double,
+                private val whileOff: List<HIDControlListener>,
+                private val whileOn: List<HIDControlListener>,
+                private val changeOn: List<HIDControlListener>,
+                private val changeOff: List<HIDControlListener>) : HIDControl {
 
-    fun pressed(command: Command) {
-        backing.whenPressed(command)
+    companion object {
+        const val DEFAULT_THRESHOLD = 0.5
     }
 
-    inline fun pressed(crossinline block: () -> Unit) {
-        pressed(object : InstantCommand() {
-            override fun initialize() {
-                block()
+    private var lastValue = source.value >= threshold
+
+    override fun update() {
+        val newValue = source.value >= threshold
+        if (lastValue != newValue) {
+            // Value has changed
+            if (newValue) {
+                changeOn.forEach { it() }
+            } else {
+                changeOff.forEach { it() }
             }
-        })
-    }
-
-    fun released(command: Command) {
-        backing.whenReleased(command)
-    }
-
-    inline fun released(crossinline block: () -> Unit) {
-        released(object : InstantCommand() {
-            override fun initialize() {
-                block()
+        } else {
+            // Value stayed the same
+            if (newValue) {
+                whileOn.forEach { it() }
+            } else {
+                whileOff.forEach { it() }
             }
-        })
+        }
+        lastValue = newValue
     }
+}
+
+typealias HIDControlListener = () -> Unit
+
+interface HIDControl {
+    fun update()
 }
