@@ -21,7 +21,7 @@ val kRightStick = XboxButton(10)
 class XboxButton internal constructor(val value: Int)
 
 fun SaturnHIDBuilder<XboxController>.button(button: XboxButton, builder: SaturnHIDButtonBuilder.() -> Unit) =
-    button(button.value)
+    button(button.value, block = builder)
 
 fun SaturnHIDBuilder<XboxController>.triggerAxisButton(
     hand: GenericHID.Hand,
