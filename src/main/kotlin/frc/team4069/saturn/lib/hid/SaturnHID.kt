@@ -70,10 +70,7 @@ class SaturnHIDButtonBuilder(source: HIDSource, private val threshold: Double) :
     fun changeOn(block: HIDControlListener) = changeOn.add(block)
     fun changeOff(block: HIDControlListener) = changeOff.add(block)
 
-    override fun build(): HIDControl {
-        println("changeOn: $changeOn. Source $source")
-        return HIDButton(source, threshold, whileOff, whileOn, changeOn, changeOff)
-    }
+    override fun build() = HIDButton(source, threshold, whileOff, whileOn, changeOn, changeOff)
 }
 
 class SaturnHID<T : GenericHID>(
