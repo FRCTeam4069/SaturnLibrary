@@ -1,6 +1,9 @@
 package frc.team4069.saturn.lib.math.profile
 
+import edu.wpi.first.wpilibj.Timer
+import kotlin.math.abs
 import kotlin.math.pow
+import kotlin.math.sign
 import kotlin.math.sqrt
 
 
@@ -14,7 +17,7 @@ import kotlin.math.sqrt
  * @param maxAccel Maximum acceleration
  * @constructor Constructor
  */
-class TrapezoidalProfile(
+class TrapezoidalMP(
     private val targetPos: Double,
     private val maxVel: Double,
     private val maxAccel: Double,
@@ -52,6 +55,7 @@ class TrapezoidalProfile(
     private var error = 0.0
     private var integral = 0.0
     private val pvajData = PVAJData()
+    private val sign = sign(targetPos)
 
     var isFinished = false
 
@@ -69,9 +73,9 @@ class TrapezoidalProfile(
 
     private fun updateState(curPos: Double) {
         state = when {
-            curPos < xAccel -> ProfileState.ACCEL
-            curPos < xAccel + xCruise -> ProfileState.CRUISE
-            curPos < 2 * xAccel + xCruise || pvajData.vel > 0.0 -> ProfileState.DECEL
+            abs(curPos) < xAccel -> ProfileState.ACCEL
+            abs(curPos) < xAccel + xCruise -> ProfileState.CRUISE
+            abs(curPos) < 2 * xAccel + xCruise || pvajData.vel > 0.0 -> ProfileState.DECEL
             else -> ProfileState.REST
         }
     }
@@ -80,20 +84,20 @@ class TrapezoidalProfile(
         updateState(curPos)
         when (state) {
             ProfileState.ACCEL -> {
-                pvajData.accel = maxAccel
-                pvajData.pos += pvajData.vel * dt + 0.5 * pvajData.accel * dt.pow(2)
-                pvajData.vel += maxAccel * dt
+                pvajData.accel = maxAccel * sign
+                pvajData.pos += pvajData.vel * dt + 0.5 * pvajData.accel * dt.pow(2) * sign
+                pvajData.vel += maxAccel * dt * sign
             }
 
             ProfileState.CRUISE -> {
                 pvajData.accel = 0.0
-                pvajData.pos += pvajData.vel * dt
+                pvajData.pos += pvajData.vel * dt * sign
             }
 
             ProfileState.DECEL -> {
-                pvajData.accel = -maxAccel
-                pvajData.pos += pvajData.vel * dt + 0.5 * pvajData.accel * dt.pow(2)
-                pvajData.vel -= maxAccel * dt
+                pvajData.accel = -maxAccel * sign
+                pvajData.pos += pvajData.vel * dt + 0.5 * pvajData.accel * dt.pow(2) * sign
+                pvajData.vel -= maxAccel * dt * sign
             }
 
             ProfileState.REST -> isFinished = true

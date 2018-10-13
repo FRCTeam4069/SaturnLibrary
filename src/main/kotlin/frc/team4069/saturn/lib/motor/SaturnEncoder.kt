@@ -7,11 +7,13 @@ import kotlin.properties.Delegates
 /**
  * Small wrapper around wpilib [Encoder]
  */
-class SaturnEncoder(val encoderTicksPerRotation: Int = 256,
-                    port1: Int,
-                    port2: Int,
-                    reversed: Boolean = false,
-                    encodingType: CounterBase.EncodingType = CounterBase.EncodingType.k4X) : Encoder(port1, port2, reversed, encodingType) {
+class SaturnEncoder(
+    val encoderTicksPerRotation: Int = 256,
+    port1: Int,
+    port2: Int,
+    reversed: Boolean = false,
+    encodingType: CounterBase.EncodingType = CounterBase.EncodingType.k4X
+) : Encoder(port1, port2, reversed, encodingType) {
 
     var reversed by Delegates.observable(reversed) { _, _, new ->
         setReverseDirection(new)
