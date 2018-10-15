@@ -127,12 +127,6 @@ class SaturnSRX(id: Int,
     }
 
     /**
-     * Returns the distance traveled in ticks, according to the attached encoder
-     */
-    val distanceTraveledTicks: Int get() = getSelectedSensorPosition(0)
-
-
-    /**
      * PID variables here
      */
     var f by Delegates.observable(0.0) { _, _, value ->
