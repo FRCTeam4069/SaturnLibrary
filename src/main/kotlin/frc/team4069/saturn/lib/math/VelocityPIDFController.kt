@@ -34,10 +34,15 @@ class VelocityPIDFController(private val p: Double = 0.0,
     private var lastCallTime = -1.0
     private var dt = -1.0
 
-    // Returns PID output between -1 and 1
-    fun getPIDFOutput(target: Pair<Double, Double>): Double {
-        // Store target
-        val (targetVelocity, targetAcceleration) = target
+    /**
+     * Updates the controller with the new current values against the setpoint
+     *
+     * [targetVelocity] is required, used in feedback and kV and kS feedforward calculations
+     * [targetAcceleration] is optional. Only required if kA is nonzero, can be 0.0 otherwise
+     *
+     * Returns a value between -1..1 to set to converge to the setpoint
+     */
+    fun getPIDFOutput(targetVelocity: Double, targetAcceleration: Double): Double {
 
         // Retrieve currentVelocity position
         val current = currentVelocity()
