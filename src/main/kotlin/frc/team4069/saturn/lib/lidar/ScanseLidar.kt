@@ -7,50 +7,78 @@ import frc.team4069.saturn.lib.lidar.packet.OutgoingPacket
 import frc.team4069.saturn.lib.lidar.packet.incoming.*
 import frc.team4069.saturn.lib.lidar.packet.outgoing.*
 import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.runBlocking
 import kotlin.experimental.and
 
 class ScanseLidar(port: SerialPort.Port) {
 
     private val conn = SerialPort(115200, port, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne)
+    private val dataNotifier = Notifier(::run)
+    val pointHistory = mutableListOf<LidarPoint>()
 
     init {
         conn.disableTermination()
         conn.setFlowControl(SerialPort.FlowControl.kNone)
 
         conn.setReadBufferSize(32767)
+        conn.setWriteBufferMode(SerialPort.WriteBufferMode.kFlushOnAccess)
+        conn.setWriteBufferSize(64)
+
+        runBlocking {
+            reset()
+        }
     }
 
-    private val dataNotifier = Notifier(::run)
-    val pointHistory = mutableListOf<LidarPoint>()
-
     suspend fun start() {
-        println("Resetting device")
-        sendPacket(ResetDevicePacket)
-        println("RR OK")
-
         println("Requesting version info")
         val ivRes = sendPacket(VersionInfoPacket) as VersionInfoResponse
         println("Response ok: $ivRes")
 
+        delay(1000)
+
         val idRes = sendPacket(DeviceInfoPacket) as DeviceInfoResponse
         println("Device information: $idRes")
 
-        println("Starting motor")
-        sendPacket(AdjustMotorSpeedPacket(AdjustMotorSpeedPacket.MotorSpeed.FIVE))
+        if (idRes.motorSpeed != AdjustMotorSpeedPacket.MotorSpeed.FIVE) {
+            delay(1500)
+            println("Starting motor")
+            val res =
+                sendPacket(AdjustMotorSpeedPacket(AdjustMotorSpeedPacket.MotorSpeed.FIVE)) as AdjustMotorSpeedResponse
+            println("Got res $res")
 
-        while(true) {
+            delay(4750)
+        }
+
+        delay(250)
+
+        while (true) {
             val motorStatus = sendPacket(MotorReadyPacket) as MotorReadyResponse
-            if(motorStatus.ready) {
+            if (motorStatus.ready) {
                 break
             }
 
-            delay(50)
+            delay(150)
         }
 
+        delay(500)
+
+        val mi = sendPacket(MotorInformationPacket) as MotorInformationResponse
+        println("new MI: $mi")
+
+        delay(500)
+
         val dsRes = sendPacket(StartDataPacket) as StartDataResponse
-        if(dsRes.status == StartDataResponse.Status.OK) {
+        if (dsRes.status == StartDataResponse.Status.OK) {
             dataNotifier.startPeriodic(0.02)
         }
+    }
+
+    suspend fun reset() {
+        if(pointHistory.isNotEmpty()) {
+            pointHistory.clear()
+        }
+        sendPacket(ResetDevicePacket)
+        delay(5000)
     }
 
     fun run() {
@@ -77,18 +105,28 @@ class ScanseLidar(port: SerialPort.Port) {
         val sum = calculateDataChecksum(buf)
 
         if (sum != buf[6].toInt()) {
-            throw InvalidChecksumException(buf[6].toInt(), sum)
+            // Checksum mismatch
+//            println("CHECKSUM MISMATCH: GOT $sum. EXPECTED ${buf[6].toInt()}")
+//            runBlocking {
+//                reset()
+//                dataNotifier.stop()
+//            }
+            return
         }
 
-        pointHistory.add(LidarPoint(angle, dist, ss))
+        synchronized(pointHistory) {
+            pointHistory.add(LidarPoint(angle, dist, ss))
+        }
     }
 
     suspend fun sendPacket(packet: OutgoingPacket): IncomingPacket? {
 
         val payload = packet.serialize()
+        println("Writing $payload")
         conn.writeString(payload)
 
         return if (packet.controlCode != ControlCode.RESET_DEVICE) {
+            println("Trying to decode ${packet.controlCode}")
             val rawPayload = readPacket(packet.returnSize)
             when (ControlCode.fromAscii(rawPayload.substring(0..1))) {
                 ControlCode.START_DATA_ACQ -> StartDataResponse.decode(rawPayload)

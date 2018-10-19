@@ -10,8 +10,8 @@ data class VersionInfoResponse(
 
     companion object {
         fun decode(payload: String): VersionInfoResponse {
-            if (payload.substring(0..1) != "VI") {
-                throw IllegalArgumentException("Invalid VI packet: $payload")
+            if (payload.substring(0..1) != "IV") {
+                throw IllegalArgumentException("Invalid IV packet: $payload")
             }
 
             val model = payload.substring(2..6)

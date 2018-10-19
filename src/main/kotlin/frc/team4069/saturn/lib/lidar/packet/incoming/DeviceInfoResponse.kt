@@ -2,13 +2,14 @@ package frc.team4069.saturn.lib.lidar.packet.incoming
 
 import frc.team4069.saturn.lib.lidar.ControlCode
 import frc.team4069.saturn.lib.lidar.packet.IncomingPacket
+import frc.team4069.saturn.lib.lidar.packet.outgoing.AdjustMotorSpeedPacket
 
 data class DeviceInfoResponse(
     val bitRate: Int,
     val laserState: Int,
     val mode: Int,
     val diagnostic: Int,
-    val motorSpeed: String,
+    val motorSpeed: AdjustMotorSpeedPacket.MotorSpeed,
     val sampleRate: String
 ) : IncomingPacket(ControlCode.DEVICE_INFO) {
     companion object {
@@ -22,9 +23,13 @@ data class DeviceInfoResponse(
             val mode = payload[9].toString().toInt()
             val diagnostic = payload[10].toString().toInt()
             val motorSpeed = payload.substring(11..12)
+
+            val spd = AdjustMotorSpeedPacket.MotorSpeed.values()
+                .find { it.code == motorSpeed }!!
+
             val sampleRate = payload.substring(13..16)
 
-            return DeviceInfoResponse(bitRate, laserState, mode, diagnostic, motorSpeed, sampleRate)
+            return DeviceInfoResponse(bitRate, laserState, mode, diagnostic, spd, sampleRate)
         }
     }
 }

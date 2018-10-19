@@ -42,7 +42,7 @@ enum class ControlCode(val asciiCode: String, val retSize: Int) {
     /**
      * Asks for version info from the Sweep
      */
-    VERSION_INFO("IV", 22),
+    VERSION_INFO("IV", 21),
 
     /**
      * Asks for device info from the Sweep
@@ -63,7 +63,7 @@ enum class ControlCode(val asciiCode: String, val retSize: Int) {
             "MI" -> ControlCode.MOTOR_SPEED_INFO
             "LR" -> ControlCode.ADJ_SAMPLE_RATE
             "LI" -> ControlCode.SAMPLE_RATE_INFO
-            "VI" -> ControlCode.VERSION_INFO
+            "IV" -> ControlCode.VERSION_INFO
             "ID" -> ControlCode.DEVICE_INFO
             "RR" -> ControlCode.RESET_DEVICE
             else -> throw IllegalArgumentException("Invalid control code $code")

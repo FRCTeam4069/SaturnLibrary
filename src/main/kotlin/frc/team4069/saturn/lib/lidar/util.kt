@@ -13,5 +13,13 @@ fun calculateDataChecksum(data: ByteArray): Int {
         throw IllegalArgumentException("Data block must be 7 bytes")
     }
 
-    return data.sliceArray(0..5).sum() % 255
+    var sum = 0
+
+    for(i in 0..5) {
+        sum += data[i]
+    }
+
+    sum %= 255
+
+    return sum
 }
