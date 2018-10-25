@@ -45,7 +45,7 @@ class SaturnSRX(id: Int,
         when(mode) {
             ControlMode.PercentOutput -> {
                 val clampedValue = value.coerceIn(-1.0..1.0)
-                super.set(mode, filter?.calculate(clampedValue) ?: clampedValue)
+                super.set(mode, clampedValue)
             }
             else -> super.set(mode, value)
         }
