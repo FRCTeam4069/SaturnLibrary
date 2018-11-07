@@ -1,7 +1,7 @@
 package frc.team4069.saturn.lib.mathematics.twodim.control
 
 import com.team254.lib.physics.DifferentialDrive
-import frc.team4069.saturn.lib.math.epsilonEquals
+import frc.team4069.saturn.lib.mathematics.epsilonEquals
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedTrajectory
