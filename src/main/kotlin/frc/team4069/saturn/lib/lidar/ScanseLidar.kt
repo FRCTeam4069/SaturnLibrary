@@ -6,8 +6,8 @@ import frc.team4069.saturn.lib.lidar.packet.IncomingPacket
 import frc.team4069.saturn.lib.lidar.packet.OutgoingPacket
 import frc.team4069.saturn.lib.lidar.packet.incoming.*
 import frc.team4069.saturn.lib.lidar.packet.outgoing.*
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlin.experimental.and
 
 class ScanseLidar(port: SerialPort.Port) {

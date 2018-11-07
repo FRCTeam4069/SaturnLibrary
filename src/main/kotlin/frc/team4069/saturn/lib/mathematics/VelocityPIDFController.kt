@@ -1,5 +1,6 @@
-package frc.team4069.saturn.lib.math
+package frc.team4069.saturn.lib.mathematics
 
+import frc.team4069.saturn.lib.math.epsilonEquals
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
