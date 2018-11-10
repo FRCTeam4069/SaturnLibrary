@@ -10,13 +10,13 @@ class DifferentialDriveDynamicsConstraint(
 ) : TimingConstraint<Pose2dWithCurvature> {
 
     override fun getMaxVelocity(state: Pose2dWithCurvature): Double {
-        return drive.getMaxAbsVelocity(state.curvature.curvature, maxVoltage.value)
+        return drive.getMaxAbsVelocity(state.curvature.curvature.value, maxVoltage.value)
     }
 
     override fun getMinMaxAcceleration(state: Pose2dWithCurvature, velocity: Double): TimingConstraint.MinMaxAcceleration {
         val minMax = drive.getMinMaxAcceleration(
-                DifferentialDrive.ChassisState(velocity, velocity * state.curvature.curvature),
-                state.curvature.curvature,
+                DifferentialDrive.ChassisState(velocity, velocity * state.curvature.curvature.value),
+                state.curvature.curvature.value,
                 maxVoltage.value
         )
         return TimingConstraint.MinMaxAcceleration(minMax.min, minMax.max)

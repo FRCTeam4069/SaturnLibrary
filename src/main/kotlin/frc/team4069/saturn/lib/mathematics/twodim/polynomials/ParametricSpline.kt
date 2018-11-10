@@ -6,11 +6,12 @@
 
 package frc.team4069.saturn.lib.mathematics.twodim.polynomials
 
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Curvature
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Translation2d
 import frc.team4069.saturn.lib.mathematics.units.Rotation2d
+import frc.team4069.saturn.lib.mathematics.units.derivedunits.curvature
 
 abstract class ParametricSpline {
     abstract fun getPoint(t: Double): Translation2d
@@ -24,6 +25,6 @@ abstract class ParametricSpline {
     }
 
     fun getPose2dWithCurvature(t: Double): Pose2dWithCurvature {
-        return Pose2dWithCurvature(getPose2d(t), Curvature(getCurvature(t), getDCurvature(t) / getVelocity(t)))
+        return Pose2dWithCurvature(getPose2d(t), Pose2dCurvature(getCurvature(t).curvature, getDCurvature(t) / getVelocity(t)))
     }
 }

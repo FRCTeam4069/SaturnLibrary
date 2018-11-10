@@ -9,31 +9,32 @@
 package frc.team4069.saturn.lib.mathematics.twodim.geometry
 
 import frc.team4069.saturn.lib.mathematics.lerp
+import frc.team4069.saturn.lib.mathematics.units.derivedunits.Curvature
 import frc.team4069.saturn.lib.types.Interpolatable
 import frc.team4069.saturn.lib.types.VaryInterpolatable
 
 data class Pose2dWithCurvature(
     val pose: Pose2d,
-    val curvature: Curvature
+    val curvature: Pose2dCurvature
 ) : VaryInterpolatable<Pose2dWithCurvature> {
 
     val mirror
         get() = Pose2dWithCurvature(
-                pose.mirror,
-                -curvature
+            pose.mirror,
+            -curvature
         )
 
     override fun interpolate(endValue: Pose2dWithCurvature, t: Double) =
-            Pose2dWithCurvature(
-                    pose.interpolate(endValue.pose, t),
-                    curvature.interpolate(endValue.curvature, t)
-            )
+        Pose2dWithCurvature(
+            pose.interpolate(endValue.pose, t),
+            curvature.interpolate(endValue.curvature, t)
+        )
 
     override fun distance(other: Pose2dWithCurvature) = pose.distance(other.pose)
 
     operator fun plus(other: Pose2d) = Pose2dWithCurvature(
-            this.pose + other,
-            curvature
+        this.pose + other,
+        curvature
     )
 }
 
@@ -41,18 +42,18 @@ data class Pose2dWithCurvature(
  * @param curvature 1/m
  * @param dkds derivative of curvature
  */
-data class Curvature(
-    val curvature: Double,
+data class Pose2dCurvature(
+    val curvature: Curvature,
     val dkds: Double
-) : Interpolatable<Curvature> {
-    override fun interpolate(endValue: Curvature, t: Double) =
-            Curvature(
-                    curvature.lerp(endValue.curvature, t),
-                    dkds.lerp(endValue.dkds, t)
-            )
+) : Interpolatable<Pose2dCurvature> {
+    override fun interpolate(endValue: Pose2dCurvature, t: Double) =
+        Pose2dCurvature(
+            curvature.lerp(endValue.curvature, t),
+            dkds.lerp(endValue.dkds, t)
+        )
 
-    operator fun unaryMinus() = Curvature(
-            -curvature,
-            -dkds
+    operator fun unaryMinus() = Pose2dCurvature(
+        -curvature,
+        -dkds
     )
 }
