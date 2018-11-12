@@ -1,11 +1,11 @@
 package frc.team4069.saturn.lib
 
-import edu.wpi.first.wpilibj.IterativeRobot
+import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.util.BrownoutWatchdog
 
-abstract class SaturnRobot : IterativeRobot() {
+abstract class SaturnRobot : TimedRobot() {
     private val brownoutWatchdog = BrownoutWatchdog(::notifyBrownout)
     private
     val controls = mutableListOf<SaturnHID<*>>()

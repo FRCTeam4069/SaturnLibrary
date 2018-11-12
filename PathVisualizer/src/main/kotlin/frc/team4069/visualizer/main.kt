@@ -1,25 +1,19 @@
 package frc.team4069.visualizer
 
-import frc.team4069.saturn.lib.math.Pose2d
-import frc.team4069.saturn.lib.math.RamsyeetPathFollower
-import jaci.pathfinder.Pathfinder
-import jaci.pathfinder.Trajectory
-import koma.cos
-import koma.figure
-import koma.plot
-import koma.sin
-import java.io.File
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
+import frc.team4069.saturn.lib.mathematics.twodim.trajectory.DefaultTrajectoryGenerator
+import frc.team4069.saturn.lib.mathematics.units.degree
+import frc.team4069.saturn.lib.mathematics.units.feet
 
 fun main(args: Array<String>) {
-    val root = File(".")
 
-    val waypoints = arrayOf(
-            Waypoint(11.0, 6.0, 0.0),
-            Waypoint(5.0, 6.0, 0.0)
+    val trajectory = DefaultTrajectoryGenerator.generateTrajectory(
+        listOf(
+        Pose2d(0.feet, 13.feet),
+        Pose2d(5.feet, 10.feet, (-90).degree),
+        Pose2d(8.feet, 6.feet, (-90).degree),
+        Pose2d(12.feet, 6.feet))
     )
-
-    val path = Pathfinder.generate(waypoints, Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST, 0.02, baseVelocity.fps, 3.0, 60.0))
-    println(path)
 
 //    val xs = path.segments.map(Trajectory.Segment::x)
 //    val ys = path.segments.map(Trajectory.Segment::y)

@@ -51,8 +51,6 @@ open class RamseteController(
     fun update(robotPose: Pose2d, currentTime: Long = System.currentTimeMillis()): DifferentialDrive.ChassisState {
         val dt = deltaTimeController.updateTime(currentTime.millisecond)
 
-        println("Ramsete dt is ${dt.millisecond}ms")
-
         val error = referencePose inFrameOfReferenceOf robotPose
         val vd = referencePoint.state.velocity
         val wd = vd.value * referencePoint.state.state.curvature.curvature.value // thank you prateek, very cool!
