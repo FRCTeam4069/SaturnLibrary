@@ -7,11 +7,13 @@ import frc.team4069.saturn.lib.mathematics.units.meter
 
 typealias Curvature = InverseUnit<Length>
 
-val Number.curvature
-    get() = Curvature(this.toDouble(), 0.meter)
+val Number.curvature get() = Curvature(toDouble())
+
+@Suppress("FunctionName")
+fun Curvature(value: Double) = Curvature(value, 0.meter)
 
 operator fun <T : SIUnit<T>> Number.div(other: T): InverseUnit<T> =
-        InverseUnit(this.toDouble(), other)
+    InverseUnit(this.toDouble(), other)
 
 class InverseUnit<T : SIUnit<T>>(
     override val value: Double,

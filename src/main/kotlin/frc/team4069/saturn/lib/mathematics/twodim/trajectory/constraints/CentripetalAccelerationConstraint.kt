@@ -7,7 +7,7 @@
 package frc.team4069.saturn.lib.mathematics.twodim.trajectory.constraints
 
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Acceleration
+import frc.team4069.saturn.lib.mathematics.units.derivedunits.LinearAcceleration
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.acceleration
 import frc.team4069.saturn.lib.mathematics.units.meter
 import kotlin.math.absoluteValue
@@ -19,7 +19,7 @@ class CentripetalAccelerationConstraint(
     val mMaxCentripetalAccel
         get() = mMaxCentripetalAccelRaw.meter.acceleration
 
-    constructor(mMaxCentripetalAccel: Acceleration) :
+    constructor(mMaxCentripetalAccel: LinearAcceleration) :
             this(mMaxCentripetalAccel.value)
 
     override fun getMaxVelocity(state: Pose2dWithCurvature) =

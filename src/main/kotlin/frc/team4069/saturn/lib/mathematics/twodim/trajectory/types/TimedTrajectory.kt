@@ -6,8 +6,8 @@ import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryIterator
 import frc.team4069.saturn.lib.mathematics.units.Time
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Acceleration
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Velocity
+import frc.team4069.saturn.lib.mathematics.units.derivedunits.LinearAcceleration
+import frc.team4069.saturn.lib.mathematics.units.derivedunits.LinearVelocity
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.acceleration
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.velocity
 import frc.team4069.saturn.lib.mathematics.units.meter
@@ -53,8 +53,8 @@ class TimedTrajectory<S : VaryInterpolatable<S>>(
 data class TimedEntry<S : VaryInterpolatable<S>>(
     val state: S,
     val t: Time = 0.second,
-    val velocity: Velocity = 0.meter.velocity,
-    val acceleration: Acceleration = 0.meter.acceleration
+    val velocity: LinearVelocity = 0.meter.velocity,
+    val acceleration: LinearAcceleration = 0.meter.acceleration
 ) : VaryInterpolatable<TimedEntry<S>> {
 
     override fun interpolate(endValue: TimedEntry<S>, interpolant: Double): TimedEntry<S> {

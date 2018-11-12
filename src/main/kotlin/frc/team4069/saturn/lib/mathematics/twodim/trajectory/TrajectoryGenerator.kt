@@ -17,8 +17,8 @@ import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.IndexedTrajec
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedEntry
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedTrajectory
 import frc.team4069.saturn.lib.mathematics.units.*
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Acceleration
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Velocity
+import frc.team4069.saturn.lib.mathematics.units.derivedunits.LinearAcceleration
+import frc.team4069.saturn.lib.mathematics.units.derivedunits.LinearVelocity
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.acceleration
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.velocity
 import frc.team4069.saturn.lib.types.VaryInterpolatable
@@ -40,10 +40,10 @@ class TrajectoryGenerator(
     fun generateTrajectory(
         wayPoints: List<Pose2d>,
         constraints: List<TimingConstraint<Pose2dWithCurvature>>,
-        startVelocity: Velocity,
-        endVelocity: Velocity,
-        maxVelocity: Velocity,
-        maxAcceleration: Acceleration,
+        startVelocity: LinearVelocity,
+        endVelocity: LinearVelocity,
+        maxVelocity: LinearVelocity,
+        maxAcceleration: LinearAcceleration,
         reversed: Boolean
     ): TimedTrajectory<Pose2dWithCurvature> {
         val flippedPosition = Pose2d(rotation = 180.degree)

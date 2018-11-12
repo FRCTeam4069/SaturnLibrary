@@ -1,11 +1,10 @@
 package frc.team4069.saturn.lib.mathematics.units.nativeunits
 
+/* ktlint-disable no-wildcard-imports */
 import frc.team4069.saturn.lib.mathematics.units.*
 
-/* ktlint-disable no-wildcard-imports */
-
 class NativeUnitLengthModel(
-    sensorUnitsPerRotation: NativeUnit = NativeUnitModel.kDefaultSensorUnitsPerRotation,
+    sensorUnitsPerRotation: NativeUnit = kDefaultSensorUnitsPerRotation,
     val wheelRadius: Length = 3.inch
 ) : NativeUnitModel<Length>(sensorUnitsPerRotation, 0.inch) {
     override fun toModel(value: NativeUnit): Length =
@@ -16,7 +15,7 @@ class NativeUnitLengthModel(
 }
 
 class NativeUnitRotationModel(
-    sensorUnitsPerRotation: NativeUnit = NativeUnitModel.kDefaultSensorUnitsPerRotation
+    sensorUnitsPerRotation: NativeUnit = kDefaultSensorUnitsPerRotation
 ) : NativeUnitModel<Rotation2d>(sensorUnitsPerRotation, 0.degree) {
     override fun toModel(value: NativeUnit) =
             Rotation2d.kRotation * (value / sensorUnitsPerRotation)
