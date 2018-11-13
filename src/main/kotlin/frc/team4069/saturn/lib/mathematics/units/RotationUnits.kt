@@ -12,12 +12,7 @@ class Rotation2d : SIUnit<Rotation2d> {
     val cos: Double
     val sin: Double
 
-    constructor(value: Double) {
-        this.value = value
-
-        cos = Math.cos(value)
-        sin = Math.sin(value)
-    }
+    constructor(value: Double) : this(Math.cos(value), Math.sin(value), true)
 
     constructor(x: Double, y: Double, normalize: Boolean) {
         if (normalize) {
@@ -36,7 +31,7 @@ class Rotation2d : SIUnit<Rotation2d> {
         value = Math.atan2(sin, cos)
     }
 
-    val radian get() = value % (Math.PI * 2)
+    val radian get() = value // should be between -PI and PI already. // % (Math.PI * 2)
     val degree get() = Math.toDegrees(value)
 
     fun isParallel(rotation: Rotation2d) = (this - rotation).radian epsilonEquals 0.0
@@ -52,10 +47,6 @@ class Rotation2d : SIUnit<Rotation2d> {
     override fun minus(other: Rotation2d) = plus(-other)
 
     override fun createNew(newBaseValue: Double) = Rotation2d(newBaseValue)
-
-    override fun toString(): String {
-        return "Rotation2d($radian rad)"
-    }
 
     companion object {
         val kRotation = 360.degree

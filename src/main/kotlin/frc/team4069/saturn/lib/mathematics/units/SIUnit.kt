@@ -1,8 +1,6 @@
 package frc.team4069.saturn.lib.mathematics.units
 
-import frc.team4069.saturn.lib.mathematics.units.expressions.SIExp2
-import frc.team4069.saturn.lib.mathematics.units.fractions.SIFrac11
-
+import frc.team4069.saturn.lib.mathematics.units.derivedunits.Velocity
 
 interface SIUnit<T : SIUnit<T>> : SIValue<T> {
     /**
@@ -11,8 +9,5 @@ interface SIUnit<T : SIUnit<T>> : SIValue<T> {
     override val value: Double
 
     @Suppress("UNCHECKED_CAST")
-    operator fun <B : SIUnit<B>> times(other: B) = SIExp2(value * other.value, this as T, other)
-
-    @Suppress("UNCHECKED_CAST")
-    operator fun <B : SIUnit<B>> div(other: B) = SIFrac11(value / other.value, this as T, other)
+    operator fun div(other: Time) = Velocity(value / other.value, this as T)
 }

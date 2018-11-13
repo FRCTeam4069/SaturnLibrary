@@ -6,8 +6,6 @@ import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedTrajectory
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.feetPerSecond
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.velocity
-import frc.team4069.saturn.lib.mathematics.units.meter
 import frc.team4069.saturn.lib.mathematics.units.millisecond
 import frc.team4069.saturn.lib.util.DeltaTime
 import kotlin.math.pow
@@ -32,6 +30,8 @@ open class RamseteController(
         }
     }
 
+    private val locationListeners = mutableMapOf<Pose2d, () -> Unit>()
+
     var lastTime = -1L
     val iterator = trajectory.iterator()
 
@@ -46,25 +46,33 @@ open class RamseteController(
 
     val deltaTimeController = DeltaTime()
 
+    fun addMarker(atPose: Pose2d, callback: () -> Unit) = locationListeners.put(atPose, callback)
+
     fun update(robotPose: Pose2d, currentTime: Long = System.currentTimeMillis()): DifferentialDrive.ChassisState {
         val dt = deltaTimeController.updateTime(currentTime.millisecond)
 
-        println("Ramsete dt is ${dt.millisecond}ms")
-
         val error = referencePose inFrameOfReferenceOf robotPose
-        val vd = referencePoint.state.velocity // convert to fps
-        val wd = vd * referencePoint.state.state.curvature.curvature // thank you prateek, very cool!
+        val vd = referencePoint.state.velocity
+        val wd = vd.value * referencePoint.state.state.curvature.curvature.value // thank you prateek, very cool!
 
-        val vdImperial = vd.meter.velocity.feetPerSecond // convert vd to fps because thats what our PID expects
+        val vdImperial = vd.feetPerSecond // convert vd to fps because thats what our PID expects
 
         val angleError = error.rotation.radian
 
         val v = vdImperial * error.rotation.cos + k1(vdImperial, wd) * error.translation.x.feet
-        val w = wd + b * vd * sinc(angleError) * error.translation.y.feet + k1(vdImperial, wd) * angleError
+        val w = wd + b * vdImperial * sinc(angleError) * error.translation.y.feet + k1(vdImperial, wd) * angleError
 
         iterator.advance(dt)
 
         lastTime = currentTime
+
+        locationListeners.asSequence().filter { robotPose fuzzyEquals it.key }
+            .forEach { (pose, listener) ->
+                locationListeners.remove(pose)
+                listener()
+            }
+
+
         return DifferentialDrive.ChassisState(
             linear = v,
             angular = w
@@ -77,9 +85,9 @@ open class RamseteController(
 
     companion object {
         private fun sinc(theta: Double): Double {
-            return if(theta epsilonEquals 0.0) {
+            return if (theta epsilonEquals 0.0) {
                 1.0 // return the limit in cases where it approaches 0
-            }else {
+            } else {
                 sin(theta) / theta
             }
         }

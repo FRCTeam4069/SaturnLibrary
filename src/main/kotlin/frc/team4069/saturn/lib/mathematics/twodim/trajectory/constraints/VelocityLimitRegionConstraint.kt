@@ -10,7 +10,7 @@ package frc.team4069.saturn.lib.mathematics.twodim.trajectory.constraints
 
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rectangle2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Translation2d
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Velocity
+import frc.team4069.saturn.lib.mathematics.units.derivedunits.LinearVelocity
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.velocity
 import frc.team4069.saturn.lib.mathematics.units.meter
 
@@ -24,7 +24,7 @@ class VelocityLimitRegionConstraint(
 
     constructor(
         region: Rectangle2d,
-        velocityLimit: Velocity
+        velocityLimit: LinearVelocity
     ) : this(
             region,
             velocityLimit.value

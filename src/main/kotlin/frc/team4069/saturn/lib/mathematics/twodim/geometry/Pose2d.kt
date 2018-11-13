@@ -24,6 +24,12 @@ data class Pose2d(
     val rotation: Rotation2d = 0.degree
 ) : VaryInterpolatable<Pose2d> {
 
+    infix fun fuzzyEquals(other: Pose2d): Boolean {
+        return translation.xRaw epsilonEquals other.translation.xRaw &&
+                translation.yRaw epsilonEquals other.translation.yRaw &&
+                rotation.radian epsilonEquals other.rotation.radian
+    }
+
     constructor(
         x: Length,
         y: Length,
