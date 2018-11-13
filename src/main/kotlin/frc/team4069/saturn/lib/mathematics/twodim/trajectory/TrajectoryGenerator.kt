@@ -82,9 +82,8 @@ class TrajectoryGenerator(
         wayPoints: Sequence<Pose2d>
     ): IndexedTrajectory<Pose2dWithCurvature> {
         val splines = wayPoints.zipWithNext { a, b -> ParametricQuinticHermiteSpline(a, b) }.toMutableList()
-        // This code nearly caused the robot to crash into the stage
-        // donut use
-//        ParametricQuinticHermiteSpline.optimizeSpline(splines)
+
+        ParametricQuinticHermiteSpline.optimizeSpline(splines)
         return trajectoryFromSplines(splines)
     }
 
