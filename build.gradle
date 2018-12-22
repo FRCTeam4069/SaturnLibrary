@@ -54,7 +54,7 @@ compileTestKotlin {
 }
 
 wrapper {
-    gradleVersion = "57.0"
+    gradleVersion = "5.0"
 }
 
 junitPlatform {
