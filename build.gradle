@@ -12,7 +12,7 @@ buildscript {
     }
 }
 plugins {
-    id "edu.wpi.first.GradleRIO" version "2019.0.0-alpha-3"
+    id "edu.wpi.first.GradleRIO" version "2019.1.1-beta-4-pre4"
 }
 
 group 'frc.team4069'
@@ -42,8 +42,8 @@ dependencies {
     testCompile "org.amshove.kluent:kluent:1.38"
     testCompile 'io.mockk:mockk:1.8.8'
 
-    compile wpilib()
-    compile ctre()
+    compile wpi.deps.wpilib()
+//    compile ctre()
 }
 
 compileKotlin {
@@ -54,7 +54,7 @@ compileTestKotlin {
 }
 
 wrapper {
-    gradleVersion = "4.9"
+    gradleVersion = "57.0"
 }
 
 junitPlatform {
