@@ -8,6 +8,7 @@ import kotlin.properties.Delegates
 /**
  * Standard Talon SRX motor
  */
+@Deprecated("Replaced with TypedSaturnSRX", ReplaceWith("TypedSaturnSRX"))
 class SaturnSRX(id: Int,
                 private val encoderTicksPerRotation: Int = 4096,
                 reversed: Boolean = false,

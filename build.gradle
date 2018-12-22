@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.3.0'
+    ext.kotlin_version = '1.3.11'
 
     repositories {
         mavenCentral()
@@ -8,19 +8,19 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.junit.platform:junit-platform-gradle-plugin:1.0.0"
-        classpath "gradle.plugin.edu.wpi.first:GradleRIO:2018.06.21"
+//        classpath "gradle.plugin.edu.wpi.first:GradleRIO:2018.06.21"
     }
 }
-//plugins {
-//    id "jaci.openrio.gradle.GradleRIO" version "2018.03.06" apply false
-//}
+plugins {
+    id "edu.wpi.first.GradleRIO" version "2019.0.0-alpha-3"
+}
 
 group 'frc.team4069'
 version '0.0.5-SNAPSHOT'
 
 apply plugin: 'kotlin'
 apply plugin: "org.junit.platform.gradle.plugin"
-apply plugin: "edu.wpi.first.GradleRIO"
+//apply plugin: "edu.wpi.first.GradleRIO"
 
 repositories {
     mavenCentral()
@@ -44,7 +44,6 @@ dependencies {
 
     compile wpilib()
     compile ctre()
-    compile pathfinder()
 }
 
 compileKotlin {
@@ -52,6 +51,10 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+wrapper {
+    gradleVersion = "4.9"
 }
 
 junitPlatform {
