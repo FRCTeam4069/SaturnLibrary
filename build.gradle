@@ -12,7 +12,7 @@ buildscript {
     }
 }
 plugins {
-    id "edu.wpi.first.GradleRIO" version "2019.0.0-alpha-3"
+    id "edu.wpi.first.GradleRIO" version "2019.1.1-beta-4-pre4"
 }
 
 group 'frc.team4069'
@@ -36,14 +36,19 @@ dependencies {
     compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.0"
 
     compile "com.kyonifer:koma-core-ejml:0.12"
+    
+    compile "io.reactivex.rxjava2:rxkotlin:2.3.0"
 
     testCompile "org.jetbrains.spek:spek-api:1.1.5"
     testRuntime "org.jetbrains.spek:spek-junit-platform-engine:1.1.5"
     testCompile "org.amshove.kluent:kluent:1.38"
     testCompile 'io.mockk:mockk:1.8.8'
 
-    compile wpilib()
-    compile ctre()
+    compile wpi.deps.wpilib()
+    compile wpi.deps.vendor.java()
+    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+//    compile ctre()
 }
 
 compileKotlin {
@@ -54,7 +59,7 @@ compileTestKotlin {
 }
 
 wrapper {
-    gradleVersion = "4.9"
+    gradleVersion = "5.0"
 }
 
 junitPlatform {
