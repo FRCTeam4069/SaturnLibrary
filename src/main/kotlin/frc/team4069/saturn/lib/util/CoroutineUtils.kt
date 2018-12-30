@@ -18,18 +18,19 @@ fun CoroutineScope.launchFrequency(
     }
 }
 
+
 suspend fun CoroutineScope.loopFrequency(
     frequency: Int = 50,
     block: suspend CoroutineScope.() -> Unit
 ) {
-    val timeBetweenUpdate = TimeUnit.SECONDS.toMillis(1) / frequency
+    val timeBetweenUpdate = TimeUnit.SECONDS.toNanos(1) / frequency
     // Stores when the next update should happen
-    var nextMS = System.currentTimeMillis() + timeBetweenUpdate
+    var nextNS = System.nanoTime() + timeBetweenUpdate
     while (isActive) {
         block(this)
-        val delayNeeded = nextMS - System.nanoTime()
-        nextMS += timeBetweenUpdate
-        delay(delayNeeded)
+        val delayNeeded = nextNS - System.nanoTime()
+        nextNS += timeBetweenUpdate
+        delay(delayNeeded / 1000000L)
     }
 }
 

@@ -1,8 +1,7 @@
 package frc.team4069.saturn.lib.hid
 
 import edu.wpi.first.wpilibj.GenericHID
-import edu.wpi.first.wpilibj.command.Command
-import edu.wpi.first.wpilibj.command.Scheduler
+import frc.team4069.saturn.lib.commands.SaturnCommand
 
 enum class POVSide(val angle: Int) {
     UP(0),
@@ -57,13 +56,13 @@ class SaturnHIDButtonBuilder(source: HIDSource, private val threshold: Double) :
     private val changeOn = mutableListOf<HIDControlListener>()
     private val changeOff = mutableListOf<HIDControlListener>()
 
-    fun change(command: Command) {
+    fun change(command: SaturnCommand) {
         changeOn(command)
-        changeOff { command.cancel() }
+        changeOff { command.stop() }
     }
 
-    fun changeOn(command: Command) = changeOn { Scheduler.getInstance().add(command) }
-    fun changeOff(command: Command) = changeOff { command.start() }
+    fun changeOn(command: SaturnCommand) = changeOn { command.start() }
+    fun changeOff(command: SaturnCommand) = changeOff { command.start() }
 
     fun whileOff(block: HIDControlListener) = whileOff.add(block)
     fun whileOn(block: HIDControlListener) = whileOn.add(block)
