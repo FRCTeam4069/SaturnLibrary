@@ -1,9 +1,9 @@
 package frc.team4069.saturn.lib
 
-import edu.wpi.first.wpilibj.hal.FRCNetComm
-import edu.wpi.first.wpilibj.hal.HAL
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.command.Scheduler
+import edu.wpi.first.wpilibj.hal.FRCNetComm
+import edu.wpi.first.wpilibj.hal.HAL
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
@@ -37,7 +37,7 @@ abstract class SaturnRobot : RobotBase() {
 
     private val brownoutWatchdog = BrownoutWatchdog(::notifyBrownout)
     private val _currentMode = ObservableValue(Mode.NONE)
-    val currentMode: ReadOnlyObservableValue<Mode> = _currentMode
+    val currentMode: ReadOnlyObservableValue<Mode> get() = _currentMode
     private val controls = mutableListOf<SaturnHID<*>>()
 
     var initialized = false
@@ -75,7 +75,7 @@ abstract class SaturnRobot : RobotBase() {
                 isTest -> Mode.TEST
                 else -> TODO("Robot is in invalid mode!")
             }
-            currentMode.set(newMode)
+            _currentMode.set(newMode)
 
             when(newMode) {
                 Mode.DISABLED -> HAL.observeUserProgramDisabled()
