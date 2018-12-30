@@ -11,6 +11,7 @@ import frc.team4069.saturn.lib.commands.SubsystemHandler
 import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.util.BrownoutWatchdog
 import frc.team4069.saturn.lib.util.ObservableValue
+import frc.team4069.saturn.lib.util.ReadOnlyObservableValue
 
 const val kLanguageKotlin = 6
 
@@ -35,7 +36,8 @@ abstract class SaturnRobot : RobotBase() {
     }
 
     private val brownoutWatchdog = BrownoutWatchdog(::notifyBrownout)
-    private val currentMode = ObservableValue(Mode.NONE)
+    private val _currentMode = ObservableValue(Mode.NONE)
+    val currentMode: ReadOnlyObservableValue<Mode> = _currentMode
     private val controls = mutableListOf<SaturnHID<*>>()
 
     var initialized = false
