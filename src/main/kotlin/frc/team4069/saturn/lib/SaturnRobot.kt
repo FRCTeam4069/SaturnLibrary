@@ -53,9 +53,9 @@ abstract class SaturnRobot : RobotBase() {
         HAL.report(FRCNetComm.tResourceType.kResourceType_Language, kLanguageKotlin)
         LiveWindow.setEnabled(false)
 
-        currentMode.addEntryListener(Mode.AUTONOMOUS) { SubsystemHandler.autoReset() }
-        currentMode.addEntryListener(Mode.TELEOP) { SubsystemHandler.teleopReset() }
-        currentMode.addEntryListener(Mode.DISABLED) { SubsystemHandler.zeroOutputs() }
+        _currentMode.addEntryListener(Mode.AUTONOMOUS) { SubsystemHandler.autoReset() }
+        _currentMode.addEntryListener(Mode.TELEOP) { SubsystemHandler.teleopReset() }
+        _currentMode.addEntryListener(Mode.DISABLED) { SubsystemHandler.zeroOutputs() }
 
         initialize()
         SubsystemHandler.lateInit()
