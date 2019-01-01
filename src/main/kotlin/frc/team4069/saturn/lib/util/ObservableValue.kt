@@ -10,7 +10,7 @@ open class ReadOnlyObservableValue<T>(protected open var value: T) {
     }
 
     fun addEntryListener(value: T, callback: () -> Unit) = addListener { newValue ->
-        if (newValue == value) callback()
+        if (newValue == value && this.value != value) callback()
     }
 }
 
