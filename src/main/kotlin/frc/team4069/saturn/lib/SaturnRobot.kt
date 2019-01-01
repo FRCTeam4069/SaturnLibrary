@@ -10,8 +10,6 @@ import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.commands.SubsystemHandler
 import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.util.BrownoutWatchdog
-import frc.team4069.saturn.lib.util.ObservableValue
-import frc.team4069.saturn.lib.util.ReadOnlyObservableValue
 
 const val kLanguageKotlin = 6
 
@@ -36,8 +34,8 @@ abstract class SaturnRobot : RobotBase() {
     }
 
     private val brownoutWatchdog = BrownoutWatchdog(::notifyBrownout)
-    private val _currentMode = ObservableValue(Mode.NONE)
-    val currentMode: ReadOnlyObservableValue<Mode> get() = _currentMode
+    var currentMode = Mode.NONE
+        private set
     private val controls = mutableListOf<SaturnHID<*>>()
 
     var initialized = false
@@ -52,10 +50,6 @@ abstract class SaturnRobot : RobotBase() {
     override fun startCompetition() {
         HAL.report(FRCNetComm.tResourceType.kResourceType_Language, kLanguageKotlin)
         LiveWindow.setEnabled(false)
-
-        _currentMode.addEntryListener(Mode.AUTONOMOUS) { SubsystemHandler.autoReset() }
-        _currentMode.addEntryListener(Mode.TELEOP) { SubsystemHandler.teleopReset() }
-        _currentMode.addEntryListener(Mode.DISABLED) { SubsystemHandler.zeroOutputs() }
 
         initialize()
         SubsystemHandler.lateInit()
@@ -75,7 +69,17 @@ abstract class SaturnRobot : RobotBase() {
                 isTest -> Mode.TEST
                 else -> TODO("Robot is in invalid mode!")
             }
-            _currentMode.set(newMode)
+
+            if(currentMode != newMode) {
+                when(newMode) {
+                    Mode.DISABLED -> SubsystemHandler.zeroOutputs()
+                    Mode.AUTONOMOUS -> SubsystemHandler.autoReset()
+                    Mode.TELEOP -> SubsystemHandler.teleopReset()
+                    else -> {}
+                }
+            }
+
+            currentMode = newMode
 
             when(newMode) {
                 Mode.DISABLED -> HAL.observeUserProgramDisabled()
