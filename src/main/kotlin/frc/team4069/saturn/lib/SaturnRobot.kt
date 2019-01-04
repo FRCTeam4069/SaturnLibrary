@@ -11,7 +11,6 @@ import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.commands.SubsystemHandler
 import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.util.BrownoutWatchdog
-import frc.team4069.saturn.lib.util.ObservableValue
 
 const val kLanguageKotlin = 6
 
