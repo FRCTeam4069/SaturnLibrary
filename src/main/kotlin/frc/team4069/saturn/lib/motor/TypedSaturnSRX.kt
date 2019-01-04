@@ -81,7 +81,7 @@ class TypedSaturnSRX<T : SIUnit<T>>(
         configMotionAcceleration(newValue.fromModel(model).STUPer100msPerSecond.toInt(), timeoutInt)
     }
 
-    var feedbackSensor by observable(FeedbackDevice.None) { _, _, newValue ->
+    var feedbackSensor by observable(FeedbackDevice.QuadEncoder) { _, _, newValue ->
         configSelectedFeedbackSensor(newValue, 0, timeoutInt)
     }
 

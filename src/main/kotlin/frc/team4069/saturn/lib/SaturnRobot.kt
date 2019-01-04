@@ -1,15 +1,17 @@
 package frc.team4069.saturn.lib
 
+import edu.wpi.first.hal.FRCNetComm
+import edu.wpi.first.hal.HAL
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.command.Scheduler
-import edu.wpi.first.wpilibj.hal.FRCNetComm
-import edu.wpi.first.wpilibj.hal.HAL
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.commands.SubsystemHandler
 import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.util.BrownoutWatchdog
+import frc.team4069.saturn.lib.util.ObservableValue
 
 const val kLanguageKotlin = 6
 
@@ -92,6 +94,7 @@ abstract class SaturnRobot : RobotBase() {
             brownoutWatchdog.feed()
             controls.forEach { it.update() }
             SmartDashboard.updateValues()
+            Shuffleboard.update()
 
             Scheduler.getInstance().run()
 
