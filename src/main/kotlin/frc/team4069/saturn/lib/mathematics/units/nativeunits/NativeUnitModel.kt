@@ -2,6 +2,7 @@ package frc.team4069.saturn.lib.mathematics.units.nativeunits
 
 /* ktlint-disable no-wildcard-imports */
 import frc.team4069.saturn.lib.mathematics.units.*
+import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitModel.Companion.kDefaultSensorUnitsPerRotation
 
 class NativeUnitLengthModel(
     sensorUnitsPerRotation: NativeUnit = kDefaultSensorUnitsPerRotation,
@@ -22,6 +23,16 @@ class NativeUnitRotationModel(
 
     override fun fromModel(value: Rotation2d) =
             sensorUnitsPerRotation * (value / Rotation2d.kRotation)
+}
+
+class NativeUnitSensorModel(sensorUnitsPerRotation: NativeUnit = kDefaultSensorUnitsPerRotation) : NativeUnitModel<NativeUnit>(sensorUnitsPerRotation, 0.STU) {
+    override fun toModel(value: NativeUnit): NativeUnit {
+        return value
+    }
+
+    override fun fromModel(value: NativeUnit): NativeUnit {
+        return value
+    }
 }
 
 abstract class NativeUnitModel<T : SIUnit<T>>(
