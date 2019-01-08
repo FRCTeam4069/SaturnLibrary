@@ -44,7 +44,7 @@ abstract class SaturnRobot : RobotBase() {
 
     protected abstract fun initialize()
 
-    protected open fun periodic() {}
+    protected open fun periodic(mode: Mode) {}
 
     protected open fun notifyBrownout() {}
 
@@ -73,9 +73,18 @@ abstract class SaturnRobot : RobotBase() {
 
             if(currentMode != newMode) {
                 when(newMode) {
-                    Mode.DISABLED -> SubsystemHandler.zeroOutputs()
-                    Mode.AUTONOMOUS -> SubsystemHandler.autoReset()
-                    Mode.TELEOP -> SubsystemHandler.teleopReset()
+                    Mode.DISABLED -> {
+                        disabledInit()
+                        SubsystemHandler.zeroOutputs()
+                    }
+                    Mode.AUTONOMOUS -> {
+                        autonomousInit()
+                        SubsystemHandler.autoReset()
+                    }
+                    Mode.TELEOP -> {
+                        teleopInit()
+                        SubsystemHandler.teleopReset()
+                    }
                     else -> {}
                 }
             }
@@ -97,9 +106,13 @@ abstract class SaturnRobot : RobotBase() {
 
             Scheduler.getInstance().run()
 
-            periodic()
+            periodic(currentMode)
         }
     }
+
+    protected open fun autonomousInit() {}
+    protected open fun teleopInit() {}
+    protected open fun disabledInit() {}
 
     protected operator fun SaturnSubsystem.unaryPlus() = SubsystemHandler.addSubsystem(this)
     protected operator fun SaturnHID<*>.unaryPlus() = controls.add(this)

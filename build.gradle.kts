@@ -25,6 +25,7 @@ dependencies {
     compile(kotlin("stdlib"))
     compile("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.1.0")
     compile("com.kyonifer:koma-core-ejml:0.12")
+    testCompile("junit:junit:4.12")
 
     // WPILib
     wpi.deps.wpilib().forEach { compile(it) }
