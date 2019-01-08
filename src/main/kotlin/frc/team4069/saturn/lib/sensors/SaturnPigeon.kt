@@ -3,9 +3,9 @@ package frc.team4069.saturn.lib.sensors
 import com.ctre.phoenix.sensors.PigeonIMU
 import frc.team4069.saturn.lib.mathematics.units.Rotation2d
 import frc.team4069.saturn.lib.mathematics.units.degree
-import frc.team4069.saturn.lib.motor.TypedSaturnSRX
+import frc.team4069.saturn.lib.motor.SaturnSRX
 
-class SaturnPigeon(parentTalon: TypedSaturnSRX<*>) : PigeonIMU(parentTalon) {
+class SaturnPigeon(parentTalon: SaturnSRX<*>) : PigeonIMU(parentTalon) {
     val fusedHeading: Rotation2d
         get() = this.getFusedHeading().degree
 

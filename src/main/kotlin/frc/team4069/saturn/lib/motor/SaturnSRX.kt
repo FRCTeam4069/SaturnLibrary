@@ -13,7 +13,7 @@ import frc.team4069.saturn.lib.mathematics.units.derivedunits.volt
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.*
 import kotlin.properties.Delegates.observable
 
-open class TypedSaturnSRX<T : SIUnit<T>>(
+open class SaturnSRX<T : SIUnit<T>>(
     id: Int,
     private val model: NativeUnitModel<T>,
     timeout: Time = 10.millisecond
