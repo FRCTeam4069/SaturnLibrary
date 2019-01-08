@@ -8,19 +8,14 @@
 
 package frc.team4069.saturn.lib.mathematics.twodim.trajectory.constraints
 
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rectangle2d
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Translation2d
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.LinearVelocity
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.velocity
-import frc.team4069.saturn.lib.mathematics.units.meter
 
 class VelocityLimitRegionConstraint(
     val region: Rectangle2d,
     val velocityLimitRaw: Double
-) : TimingConstraint<Translation2d> {
-
-    val velocityLimit
-        get() = velocityLimitRaw.meter.velocity
+) : TimingConstraint<Pose2dWithCurvature> {
 
     constructor(
         region: Rectangle2d,
@@ -30,11 +25,11 @@ class VelocityLimitRegionConstraint(
             velocityLimit.value
     )
 
-    override fun getMaxVelocity(state: Translation2d) =
-            if (state in region) velocityLimitRaw else Double.POSITIVE_INFINITY
+    override fun getMaxVelocity(state: Pose2dWithCurvature) =
+            if (state.pose.translation in region) velocityLimitRaw else Double.POSITIVE_INFINITY
 
     override fun getMinMaxAcceleration(
-        state: Translation2d,
+        state: Pose2dWithCurvature,
         velocity: Double
     ) = TimingConstraint.MinMaxAcceleration.kNoLimits
 }
