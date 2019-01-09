@@ -32,6 +32,9 @@ abstract class SaturnCommand(
      *  When this is true the command will end
      */
     protected val finishCondition = FinishCondition(Source(false))
+
+    val isFinished
+        get() = finishCondition()
     /**
      * The frequency the command will run
      * -1 -> will use WPI's internal command loop
@@ -39,9 +42,9 @@ abstract class SaturnCommand(
      */
     protected var executeFrequency = -1
 
-    internal open suspend fun initialize0() = initialize()
-    internal open suspend fun execute0() = execute()
-    internal open suspend fun dispose0() = dispose()
+    internal suspend fun initialize0() = initialize()
+    internal suspend fun execute0() = execute()
+    internal suspend fun dispose0() = dispose()
 
     /**
      * Called when the command starts
