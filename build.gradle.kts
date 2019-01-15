@@ -10,7 +10,7 @@ import jaci.gradle.deploy.target.TargetsExtension
 
 plugins {
     kotlin("jvm") version "1.3.11"
-    id("edu.wpi.first.GradleRIO") version "2019.1.1-rc-1"
+    id("edu.wpi.first.GradleRIO") version "2019.2.1"
     maven
 }
 
