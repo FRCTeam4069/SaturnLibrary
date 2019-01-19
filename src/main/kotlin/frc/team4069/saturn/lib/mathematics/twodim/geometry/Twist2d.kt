@@ -12,10 +12,16 @@ import frc.team4069.saturn.lib.mathematics.units.Rotation2d
 import frc.team4069.saturn.lib.mathematics.units.meter
 
 class Twist2d(
-    val dx: Length,
-    val dy: Length,
-    val dTheta: Rotation2d
+        internal val _dx: Double,
+        internal val _dy: Double,
+        val dTheta: Rotation2d
 ) {
+
+    val dx get() = _dx.meter
+    val dy get() = _dy.meter
+
+    constructor(dx: Length, dy: Length, dTheta: Rotation2d)
+            : this(dx.value, dy.value, dTheta)
 
     val norm
         get() = if (dy.value == 0.0) dx.absoluteValue else Math.hypot(dx.value, dy.value).meter

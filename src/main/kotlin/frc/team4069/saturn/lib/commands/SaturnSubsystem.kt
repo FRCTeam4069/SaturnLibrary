@@ -46,6 +46,10 @@ abstract class SaturnSubsystem(name: String? = null) {
         override fun initDefaultCommand() {
             defaultCommand = this@SaturnSubsystem.defaultCommand.wrappedValue
         }
+
+        override fun periodic() {
+            this@SaturnSubsystem.periodic()
+        }
     }
 
     /**
@@ -77,4 +81,6 @@ abstract class SaturnSubsystem(name: String? = null) {
      * Called when no mode is enabled
      */
     open fun zeroOutputs() {}
+
+    protected open fun periodic() {}
 }

@@ -4,8 +4,9 @@ import com.ctre.phoenix.sensors.PigeonIMU
 import frc.team4069.saturn.lib.mathematics.units.Rotation2d
 import frc.team4069.saturn.lib.mathematics.units.degree
 import frc.team4069.saturn.lib.motor.SaturnSRX
+import frc.team4069.saturn.lib.util.Source
 
-class SaturnPigeon(parentTalon: SaturnSRX<*>) : PigeonIMU(parentTalon) {
+class SaturnPigeon(parentTalon: SaturnSRX<*>) : PigeonIMU(parentTalon), Source<Rotation2d> {
     val fusedHeading: Rotation2d
         get() = this.getFusedHeading().degree
 
@@ -16,6 +17,8 @@ class SaturnPigeon(parentTalon: SaturnSRX<*>) : PigeonIMU(parentTalon) {
 
             return Quaternion(arr[0], arr[1], arr[2], arr[3])
         }
+
+    override fun invoke() = fusedHeading
 
     data class Quaternion(val w: Double, val x: Double, val y: Double, val z: Double)
 }
