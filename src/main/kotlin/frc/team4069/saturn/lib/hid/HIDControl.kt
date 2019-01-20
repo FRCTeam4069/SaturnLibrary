@@ -1,5 +1,7 @@
 package frc.team4069.saturn.lib.hid
 
+import kotlin.math.absoluteValue
+
 
 class HIDButton(private val source: HIDSource,
                 private val threshold: Double,
@@ -12,10 +14,10 @@ class HIDButton(private val source: HIDSource,
         const val DEFAULT_THRESHOLD = 0.5
     }
 
-    private var lastValue = source() >= threshold
+    private var lastValue = source().absoluteValue >= threshold
 
     override fun update() {
-        val newValue = source() >= threshold
+        val newValue = source().absoluteValue >= threshold
         if (lastValue != newValue) {
             // Value has changed
             if (newValue) {
