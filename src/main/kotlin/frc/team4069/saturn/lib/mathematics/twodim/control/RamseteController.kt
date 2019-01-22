@@ -57,8 +57,8 @@ open class RamseteController(
 
         val angleError = error.rotation.radian
 
-        val v = vd * error.rotation.cos + k1(vd, wd) * error.translation.x.feet
-        val w = wd + b * vd * sinc(angleError) * error.translation.y.feet + k1(vd, wd) * angleError
+        val v = vd * error.rotation.cos + k1(vd, wd) * error.translation.xRaw
+        val w = wd + b * vd * sinc(angleError) * error.translation.yRaw + k1(vd, wd) * angleError
 
         iterator.advance(dt)
 
