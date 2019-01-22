@@ -8,7 +8,7 @@ import frc.team4069.saturn.lib.util.Source
 
 class SaturnPigeon(parentTalon: SaturnSRX<*>) : PigeonIMU(parentTalon), Source<Rotation2d> {
     val fusedHeading: Rotation2d
-        get() = this.getFusedHeading().degree
+        get() = (-this.getFusedHeading()).degree
 
     val quaternion: Quaternion
         get() {
