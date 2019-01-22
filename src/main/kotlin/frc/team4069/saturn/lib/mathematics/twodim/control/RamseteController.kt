@@ -52,15 +52,13 @@ open class RamseteController(
         val dt = deltaTimeController.updateTime(currentTime.millisecond)
 
         val error = referencePose inFrameOfReferenceOf robotPose
-        val vd = referencePoint.state.velocity
-        val wd = vd.value * referencePoint.state.state.curvature.curvature.value // thank you prateek, very cool!
-
-        val vdImperial = vd.feetPerSecond // convert vd to fps because thats what our PID expects
+        val vd = referencePoint.state.velocity.value // m/s
+        val wd = vd * referencePoint.state.state.curvature.curvature.value // thank you prateek, very cool!
 
         val angleError = error.rotation.radian
 
-        val v = vdImperial * error.rotation.cos + k1(vdImperial, wd) * error.translation.x.feet
-        val w = wd + b * vdImperial * sinc(angleError) * error.translation.y.feet + k1(vdImperial, wd) * angleError
+        val v = vd * error.rotation.cos + k1(vd, wd) * error.translation.x.feet
+        val w = wd + b * vd * sinc(angleError) * error.translation.y.feet + k1(vd, wd) * angleError
 
         iterator.advance(dt)
 
