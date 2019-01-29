@@ -20,6 +20,10 @@ open class SaturnSRX<T : SIUnit<T>>(
 ) : WPI_TalonSRX(id) {
     private val timeoutInt = timeout.millisecond.toInt()
 
+    init {
+        configFactoryDefault()
+    }
+
     var kP by observable(0.0) { _, _, newValue -> config_kP(0, newValue, timeoutInt) }
     var kI by observable(0.0) { _, _, newValue -> config_kI(0, newValue, timeoutInt) }
     var kD by observable(0.0) { _, _, newValue -> config_kD(0, newValue, timeoutInt) }
