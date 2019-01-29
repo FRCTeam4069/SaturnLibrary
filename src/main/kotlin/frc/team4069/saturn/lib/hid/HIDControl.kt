@@ -21,9 +21,8 @@ class HIDButton(private val source: HIDSource,
         if (lastValue != newValue) {
             // Value has changed
             if (newValue) {
-                changeOn.forEach { println("$it"); it() }
+                changeOn.forEach { it() }
             } else {
-                println("changeOff called")
                 changeOff.forEach { it() }
             }
         } else {

@@ -1,7 +1,7 @@
 package frc.team4069.saturn.lib.mathematics.twodim.geometry
 
 import frc.team4069.saturn.lib.mathematics.units.meter
-import frc.team4069.saturn.lib.utils.safeRangeTo
+import frc.team4069.saturn.lib.util.safeRangeTo
 import kotlin.math.max
 import kotlin.math.min
 

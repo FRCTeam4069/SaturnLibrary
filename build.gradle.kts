@@ -12,6 +12,7 @@ plugins {
     kotlin("jvm") version "1.3.11"
     id("edu.wpi.first.GradleRIO") version "2019.2.1"
     maven
+    `maven-publish`
 }
 
 repositories {
@@ -32,6 +33,18 @@ dependencies {
     wpi.deps.vendor.java().forEach { compile(it) }
     wpi.deps.vendor.jni(NativePlatforms.roborio).forEach { nativeZip(it) }
     wpi.deps.vendor.jni(NativePlatforms.desktop).forEach { nativeDesktopZip(it) }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenLocal") {
+            groupId = "frc.team4069"
+            artifactId = "SaturnLibrary"
+            version = "2019.1.29"
+            
+            from(components["java"])
+        }
+    } 
 }
 
 tasks.withType<Wrapper>().configureEach {
