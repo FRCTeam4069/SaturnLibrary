@@ -38,10 +38,10 @@ open class SaturnSRX<T : SIUnit<T>>(
         configReverseSoftLimitEnable(newValue, timeoutInt)
     }
     var softLimitForward by observable(model.zero) { _, _, newValue ->
-        configForwardSoftLimitThreshold(newValue.fromModel(model).value, timeoutInt)
+        configForwardSoftLimitThreshold(newValue.fromModel(model).value.toInt(), timeoutInt)
     }
     var softLimitReverse by observable(model.zero) { _, _, newValue ->
-        configReverseSoftLimitThreshold(newValue.fromModel(model).value, timeoutInt)
+        configReverseSoftLimitThreshold(newValue.fromModel(model).value.toInt(), timeoutInt)
     }
 
     var brakeMode by observable(NeutralMode.Coast) { _, _, newValue ->
