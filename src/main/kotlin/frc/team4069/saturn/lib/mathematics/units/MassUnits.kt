@@ -1,5 +1,7 @@
 package frc.team4069.saturn.lib.mathematics.units
 
+import frc.team4069.saturn.lib.mathematics.Numéro
+
 val Number.yottagram get() = Mass(toDouble() * SIConstants.kYottaOffsetKilo)
 val Number.zettagram get() = Mass(toDouble() * SIConstants.kZettaOffsetKilo)
 val Number.exagram get() = Mass(toDouble() * SIConstants.kExaOffsetKilo)
@@ -8,6 +10,7 @@ val Number.teragram get() = Mass(toDouble() * SIConstants.kTeraOffsetKilo)
 val Number.gigagram get() = Mass(toDouble() * SIConstants.kGigaOffsetKilo)
 val Number.megagram get() = Mass(toDouble() * SIConstants.kMegaOffsetKilo)
 val Number.kilogram get() = Mass(toDouble())
+val Numéro.kilogramme get() = this.kilogram
 val Number.hectogram get() = Mass(toDouble() * SIConstants.kHectoOffsetKilo)
 val Number.decagram get() = Mass(toDouble() * SIConstants.kDecaOffsetKilo)
 val Number.gram get() = Mass(toDouble() * SIConstants.kBaseOffsetKilo)

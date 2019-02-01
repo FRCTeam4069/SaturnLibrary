@@ -1,5 +1,7 @@
 package frc.team4069.saturn.lib.mathematics.units
 
+import frc.team4069.saturn.lib.mathematics.Numéro
+
 val Number.yottaamp get() = ElectricCurrent(toDouble() * SIConstants.kYotta)
 val Number.zettaamp get() = ElectricCurrent(toDouble() * SIConstants.kZetta)
 val Number.exaamp get() = ElectricCurrent(toDouble() * SIConstants.kExa)
@@ -11,6 +13,7 @@ val Number.kiloamp get() = ElectricCurrent(toDouble() * SIConstants.kKilo)
 val Number.hectoamp get() = ElectricCurrent(toDouble() * SIConstants.kHecto)
 val Number.decaamp get() = ElectricCurrent(toDouble() * SIConstants.kDeca)
 val Number.amp get() = ElectricCurrent(toDouble())
+val Numéro.ampère get() = this.amp
 val Number.deciamp get() = ElectricCurrent(toDouble() * SIConstants.kDeci)
 val Number.centiamp get() = ElectricCurrent(toDouble() * SIConstants.kCenti)
 val Number.milliamp get() = ElectricCurrent(toDouble() * SIConstants.kMilli)

@@ -1,5 +1,8 @@
 package frc.team4069.saturn.lib.mathematics.units
 
+import frc.team4069.saturn.lib.mathematics.Numéro
+
+
 val Number.minute get() = Time(toDouble() * SITimeConstants.kMinuteToSecond)
 val Number.hour get() = Time(toDouble() * SITimeConstants.kHourToSecond)
 val Number.day get() = Time(toDouble() * SITimeConstants.kDayToSecond)
@@ -17,6 +20,7 @@ val Number.kilosecond get() = Time(toDouble() * SIConstants.kKilo)
 val Number.hectosecond get() = Time(toDouble() * SIConstants.kHecto)
 val Number.decasecond get() = Time(toDouble() * SIConstants.kDeca)
 val Number.second get() = Time(toDouble())
+val Numéro.seconde get() = this.second
 val Number.decisecond get() = Time(toDouble() * SIConstants.kDeci)
 val Number.centisecond get() = Time(toDouble() * SIConstants.kCenti)
 val Number.millisecond get() = Time(toDouble() * SIConstants.kMilli)

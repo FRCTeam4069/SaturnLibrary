@@ -1,5 +1,7 @@
 package frc.team4069.saturn.lib.mathematics.units
 
+import frc.team4069.saturn.lib.mathematics.Numéro
+
 val Number.thou get() = Length(toDouble() * SILengthConstants.kThouToMeter)
 val Number.line get() = Length(toDouble() * SILengthConstants.kLineToMeter)
 val Number.inch get() = Length(toDouble() * SILengthConstants.kInchToMeter)
@@ -21,6 +23,7 @@ val Number.kilometer get() = Length(toDouble() * SIConstants.kKilo)
 val Number.hectometer get() = Length(toDouble() * SIConstants.kHecto)
 val Number.decameter get() = Length(toDouble() * SIConstants.kDeca)
 val Number.meter get() = Length(toDouble())
+val Numéro.mètre get() = this.meter
 val Number.decimeter get() = Length(toDouble() * SIConstants.kDeci)
 val Number.centimeter get() = Length(toDouble() * SIConstants.kCenti)
 val Number.millimeter get() = Length(toDouble() * SIConstants.kMilli)
