@@ -2,6 +2,7 @@ package frc.team4069.saturn.lib.hid
 
 import edu.wpi.first.wpilibj.GenericHID
 import frc.team4069.saturn.lib.commands.SaturnCommand
+import frc.team4069.saturn.lib.util.BooleanSource
 
 enum class POVSide(val angle: Int) {
     UP(0),
@@ -16,6 +17,7 @@ fun <T : GenericHID> controller(genericHID: T, block: SaturnHIDBuilder<T>.() -> 
 
 class SaturnHIDBuilder<T : GenericHID>(private val genericHID: T) {
     private val controlBuilders = mutableListOf<SaturnHIDControlBuilder>()
+    private val stateControlBuilders = mutableMapOf<BooleanSource, SaturnHIDBuilder<T>>()
 
     fun button(buttonId: Int, block: SaturnHIDButtonBuilder.() -> Unit = {}) =
         control(HIDButtonSource(genericHID, buttonId), block = block)
@@ -30,6 +32,9 @@ class SaturnHIDBuilder<T : GenericHID>(private val genericHID: T) {
     fun pov(pov: Int, angle: POVSide, block: SaturnHIDButtonBuilder.() -> Unit = {}) =
         control(HIDPOVSource(genericHID, pov, angle.angle), block = block)
 
+    fun state(state: BooleanSource, block: SaturnHIDBuilder<T>.() -> Unit) =
+            stateControlBuilders.compute(state) { _, _ -> SaturnHIDBuilder(genericHID).apply(block) }
+
     fun control(
         source: HIDSource,
         threshold: Double = HIDButton.DEFAULT_THRESHOLD,
@@ -42,7 +47,8 @@ class SaturnHIDBuilder<T : GenericHID>(private val genericHID: T) {
 
     fun build(): SaturnHID<T> {
         val controls = controlBuilders.map { it.build() }
-        return SaturnHID(genericHID, controls)
+        val stateControls = stateControlBuilders.mapValues { it.value.build() }
+        return SaturnHID(genericHID, controls, stateControls)
     }
 }
 
@@ -74,7 +80,8 @@ class SaturnHIDButtonBuilder(source: HIDSource, private val threshold: Double) :
 
 class SaturnHID<T : GenericHID>(
     private val genericHID: T,
-    private val controls: List<HIDControl>
+    private val controls: List<HIDControl>,
+    private val stateControls: Map<BooleanSource, SaturnHID<T>>
 ) {
 
 
@@ -83,5 +90,6 @@ class SaturnHID<T : GenericHID>(
 
     fun update() {
         controls.forEach { it.update() }
+        stateControls.filterKeys { it() }.values.forEach { it.update() }
     }
 }
