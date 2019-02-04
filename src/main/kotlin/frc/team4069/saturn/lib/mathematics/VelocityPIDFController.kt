@@ -40,7 +40,7 @@ class VelocityPIDFController(private val p: Double = 0.0,
      * [targetVelocity] is required, used in feedback and kV and kS feedforward calculations
      * [targetAcceleration] is optional. Only required if kA is nonzero, can be 0.0 otherwise
      *
-     * Returns a value between -1..1 to tankDrive to converge to the setpoint
+     * Returns a value between -1..1 to set to converge to the setpoint
      */
     fun getPIDFOutput(targetVelocity: Double, targetAcceleration: Double): Double {
 
