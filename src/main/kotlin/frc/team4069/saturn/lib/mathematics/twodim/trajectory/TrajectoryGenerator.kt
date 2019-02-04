@@ -168,7 +168,7 @@ class TrajectoryGenerator(
         // Forward pass. We look at pairs of consecutive states, where the start state has already been velocity
         // parameterized (though we may adjust the velocity downwards during the backwards pass). We wish to find an
         // acceleration that is admissible at both the start and end state, as well as an admissible end velocity. If
-        // there is no admissible end velocity or acceleration, we set the end velocity to the state's maximum allowed
+        // there is no admissible end velocity or acceleration, we tankDrive the end velocity to the state's maximum allowed
         // velocity and will repair the acceleration during the backward pass (by slowing down the predecessor).
 
         var predecessor = ConstrainedState<S>()

@@ -36,7 +36,7 @@ abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
     }
 
     override fun zeroOutputs() {
-        set(0.0, 0.0)
+        tankDrive(0.0, 0.0)
     }
 
     override fun periodic() {
@@ -103,10 +103,10 @@ abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
             rightMotorOutput /= maxMagnitude
         }
 
-        set(leftMotorOutput, rightMotorOutput)
+        tankDrive(leftMotorOutput, rightMotorOutput)
     }
 
-    fun set(left: Double, right: Double) {
+    fun tankDrive(left: Double, right: Double) {
         leftMotor.set(ControlMode.PercentOutput, left)
         rightMotor.set(ControlMode.PercentOutput, right)
     }
