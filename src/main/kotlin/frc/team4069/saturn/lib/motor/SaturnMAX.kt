@@ -1,14 +1,12 @@
 package frc.team4069.saturn.lib.motor
 
 import com.revrobotics.CANSparkMax
-import com.revrobotics.CANSparkMaxLowLevel.MotorType
 import com.revrobotics.ControlType
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.Velocity
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.velocity
+import frc.team4069.saturn.lib.mathematics.units.minute
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitModel
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.STU
-import frc.team4069.saturn.lib.mathematics.units.nativeunits.fromModel
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.toModel
 
 class SaturnMAX<T: SIUnit<T>>(id: Int, motorType: MotorType = MotorType.kBrushless, val model: NativeUnitModel<T>) : CANSparkMax(id, motorType) {
@@ -40,10 +38,10 @@ class SaturnMAX<T: SIUnit<T>>(id: Int, motorType: MotorType = MotorType.kBrushle
         }
 
     val position: T
-        get() = model.toModel(_encoder.position.STU)
+        get() = -_encoder.position.STU.toModel(model) // Bug in MAX firmware causing these values to be incorrect
 
     val velocity: Velocity<T>
-        get() = _encoder.velocity.STU.velocity.toModel(model)
+        get() = -(_encoder.velocity.STU / 1.minute).toModel(model) // RPM in FRC :screm:
 
     fun set(type: ControlType, output: T) {
         pid.setReference(model.fromModel(output).value, type)
