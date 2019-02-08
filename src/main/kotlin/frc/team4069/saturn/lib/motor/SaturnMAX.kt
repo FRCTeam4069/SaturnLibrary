@@ -37,6 +37,12 @@ class SaturnMAX<T: SIUnit<T>>(id: Int, motorType: MotorType = MotorType.kBrushle
             pid.d = value
         }
 
+    var outputRange: Pair<Double, Double>
+        get() = pid.outputMin to pid.outputMax
+        set(value) {
+            pid.setOutputRange(value.first, value.second)
+        }
+
     val position: T
         get() = -_encoder.position.STU.toModel(model) // Bug in MAX firmware causing these values to be incorrect
 
