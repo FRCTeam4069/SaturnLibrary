@@ -1,14 +1,55 @@
 package frc.team4069.saturn.lib.sensors
 
 import com.ctre.phoenix.sensors.PigeonIMU
+import frc.team4069.saturn.lib.mathematics.epsilonEquals
 import frc.team4069.saturn.lib.mathematics.units.Rotation2d
 import frc.team4069.saturn.lib.mathematics.units.degree
 import frc.team4069.saturn.lib.motor.SaturnSRX
 import frc.team4069.saturn.lib.util.Source
 
 class SaturnPigeon(parentTalon: SaturnSRX<*>) : PigeonIMU(parentTalon), Source<Rotation2d> {
+    // Accessors for Yaw, Pitch, and Roll.
+    // fusedHeading is equivalent to yaw
+    private var pitchOffset = Double.NaN
+    private var rollOffset = Double.NaN
+
+    init {
+        val p = pitch
+        if (!(p epsilonEquals 0.0)) {
+            pitchOffset = p
+        }
+
+        val r = roll
+        if(!(r epsilonEquals 0.0)) {
+            rollOffset = r
+        }
+    }
+
     val fusedHeading: Rotation2d
         get() = (-this.getFusedHeading()).degree
+
+    val pitch: Double
+        get() {
+            val ypr = DoubleArray(3)
+            getYawPitchRoll(ypr)
+            return if (pitchOffset.isFinite()) {
+                ypr[1] - pitchOffset
+            } else {
+                ypr[1]
+            }
+        }
+
+    val roll: Double
+        get() {
+            val ypr = DoubleArray(3)
+            getYawPitchRoll(ypr)
+
+            return if(rollOffset.isFinite()) {
+                ypr[2] - rollOffset
+            } else {
+                ypr[2]
+            }
+        }
 
     val quaternion: Quaternion
         get() {

@@ -1,12 +1,5 @@
-import edu.wpi.first.gradlerio.GradleRIOPlugin
-import edu.wpi.first.gradlerio.frc.FRCJavaArtifact
-import edu.wpi.first.gradlerio.frc.FRCPlugin
-import edu.wpi.first.gradlerio.frc.RoboRIO
-import edu.wpi.first.gradlerio.wpi.dependencies.WPIVendorDepsExtension
+
 import edu.wpi.first.toolchain.NativePlatforms
-import jaci.gradle.deploy.artifact.ArtifactsExtension
-import jaci.gradle.deploy.artifact.FileTreeArtifact
-import jaci.gradle.deploy.target.TargetsExtension
 
 plugins {
     kotlin("jvm") version "1.3.11"
@@ -40,7 +33,7 @@ publishing {
         create<MavenPublication>("mavenLocal") {
             groupId = "frc.team4069"
             artifactId = "SaturnLibrary"
-            version = "2019.2.07"
+            version = "2019.2.8"
             
             from(components["java"])
         }
