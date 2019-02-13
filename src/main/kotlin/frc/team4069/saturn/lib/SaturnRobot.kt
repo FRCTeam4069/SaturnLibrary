@@ -10,11 +10,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.commands.SubsystemHandler
 import frc.team4069.saturn.lib.hid.SaturnHID
+import frc.team4069.saturn.lib.mathematics.units.Time
+import frc.team4069.saturn.lib.mathematics.units.millisecond
 import frc.team4069.saturn.lib.util.BrownoutWatchdog
+import kotlin.concurrent.fixedRateTimer
 
 const val kLanguageKotlin = 6
 
-abstract class SaturnRobot : RobotBase() {
+abstract class SaturnRobot(val period: Time = 20.millisecond) : RobotBase() {
     companion object {
         @Suppress("LateinitUsage")
         lateinit var INSTANCE: SaturnRobot
@@ -44,7 +47,7 @@ abstract class SaturnRobot : RobotBase() {
 
     protected abstract fun initialize()
 
-    protected open fun periodic(mode: Mode) {}
+    protected open fun periodic() {}
 
     protected open fun notifyBrownout() {}
 
@@ -60,8 +63,8 @@ abstract class SaturnRobot : RobotBase() {
 
         HAL.observeUserProgramStarting()
 
-        while(true) {
-            m_ds.waitForData()
+        fixedRateTimer("Robot Loop", period = period.millisecond.toLong()) {
+//            m_ds.waitForData()
 
             val newMode = when {
                 isDisabled -> Mode.DISABLED
@@ -106,7 +109,7 @@ abstract class SaturnRobot : RobotBase() {
 
             Scheduler.getInstance().run()
 
-            periodic(currentMode)
+            periodic()
         }
     }
 
