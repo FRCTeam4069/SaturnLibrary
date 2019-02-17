@@ -13,7 +13,8 @@ import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.mathematics.units.Time
 import frc.team4069.saturn.lib.mathematics.units.millisecond
 import frc.team4069.saturn.lib.util.BrownoutWatchdog
-import kotlin.concurrent.fixedRateTimer
+import frc.team4069.saturn.lib.util.launchFrequency
+import kotlinx.coroutines.GlobalScope
 
 const val kLanguageKotlin = 6
 
@@ -47,7 +48,7 @@ abstract class SaturnRobot(val period: Time = 20.millisecond) : RobotBase() {
 
     protected abstract fun initialize()
 
-    protected open fun periodic() {}
+    protected open suspend fun periodic() {}
 
     protected open fun notifyBrownout() {}
 
@@ -63,7 +64,7 @@ abstract class SaturnRobot(val period: Time = 20.millisecond) : RobotBase() {
 
         HAL.observeUserProgramStarting()
 
-        fixedRateTimer("Robot Loop", period = period.millisecond.toLong()) {
+        GlobalScope.launchFrequency((1 / period.second).toInt()) {
 //            m_ds.waitForData()
 
             val newMode = when {
@@ -110,6 +111,10 @@ abstract class SaturnRobot(val period: Time = 20.millisecond) : RobotBase() {
             Scheduler.getInstance().run()
 
             periodic()
+        }
+
+        while(true) {
+            Thread.sleep(60 * 60)
         }
     }
 

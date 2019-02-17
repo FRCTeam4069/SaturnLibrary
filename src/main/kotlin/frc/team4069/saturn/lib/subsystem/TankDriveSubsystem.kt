@@ -9,6 +9,7 @@ import frc.team4069.saturn.lib.localization.Localization
 import frc.team4069.saturn.lib.mathematics.units.Length
 import frc.team4069.saturn.lib.motor.SaturnSRX
 import frc.team4069.saturn.lib.sensors.SaturnPigeon
+import frc.team4069.saturn.lib.util.LowPassFilter
 import kotlin.math.absoluteValue
 import kotlin.math.max
 
@@ -23,6 +24,9 @@ abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
     abstract val rightMotor: SaturnSRX<Length>
 
     abstract val gyro: SaturnPigeon
+
+    private val leftLpf = LowPassFilter(150)
+    private val rightLpf = LowPassFilter(150)
 
     var robotPosition
         get() = localization.robotPosition
@@ -107,8 +111,8 @@ abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
     }
 
     fun tankDrive(left: Double, right: Double) {
-        leftMotor.set(ControlMode.PercentOutput, left)
-        rightMotor.set(ControlMode.PercentOutput, right)
+        leftMotor.set(ControlMode.PercentOutput, leftLpf.calculate(left))
+        rightMotor.set(ControlMode.PercentOutput, rightLpf.calculate(right))
     }
 
     companion object {
