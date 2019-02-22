@@ -10,6 +10,9 @@ import frc.team4069.saturn.lib.mathematics.kEpsilon
 import frc.team4069.saturn.lib.mathematics.units.Length
 import frc.team4069.saturn.lib.mathematics.units.Rotation2d
 import frc.team4069.saturn.lib.mathematics.units.meter
+import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.sin
 
 class Twist2d(
         internal val _dx: Double,
@@ -29,10 +32,10 @@ class Twist2d(
     val asPose: Pose2d
         get() {
             val dTheta = this.dTheta.radian
-            val sinTheta = Math.sin(dTheta)
-            val cosTheta = Math.cos(dTheta)
+            val sinTheta = sin(dTheta)
+            val cosTheta = cos(dTheta)
 
-            val (s, c) = if (Math.abs(dTheta) < kEpsilon) {
+            val (s, c) = if (dTheta.absoluteValue < kEpsilon) {
                 1.0 - 1.0 / 6.0 * dTheta * dTheta to .5 * dTheta
             } else {
                 sinTheta / dTheta to (1.0 - cosTheta) / dTheta

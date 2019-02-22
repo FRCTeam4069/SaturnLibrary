@@ -26,7 +26,7 @@ class SaturnPigeon(parentTalon: SaturnSRX<*>) : PigeonIMU(parentTalon), Source<R
     }
 
     val fusedHeading: Rotation2d
-        get() = (-this.getFusedHeading()).degree
+        get() = this.getFusedHeading().degree
 
     val pitch: Double
         get() {
