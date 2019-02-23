@@ -1,21 +1,74 @@
 package frc.team4069.saturn.lib.mathematics.control
 
+import frc.team4069.saturn.lib.mathematics.control.coeffs.StateSpaceControllerCoeffs
+import koma.extensions.get
+import koma.extensions.set
 import koma.matrix.Matrix
+import koma.util.validation.validate
+import koma.zeros
 
 typealias RealMatrix = Matrix<Double> // Faster to type
 
-data class StateSpaceGains(val A: RealMatrix, val B: RealMatrix, val C: RealMatrix, val D: RealMatrix,
-                           val K: RealMatrix, val Umax: RealMatrix, val Umin: RealMatrix)
+class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateSpacePlant) {
+    private val index = 0
+    private val coefficients = mutableListOf(coeffs)
+    internal var enabled = false
 
+    internal val states = plant.states
+    internal val inputs = plant.inputs
+    internal val outputs = plant.outputs
 
-class StateSpaceController(gains: StateSpaceGains) {
-    private val A = gains.A
-    private val B = gains.B
-    private val C = gains.C
-    private val D = gains.D
-    private val K = gains.K
-    private val Umin = gains.Umin
-    private val Umax = gains.Umax
+    val K: RealMatrix get() = coefficients[index].K
+    val Kff: RealMatrix get() = coefficients[index].Kff
+    val Umin: RealMatrix get() = coefficients[index].Umin
+    val Umax: RealMatrix get() = coefficients[index].Umax
 
-    fun update(r: RealMatrix, x: RealMatrix): RealMatrix = K * (r - x)
+    var r = zeros(states, 1)
+    var u = zeros(inputs, 1)
+
+    fun K(i: Int, j: Int) = K[i, j]
+    fun Kff(i: Int, j: Int) = Kff[i, j]
+    fun Umin(i: Int, j: Int) = Umin[i, j]
+    fun Umax(i: Int, j: Int) = Umax[i, j]
+
+    fun enable() {
+        enabled = true
+    }
+
+    fun disable() {
+        enabled = false
+        u = zeros(inputs, 1)
+    }
+
+    fun reset() {
+        r = zeros(states, 1)
+        u = zeros(inputs, 1)
+    }
+
+    fun update(x: RealMatrix) {
+        update(x, r)
+    }
+
+    fun update(x: RealMatrix, nextR: RealMatrix) {
+        validate {
+            x("x") { states x 1 }
+            nextR("r") { states x 1 }
+        }
+
+        if (enabled) {
+            u = K * (r - x) + Kff * (nextR - plant.A * r)
+            capU()
+            r = nextR
+        }
+    }
+
+    private fun capU() {
+        for (i in 0..inputs) {
+            if (u[i, 0] > Umax[i, 0]) {
+                u[i, 0] = Umax[i, 0]
+            } else if (u[i, 0] < Umin[i, 0]) {
+                u[i, 0] = Umin[i, 0]
+            }
+        }
+    }
 }
