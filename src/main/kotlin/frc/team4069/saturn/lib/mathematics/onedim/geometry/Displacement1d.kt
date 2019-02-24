@@ -1,17 +1,23 @@
 package frc.team4069.saturn.lib.mathematics.onedim.geometry
 
 import frc.team4069.saturn.lib.mathematics.kEpsilon
+import frc.team4069.saturn.lib.mathematics.units.Length
+import frc.team4069.saturn.lib.mathematics.units.meter
 import frc.team4069.saturn.lib.types.VaryInterpolatable
 import java.text.DecimalFormat
 
-class Displacement1d(val x: Double) : VaryInterpolatable<Displacement1d> {
+class Displacement1d internal constructor(internal val _x: Double) : VaryInterpolatable<Displacement1d> {
 
     constructor() : this(0.0)
+    constructor(x: Length) : this(x.meter)
 
-    fun addDisplacement(other: Displacement1d) = Displacement1d(x + other.x)
+    val x: Length
+        get() = _x.meter
+
+    operator fun plus(other: Displacement1d) = Displacement1d(x + other.x)
 
     override fun distance(other: Displacement1d): Double {
-        return other.x - this.x
+        return other._x - this._x
     }
 
     override fun equals(other: Any?): Boolean {
