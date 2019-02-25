@@ -19,8 +19,8 @@ val LinearVelocity.feetPerMinute get() = feetPerSecond * secondsPerMinute
 val LinearVelocity.inchesPerSecond get() = value * meterToInches
 
 class Velocity<T : SIValue<T>>(
-    override val value: Double,
-    internal val type: T
+        override val value: Double,
+        internal val type: T
 ) : SIValue<Velocity<T>> {
     override fun createNew(newValue: Double) = Velocity(newValue, type)
 

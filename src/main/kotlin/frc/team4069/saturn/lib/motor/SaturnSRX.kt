@@ -30,7 +30,6 @@ open class SaturnSRX<T : SIUnit<T>>(
     var kF by observable(0.0) { _, _, newValue -> config_kF(0, newValue, timeoutInt) }
     var encoderPhase by observable(false) { _, _, newValue -> setSensorPhase(newValue) }
 
-
     var overrideLimitSwitchesEnable by observable(false) { _, _, newValue ->
         overrideLimitSwitchesEnable(newValue)
     }

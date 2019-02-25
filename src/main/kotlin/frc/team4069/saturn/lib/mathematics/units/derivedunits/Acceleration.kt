@@ -13,8 +13,8 @@ typealias LinearAcceleration = Acceleration<Length>
 typealias AngularAcceleration = Acceleration<Rotation2d>
 
 class Acceleration<T : SIValue<T>>(
-    override val value: Double,
-    internal val type: T
+        override val value: Double,
+        internal val type: T
 ) : SIValue<Acceleration<T>> {
     override fun createNew(newValue: Double) = Acceleration(newValue, type)
 

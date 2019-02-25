@@ -63,7 +63,7 @@ class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateS
     }
 
     private fun capU() {
-        for (i in 0..inputs) {
+        for (i in 0 until inputs) {
             if (u[i, 0] > Umax[i, 0]) {
                 u[i, 0] = Umax[i, 0]
             } else if (u[i, 0] < Umin[i, 0]) {
