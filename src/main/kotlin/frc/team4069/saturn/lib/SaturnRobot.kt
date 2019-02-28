@@ -11,6 +11,7 @@ import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.commands.SubsystemHandler
 import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.mathematics.units.Time
+import frc.team4069.saturn.lib.mathematics.units.derivedunits.hertz
 import frc.team4069.saturn.lib.mathematics.units.millisecond
 import frc.team4069.saturn.lib.util.BrownoutWatchdog
 import frc.team4069.saturn.lib.util.launchFrequency
@@ -64,7 +65,7 @@ abstract class SaturnRobot(val period: Time = 20.millisecond) : RobotBase() {
 
         HAL.observeUserProgramStarting()
 
-        GlobalScope.launchFrequency((1 / period.second).toInt()) {
+        GlobalScope.launchFrequency((1 / period.second).hertz) {
 //            m_ds.waitForData()
 
             val newMode = when {
