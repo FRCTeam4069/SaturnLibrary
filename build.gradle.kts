@@ -33,7 +33,7 @@ publishing {
         create<MavenPublication>("mavenLocal") {
             groupId = "frc.team4069"
             artifactId = "SaturnLibrary"
-            version = "2019.2.25"
+            version = "2019.3.1"
             
             from(components["java"])
         }
