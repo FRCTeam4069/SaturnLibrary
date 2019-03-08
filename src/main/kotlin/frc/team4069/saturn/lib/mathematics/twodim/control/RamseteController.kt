@@ -31,7 +31,7 @@ open class RamseteController(
         }
     }
 
-    val markerTolerance = 2.inch
+    var markerTolerance = 2.inch
     private val locationListeners = mutableMapOf<Pose2d, () -> Unit>()
 
     var lastTime = -1L
