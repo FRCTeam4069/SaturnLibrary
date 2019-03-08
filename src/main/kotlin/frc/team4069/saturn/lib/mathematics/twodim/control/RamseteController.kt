@@ -5,7 +5,8 @@ import frc.team4069.saturn.lib.mathematics.epsilonEquals
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedTrajectory
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.feetPerSecond
+import frc.team4069.saturn.lib.mathematics.units.degree
+import frc.team4069.saturn.lib.mathematics.units.inch
 import frc.team4069.saturn.lib.mathematics.units.millisecond
 import frc.team4069.saturn.lib.util.DeltaTime
 import kotlin.math.pow
@@ -15,9 +16,9 @@ import kotlin.math.sqrt
 // https://www.dis.uniroma1.it/~labrob/pub/papers/Ramsete01.pdf
 // Equation 5.12
 open class RamseteController(
-    val trajectory: TimedTrajectory<Pose2dWithCurvature>,
-    private val b: Double,
-    private val zeta: Double
+        val trajectory: TimedTrajectory<Pose2dWithCurvature>,
+        private val b: Double,
+        private val zeta: Double
 ) {
 
     init {
@@ -30,6 +31,7 @@ open class RamseteController(
         }
     }
 
+    val markerTolerance = 2.inch
     private val locationListeners = mutableMapOf<Pose2d, () -> Unit>()
 
     var lastTime = -1L
@@ -64,16 +66,20 @@ open class RamseteController(
 
         lastTime = currentTime
 
-        locationListeners.asSequence().filter { robotPose fuzzyEquals it.key }
-            .forEach { (pose, listener) ->
-                locationListeners.remove(pose)
-                listener()
-            }
+        locationListeners.asSequence().filter { (pose, _) ->
+            (robotPose.translation.x - pose.translation.x).absoluteValue < markerTolerance &&
+                    (robotPose.translation.y - pose.translation.y).absoluteValue < markerTolerance &&
+                    (robotPose.rotation - pose.rotation) < 10.degree
+        }
+                .forEach { (pose, listener) ->
+                    locationListeners.remove(pose)
+                    listener()
+                }
 
 
         return DifferentialDrive.ChassisState(
-            linear = v,
-            angular = w
+                linear = v,
+                angular = w
         )
     }
 
