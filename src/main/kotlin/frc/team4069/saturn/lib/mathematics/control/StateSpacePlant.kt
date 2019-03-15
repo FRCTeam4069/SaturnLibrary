@@ -27,11 +27,11 @@ class StateSpacePlant(coeffs: StateSpacePlantCoeffs) {
             u("u") { inputs x 1 }
         }
 
-        x = updateX(u)
+        x = updateX(x, u)
         y = updateY(u)
     }
 
-    internal fun updateX(u: RealMatrix): RealMatrix = A * x + B * u
+    internal fun updateX(x: RealMatrix, u: RealMatrix): RealMatrix = A * x + B * u
 
     internal fun updateY(u: RealMatrix): RealMatrix = C * x + D * u
 

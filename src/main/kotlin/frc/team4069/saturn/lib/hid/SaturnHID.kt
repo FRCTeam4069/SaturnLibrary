@@ -3,6 +3,7 @@ package frc.team4069.saturn.lib.hid
 import edu.wpi.first.wpilibj.GenericHID
 import frc.team4069.saturn.lib.commands.SaturnCommand
 import frc.team4069.saturn.lib.util.BooleanSource
+import kotlin.properties.Delegates
 
 enum class POVSide(val angle: Int) {
     UP(0),
@@ -87,6 +88,14 @@ class SaturnHID<T : GenericHID>(
 
     fun getRawAxis(axisId: Int): Double = genericHID.getRawAxis(axisId)
     fun getRawButton(buttonId: Int): Boolean = genericHID.getRawButton(buttonId)
+
+    var leftRumble by Delegates.observable(0.0) { _, _, new ->
+        genericHID.setRumble(GenericHID.RumbleType.kLeftRumble, new)
+    }
+
+    var rightRumble by Delegates.observable(0.0) { _, _, new ->
+        genericHID.setRumble(GenericHID.RumbleType.kRightRumble, new)
+    }
 
     fun update() {
         controls.forEach { it.update() }

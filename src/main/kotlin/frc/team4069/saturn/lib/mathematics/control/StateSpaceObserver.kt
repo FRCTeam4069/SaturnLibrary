@@ -19,7 +19,7 @@ class StateSpaceObserver(coeffs: StateSpaceObserverCoeffs, val plant: StateSpace
     }
 
     fun predict(newU: RealMatrix) {
-        xHat = plant.updateX(newU)
+        xHat = plant.updateX(xHat, newU)
     }
 
     fun correct(u: RealMatrix, y: RealMatrix) {
