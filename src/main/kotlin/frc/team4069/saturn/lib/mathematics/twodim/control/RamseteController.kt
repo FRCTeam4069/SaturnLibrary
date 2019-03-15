@@ -4,6 +4,7 @@ import com.team254.lib.physics.DifferentialDrive
 import frc.team4069.saturn.lib.mathematics.epsilonEquals
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rectangle2d
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedTrajectory
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.feetPerSecond
 import frc.team4069.saturn.lib.mathematics.units.millisecond
@@ -21,7 +22,7 @@ open class RamseteController(
 ) {
 
     init {
-        if (zeta !in 0..1) {
+        if (zeta !in 0.0..1.0) {
             throw IllegalArgumentException("Zeta must be in (0, 1)")
         }
 
@@ -30,7 +31,7 @@ open class RamseteController(
         }
     }
 
-    private val locationListeners = mutableMapOf<Pose2d, () -> Unit>()
+    private val locationListeners = mutableMapOf<Rectangle2d, () -> Unit>()
 
     var lastTime = -1L
     val iterator = trajectory.iterator()
@@ -46,7 +47,7 @@ open class RamseteController(
 
     val deltaTimeController = DeltaTime()
 
-    fun addMarker(atPose: Pose2d, callback: () -> Unit) = locationListeners.put(atPose, callback)
+    fun addMarker(container: Rectangle2d, callback: () -> Unit) = locationListeners.put(container, callback)
 
     fun update(robotPose: Pose2d, currentTime: Long = System.currentTimeMillis()): DifferentialDrive.ChassisState {
         val dt = deltaTimeController.updateTime(currentTime.millisecond)
@@ -64,9 +65,9 @@ open class RamseteController(
 
         lastTime = currentTime
 
-        locationListeners.asSequence().filter { robotPose fuzzyEquals it.key }
-            .forEach { (pose, listener) ->
-                locationListeners.remove(pose)
+        locationListeners.asSequence().filter { (rect, _) -> rect.contains(robotPose.translation) }
+            .forEach { (rect, listener) ->
+                locationListeners.remove(rect)
                 listener()
             }
 
