@@ -56,6 +56,7 @@ abstract class SaturnRobot(val period: Time = 20.millisecond) : RobotBase() {
     override fun startCompetition() {
         HAL.report(FRCNetComm.tResourceType.kResourceType_Language, kLanguageKotlin)
         LiveWindow.setEnabled(false)
+        LiveWindow.disableAllTelemetry() // LW is doo doo
 
         initialize()
         SubsystemHandler.lateInit()
