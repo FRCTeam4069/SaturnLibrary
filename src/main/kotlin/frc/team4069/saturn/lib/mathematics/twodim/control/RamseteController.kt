@@ -66,7 +66,7 @@ open class RamseteController(
 
         lastTime = currentTime
 
-        locationListeners.asSequence().filter { (rect, _) -> rect.contains(robotPose.translation) }
+        locationListeners.filter { (rect, _) -> rect.contains(robotPose.translation) }
             .forEach { (rect, listener) ->
                 locationListeners.remove(rect)
                 listener()
