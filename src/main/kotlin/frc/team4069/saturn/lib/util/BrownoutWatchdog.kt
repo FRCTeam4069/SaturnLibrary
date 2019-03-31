@@ -9,13 +9,15 @@ import edu.wpi.first.wpilibj.RobotController
  */
 class BrownoutWatchdog(val notify: () -> Unit) {
     // How many brownouts have occurred so far
-    var voltageFaults = 0
+    private var voltageFaults = 0
 
     // Is the controller currently browning out
-    var browningOut = false
+    private var browningOut = false
 
     // Has user code been notified
-    var notified = false
+    private var notified = false
+
+    var threshold = FAULT_THRESHOLD
 
     /**
      * Updates the internal state of the watchdog, notifying user code if
@@ -33,13 +35,13 @@ class BrownoutWatchdog(val notify: () -> Unit) {
             }
         }
 
-        if(voltageFaults >= FAULT_THRESHOLD && !notified) {
+        if(voltageFaults >= threshold && !notified) {
             notified = true
             notify()
         }
     }
 
     companion object {
-        const val FAULT_THRESHOLD = 3
+        const val FAULT_THRESHOLD = 10
     }
 }

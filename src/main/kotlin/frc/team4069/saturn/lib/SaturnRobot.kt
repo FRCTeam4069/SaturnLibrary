@@ -40,6 +40,13 @@ abstract class SaturnRobot(val period: Time = 20.millisecond) : RobotBase() {
     }
 
     private val brownoutWatchdog = BrownoutWatchdog(::notifyBrownout)
+
+    protected var brownoutThreshold
+        get() = brownoutWatchdog.threshold
+        set(value) {
+            brownoutWatchdog.threshold = value
+        }
+
     var currentMode = Mode.NONE
         private set
     private val controls = mutableListOf<SaturnHID<*>>()
