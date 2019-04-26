@@ -23,8 +23,8 @@ class CharacterizationCommand(val driveSubsystem: TankDriveSubsystem) : SaturnCo
 
         val battery = RobotController.getBatteryVoltage()
 
-        val lvolt = driveSubsystem.leftMotor.motorOutputVoltage
-        val rvolt = driveSubsystem.rightMotor.motorOutputVoltage
+        val lvolt = driveSubsystem.leftMotor.motorOutputVoltage.value
+        val rvolt = driveSubsystem.rightMotor.motorOutputVoltage.value
 
         val spd = speed.getDouble(0.0)
         priorSpd = spd

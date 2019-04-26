@@ -15,14 +15,19 @@ import kotlin.properties.Delegates.observable
 
 open class SaturnSRX<T : SIUnit<T>>(
     id: Int,
-    private val model: NativeUnitModel<T>,
+    override val model: NativeUnitModel<T>,
     timeout: Time = 10.millisecond
-) : WPI_TalonSRX(id) {
+) : WPI_TalonSRX(id), SaturnMotor<T> {
     private val timeoutInt = timeout.millisecond.toInt()
 
     init {
         configFactoryDefault()
     }
+
+    /**
+     * Whether SaturnMotor override should use MotionMagic or Position
+     */
+    var useMotionMagic = true
 
     var kP by observable(0.0) { _, _, newValue -> config_kP(0, newValue, timeoutInt) }
     var kI by observable(0.0) { _, _, newValue -> config_kI(0, newValue, timeoutInt) }
@@ -108,17 +113,33 @@ open class SaturnSRX<T : SIUnit<T>>(
         enableVoltageCompensation(newValue)
     }
 
-    var sensorPosition
+    override var sensorPosition
         get() = getSelectedSensorPosition(0).STU.toModel(model)
         set(pos) {
             setSelectedSensorPosition(model.fromModel(pos).value.toInt(), 0, timeoutInt)
         }
 
-    val sensorVelocity get() = getSelectedSensorVelocity(0).STUPer100ms.toModel(model)
+    override val sensorVelocity get() = getSelectedSensorVelocity(0).STUPer100ms.toModel(model)
+
+    override val motorOutputVoltage get() = getMotorOutputVoltage().volt
+
+    override fun setPercentOutput(duty: Double) {
+        set(ControlMode.PercentOutput, duty)
+    }
+
+    override fun setPosition(position: T) = if(useMotionMagic) {
+        set(ControlMode.MotionMagic, position)
+    }else {
+        set(ControlMode.Position, position)
+    }
 
     fun set(controlMode: ControlMode, length: T) = set(controlMode, length.fromModel(model).value)
 
     fun set(controlMode: ControlMode, velocity: Velocity<T>) = set(controlMode, velocity, DemandType.ArbitraryFeedForward, 0.0)
+
+    override fun setClosedLoopVelocity(velocity: Velocity<T>, arbitraryFeedForward: Double) {
+        this.set(ControlMode.Velocity, velocity, DemandType.ArbitraryFeedForward, arbitraryFeedForward)
+    }
 
     fun set(
         controlMode: ControlMode,

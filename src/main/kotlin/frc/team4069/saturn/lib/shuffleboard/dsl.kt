@@ -26,7 +26,7 @@ class SendableChooserDsl<T>(val chooser: SendableChooser<T>) {
             chooser.setDefaultOption(defaultKey!!, values.remove(defaultKey!!)!!)
         }
 
-        values.forEach { s, v -> chooser.addOption(s, v) }
+        values.forEach { (s, v) -> chooser.addOption(s, v) }
         return chooser
     }
 }

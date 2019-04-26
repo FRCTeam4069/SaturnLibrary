@@ -1,13 +1,12 @@
 package frc.team4069.saturn.lib.subsystem
 
-import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.debug.LiveDashboard
 import frc.team4069.saturn.lib.localization.Localization
 import frc.team4069.saturn.lib.mathematics.units.Length
-import frc.team4069.saturn.lib.motor.SaturnSRX
+import frc.team4069.saturn.lib.motor.SaturnMotor
 import frc.team4069.saturn.lib.sensors.SaturnPigeon
 import kotlin.math.absoluteValue
 import kotlin.math.max
@@ -19,8 +18,8 @@ abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
 
     //TODO: Make these more generic than CTRE wrappers(?)
 
-    abstract val leftMotor: SaturnSRX<Length>
-    abstract val rightMotor: SaturnSRX<Length>
+    abstract val leftMotor: SaturnMotor<Length>
+    abstract val rightMotor: SaturnMotor<Length>
 
     abstract val gyro: SaturnPigeon
 
@@ -107,8 +106,8 @@ abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
     }
 
     fun tankDrive(left: Double, right: Double) {
-        leftMotor.set(ControlMode.PercentOutput, left)
-        rightMotor.set(ControlMode.PercentOutput, right)
+        leftMotor.setPercentOutput(left)
+        rightMotor.setPercentOutput(right)
     }
 
     companion object {

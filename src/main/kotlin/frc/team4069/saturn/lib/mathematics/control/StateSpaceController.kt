@@ -49,16 +49,23 @@ class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateS
         update(x, r)
     }
 
-    fun update(x: RealMatrix, nextR: RealMatrix) {
+    fun update(x: RealMatrix, nextR: RealMatrix? = null) {
         validate {
             x("x") { states x 1 }
-            nextR("r") { states x 1 }
+            if(nextR != null) {
+                nextR("r") { states x 1 }
+            }
         }
 
         if (enabled) {
-            u = K * (r - x) + Kff * (nextR - plant.A * r)
+            u = if (nextR == null) {
+                K * (r - x)
+            } else {
+                r = nextR
+                K * (r - x) + Kff * (nextR - plant.A * r)
+            }
+//            u = K * (r - x) + Kff * (nextR - plant.A * r)
             capU()
-            r = nextR
         }
     }
 

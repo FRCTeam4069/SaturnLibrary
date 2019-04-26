@@ -2,7 +2,7 @@
 import edu.wpi.first.toolchain.NativePlatforms
 
 plugins {
-    kotlin("jvm") version "1.3.11"
+    kotlin("jvm") version "1.3.31"
     id("edu.wpi.first.GradleRIO") version "2019.3.2"
     maven
     `maven-publish`
