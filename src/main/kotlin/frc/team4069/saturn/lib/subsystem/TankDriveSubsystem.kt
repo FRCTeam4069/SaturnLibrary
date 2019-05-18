@@ -10,13 +10,12 @@ import frc.team4069.saturn.lib.motor.SaturnMotor
 import frc.team4069.saturn.lib.sensors.SaturnPigeon
 import kotlin.math.absoluteValue
 import kotlin.math.max
+import com.team254.lib.physics.DifferentialDrive as DifferentialDriveModel
 
 abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
     private var quickStopAccumulator = 0.0
 
     abstract val localization: Localization
-
-    //TODO: Make these more generic than CTRE wrappers(?)
 
     abstract val leftMotor: SaturnMotor<Length>
     abstract val rightMotor: SaturnMotor<Length>
@@ -106,8 +105,8 @@ abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
     }
 
     fun tankDrive(left: Double, right: Double) {
-        leftMotor.setPercentOutput(left)
-        rightMotor.setPercentOutput(right)
+        leftMotor.setDutyCycle(left, 0.0)
+        rightMotor.setDutyCycle(right, 0.0)
     }
 
     companion object {

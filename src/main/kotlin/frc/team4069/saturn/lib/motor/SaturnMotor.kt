@@ -1,32 +1,79 @@
 package frc.team4069.saturn.lib.motor
 
+import frc.team4069.saturn.lib.mathematics.units.Length
+import frc.team4069.saturn.lib.mathematics.units.Rotation2d
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
+import frc.team4069.saturn.lib.mathematics.units.derivedunits.Acceleration
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.Velocity
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Volt
-import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitModel
 
-/**
- * Represents a platform-agnostic smart motor controller
- */
-interface SaturnMotor<T: SIUnit<T>> {
-    val model: NativeUnitModel<T>
+typealias LinearFalconMotor = SaturnMotor<Length>
+typealias AngularFalconMotor = SaturnMotor<Rotation2d>
 
-    val sensorPosition: T
-    val sensorVelocity: Velocity<T>
-    val motorOutputVoltage: Volt
+interface SaturnMotor<T : SIUnit<T>> {
 
     /**
-     * Sets a percent output to the motor controller
+     * The encoder attached to the motor
      */
-    fun setPercentOutput(duty: Double)
+    val encoder: SaturnEncoder<T>
+    /**
+     * The voltage output of the motor controller in volts
+     */
+    val voltageOutput: Double
 
     /**
-     * Sets a position closed loop to the motor controller
+     * Inverts the output given to the motor
      */
-    fun setPosition(unit: T)
+    var outputInverted: Boolean
 
     /**
-     * Sets a velocity closed loop to the motor controller, with optional arbitrary feedforward
+     *  When enabled, motor leads are commonized electrically to reduce motion
      */
-    fun setClosedLoopVelocity(velocity: Velocity<T>, arbitraryFeedForward: Double = 0.0)
+    var brakeMode: Boolean
+
+    /**
+     * Configures the max voltage output given to the motor
+     */
+    var voltageCompSaturation: Double
+
+    /**
+     *  Peak target velocity that the on board motion profile generator will use
+     *  Unit is [T]/s
+     */
+    var motionProfileCruiseVelocity: Velocity<T>
+    /**
+     *  Acceleration that the on board motion profile generator will
+     *  Unit is [T]/s/s
+     */
+    var motionProfileAcceleration: Acceleration<T>
+    /**
+     * Enables the use of on board motion profiling for position mode
+     */
+    var useMotionProfileForPosition: Boolean
+
+    fun follow(motor: SaturnMotor<*>): Boolean
+
+    /**
+     * Sets the output [voltage] in volts and [arbitraryFeedForward] in volts
+     */
+    fun setVoltage(voltage: Double, arbitraryFeedForward: Double = 0.0)
+
+    /**
+     * Sets the output [dutyCycle] in percent and [arbitraryFeedForward] in volts
+     */
+    fun setDutyCycle(dutyCycle: Double, arbitraryFeedForward: Double = 0.0)
+
+    /**
+     * Sets the output [velocity] in [T]/s and [arbitraryFeedForward] in volts
+     */
+    fun setVelocity(velocity: Velocity<T>, arbitraryFeedForward: Double = 0.0)
+
+    /**
+     * Sets the output [position] in [T] and [arbitraryFeedForward] in volts
+     */
+    fun setPosition(position: T, arbitraryFeedForward: Double = 0.0)
+
+    /**
+     * Sets the output of the motor to neutral
+     */
+    fun setNeutral()
 }

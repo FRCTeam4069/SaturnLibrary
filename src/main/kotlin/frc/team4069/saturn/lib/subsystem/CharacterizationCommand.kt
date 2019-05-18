@@ -15,16 +15,16 @@ class CharacterizationCommand(val driveSubsystem: TankDriveSubsystem) : SaturnCo
     override suspend fun execute() {
         val now = Timer.getFPGATimestamp()
 
-        val lpos = driveSubsystem.leftMotor.sensorPosition.meter
-        val lvel = driveSubsystem.leftMotor.sensorVelocity.value
+        val lpos = driveSubsystem.leftMotor.encoder.position.meter
+        val lvel = driveSubsystem.leftMotor.encoder.velocity.value
 
-        val rpos = driveSubsystem.rightMotor.sensorPosition.meter
-        val rvel = driveSubsystem.rightMotor.sensorVelocity.value
+        val rpos = driveSubsystem.rightMotor.encoder.position.meter
+        val rvel = driveSubsystem.rightMotor.encoder.velocity.value
 
         val battery = RobotController.getBatteryVoltage()
 
-        val lvolt = driveSubsystem.leftMotor.motorOutputVoltage.value
-        val rvolt = driveSubsystem.rightMotor.motorOutputVoltage.value
+        val lvolt = driveSubsystem.leftMotor.voltageOutput
+        val rvolt = driveSubsystem.rightMotor.voltageOutput
 
         val spd = speed.getDouble(0.0)
         priorSpd = spd
