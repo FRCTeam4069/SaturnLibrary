@@ -9,6 +9,9 @@ import koma.zeros
 
 typealias RealMatrix = Matrix<Double> // Faster to type
 
+/**
+ * A state space controller for the given plant
+ */
 class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateSpacePlant) {
     private val index = 0
     private val coefficients = mutableListOf(coeffs)
@@ -18,13 +21,35 @@ class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateS
     internal val inputs = plant.inputs
     internal val outputs = plant.outputs
 
+    /**
+     * The gain matrix
+     */
     val K: RealMatrix get() = coefficients[index].K
+
+    /**
+     * The feedforward gain matrix
+     */
     val Kff: RealMatrix get() = coefficients[index].Kff
+
+    /**
+     * The minimum value the control input can take
+     */
     val Umin: RealMatrix get() = coefficients[index].Umin
+
+    /**
+     * The maximum value the control input can take
+     */
     val Umax: RealMatrix get() = coefficients[index].Umax
 
+    /**
+     * The reference vector
+     */
     var r = zeros(states, 1)
         private set
+
+    /**
+     * The input vector (Note that it is an input to the plant)
+     */
     var u = zeros(inputs, 1)
         private set
 
@@ -33,24 +58,33 @@ class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateS
     fun Umin(i: Int, j: Int) = Umin[i, j]
     fun Umax(i: Int, j: Int) = Umax[i, j]
 
+    /**
+     * Enables this controller, allowing the value of u to be updated
+     */
     fun enable() {
         enabled = true
     }
 
+    /**
+     * Disables this controller, and resets the value of u to [0]
+     */
     fun disable() {
         enabled = false
         u = zeros(inputs, 1)
     }
 
+    /**
+     * Resets the reference and input for this controller
+     */
     fun reset() {
         r = zeros(states, 1)
         u = zeros(inputs, 1)
     }
 
-    fun update(x: RealMatrix) {
-        update(x, r)
-    }
-
+    /**
+     * Updates the state of this controller with the given state `x`, and
+     * optionally the next reference `nextR`
+     */
     fun update(x: RealMatrix, nextR: RealMatrix? = null) {
         validate {
             x("x") { states x 1 }
@@ -70,6 +104,9 @@ class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateS
         }
     }
 
+    /**
+     * Clamps the value of u to be between Umin and Umax
+     */
     private fun capU() {
         for (i in 0 until inputs) {
             if (u[i, 0] > Umax[i, 0]) {
