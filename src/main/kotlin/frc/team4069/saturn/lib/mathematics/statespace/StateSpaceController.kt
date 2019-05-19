@@ -15,11 +15,9 @@ typealias RealMatrix = Matrix<Double> // Faster to type
 class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateSpacePlant) {
     private val index = 0
     private val coefficients = mutableListOf(coeffs)
-    internal var enabled = false
 
-    internal val states = plant.states
-    internal val inputs = plant.inputs
-    internal val outputs = plant.outputs
+    private val states = plant.states
+    private val inputs = plant.inputs
 
     /**
      * The gain matrix
@@ -53,26 +51,6 @@ class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateS
     var u = zeros(inputs, 1)
         private set
 
-    fun K(i: Int, j: Int) = K[i, j]
-    fun Kff(i: Int, j: Int) = Kff[i, j]
-    fun Umin(i: Int, j: Int) = Umin[i, j]
-    fun Umax(i: Int, j: Int) = Umax[i, j]
-
-    /**
-     * Enables this controller, allowing the value of u to be updated
-     */
-    fun enable() {
-        enabled = true
-    }
-
-    /**
-     * Disables this controller, and resets the value of u to [0]
-     */
-    fun disable() {
-        enabled = false
-        u = zeros(inputs, 1)
-    }
-
     /**
      * Resets the reference and input for this controller
      */
@@ -82,26 +60,25 @@ class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateS
     }
 
     /**
-     * Updates the state of this controller with the given state `x`, and
-     * optionally the next reference `nextR`
+     * Updates the state of this controller with the given state `x` without updating the reference
      */
-    fun update(x: RealMatrix, nextR: RealMatrix? = null) {
+    fun update(x: RealMatrix) {
+        u = K * (r - x) + Kff * (r - plant.A * r)
+        capU()
+    }
+
+    /**
+     * Updates the state of this controller with the given state `x`, along with the next reference for the controller
+     */
+    fun update(x: RealMatrix, nextR: RealMatrix) {
         validate {
             x("x") { states x 1 }
-            if(nextR != null) {
-                nextR("r") { states x 1 }
-            }
+            nextR("r") { states x 1 }
         }
 
-        if (enabled) {
-            u = if (nextR == null) {
-                K * (r - x)
-            } else {
-                r = nextR
-                K * (r - x) + Kff * (nextR - plant.A * r)
-            }
-            capU()
-        }
+        u = K * (r - x) + Kff * (nextR - plant.A * r)
+        r = nextR
+        capU()
     }
 
     /**
@@ -109,11 +86,7 @@ class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateS
      */
     private fun capU() {
         for (i in 0 until inputs) {
-            if (u[i, 0] > Umax[i, 0]) {
-                u[i, 0] = Umax[i, 0]
-            } else if (u[i, 0] < Umin[i, 0]) {
-                u[i, 0] = Umin[i, 0]
-            }
+            u[i, 0] = u[i, 0].coerceIn(Umin[i, 0], Umax[i, 0])
         }
     }
 }

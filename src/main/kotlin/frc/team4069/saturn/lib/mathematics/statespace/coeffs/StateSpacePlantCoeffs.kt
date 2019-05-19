@@ -3,7 +3,7 @@ package frc.team4069.saturn.lib.mathematics.statespace.coeffs
 import frc.team4069.saturn.lib.mathematics.statespace.RealMatrix
 import koma.util.validation.validate
 
-data class StateSpacePlantCoeffs(internal val inputs: Int, internal val states: Int, internal val outputs: Int,
+data class StateSpacePlantCoeffs(val inputs: Int, val states: Int, val outputs: Int,
                                  val A: RealMatrix,
                                  val B: RealMatrix,
                                  val C: RealMatrix,

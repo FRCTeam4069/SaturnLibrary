@@ -1,7 +1,6 @@
 package frc.team4069.saturn.lib.mathematics.statespace
 
 import frc.team4069.saturn.lib.mathematics.statespace.coeffs.StateSpacePlantCoeffs
-import koma.extensions.get
 import koma.util.validation.validate
 import koma.zeros
 
@@ -35,7 +34,6 @@ class StateSpacePlant(coeffs: StateSpacePlantCoeffs) {
 
     internal val states get() = coefficients[index].states
     internal val inputs get() = coefficients[index].inputs
-    internal val outputs get() = coefficients[index].outputs
 
     /**
      * The internal state of this plant
@@ -80,13 +78,5 @@ class StateSpacePlant(coeffs: StateSpacePlantCoeffs) {
         x = zeros(states, 1)
         y = zeros(inputs, 1)
     }
-
-    /**
-     * Functions to get elements from the various system matrices
-     */
-    fun A(i: Int, j: Int) = A[i, j]
-
-    fun B(i: Int, j: Int) = B[i, j]
-    fun C(i: Int, j: Int) = C[i, j]
-    fun D(i: Int, j: Int) = D[i, j]
 }
+
