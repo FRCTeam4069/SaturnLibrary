@@ -1,6 +1,6 @@
-package frc.team4069.saturn.lib.mathematics.control
+package frc.team4069.saturn.lib.mathematics.statespace
 
-import frc.team4069.saturn.lib.mathematics.control.coeffs.StateSpaceControllerCoeffs
+import frc.team4069.saturn.lib.mathematics.statespace.coeffs.StateSpaceControllerCoeffs
 import koma.extensions.get
 import koma.extensions.set
 import koma.matrix.Matrix
@@ -24,7 +24,9 @@ class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateS
     val Umax: RealMatrix get() = coefficients[index].Umax
 
     var r = zeros(states, 1)
+        private set
     var u = zeros(inputs, 1)
+        private set
 
     fun K(i: Int, j: Int) = K[i, j]
     fun Kff(i: Int, j: Int) = Kff[i, j]
@@ -64,7 +66,6 @@ class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateS
                 r = nextR
                 K * (r - x) + Kff * (nextR - plant.A * r)
             }
-//            u = K * (r - x) + Kff * (nextR - plant.A * r)
             capU()
         }
     }

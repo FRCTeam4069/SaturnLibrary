@@ -1,4 +1,4 @@
-package frc.team4069.saturn.lib.mathematics.control
+package frc.team4069.saturn.lib.mathematics.statespace
 
 import koma.util.validation.validate
 import koma.zeros
@@ -27,6 +27,9 @@ class StateSpaceLoop(val plant: StateSpacePlant, val controller: StateSpaceContr
     var xHat
         get() = observer.xHat
         set(value) {
+            validate {
+                value("xHat") { plant.states x 1 }
+            }
             observer.xHat = value
         }
 
@@ -42,7 +45,7 @@ class StateSpaceLoop(val plant: StateSpacePlant, val controller: StateSpaceContr
     }
 
     fun predict() {
-        controller.update(nextR, observer.xHat)
+        controller.update(observer.xHat, nextR)
         observer.predict(controller.u)
     }
 

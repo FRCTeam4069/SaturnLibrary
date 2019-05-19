@@ -1,6 +1,6 @@
-package frc.team4069.saturn.lib.mathematics.control
+package frc.team4069.saturn.lib.mathematics.statespace
 
-import frc.team4069.saturn.lib.mathematics.control.coeffs.StateSpaceObserverCoeffs
+import frc.team4069.saturn.lib.mathematics.statespace.coeffs.StateSpaceObserverCoeffs
 import koma.extensions.get
 import koma.zeros
 
@@ -9,6 +9,7 @@ class StateSpaceObserver(coeffs: StateSpaceObserverCoeffs, val plant: StateSpace
     private val index = 0
 
     var xHat = zeros(plant.states, 1)
+        internal set
 
     val K: RealMatrix get() = coefficients[index].K
 

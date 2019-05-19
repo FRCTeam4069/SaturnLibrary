@@ -1,6 +1,6 @@
-package frc.team4069.saturn.lib.mathematics.control
+package frc.team4069.saturn.lib.mathematics.statespace
 
-import frc.team4069.saturn.lib.mathematics.control.coeffs.StateSpacePlantCoeffs
+import frc.team4069.saturn.lib.mathematics.statespace.coeffs.StateSpacePlantCoeffs
 import koma.extensions.get
 import koma.util.validation.validate
 import koma.zeros
@@ -19,8 +19,10 @@ class StateSpacePlant(coeffs: StateSpacePlantCoeffs) {
     internal val inputs get() = coefficients[index].inputs
     internal val outputs get() = coefficients[index].outputs
 
-    var x = RealMatrix(states, 1) { _, _ -> 0.0 }
-    var y = RealMatrix(inputs, 1) { _, _ -> 0.0 }
+    var x = zeros(states, 1)
+        private set
+    var y = zeros(inputs, 1)
+        private set
 
     fun update(u: RealMatrix) {
         validate {
