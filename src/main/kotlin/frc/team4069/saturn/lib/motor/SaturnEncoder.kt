@@ -24,6 +24,6 @@ interface SaturnEncoder<T : SIUnit<T>> {
      */
     val rawPosition: NativeUnit
 
-    fun resetPosition(newPosition: Double)
+    fun resetPosition(newPosition: T)
 
 }

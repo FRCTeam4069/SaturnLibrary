@@ -19,8 +19,8 @@ class SaturnMAXEncoder<T: SIUnit<T>>(
     override val rawPosition: NativeUnit
         get() = canEncoder.position.STU
 
-    override fun resetPosition(newPosition: Double) {
-        canEncoder.position = newPosition
+    override fun resetPosition(newPosition: T) {
+        canEncoder.position = model.toNativeUnitPosition(newPosition).value
     }
 
 }

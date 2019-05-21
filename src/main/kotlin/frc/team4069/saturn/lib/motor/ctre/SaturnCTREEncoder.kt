@@ -21,7 +21,7 @@ class SaturnCTREEncoder<T: SIUnit<T>>(
         motorController.setSensorPhase(newValue)
     }
 
-    override fun resetPosition(newPosition: Double) {
-        motorController.setSelectedSensorPosition(newPosition.toInt(), pidIdx, 0)
+    override fun resetPosition(newPosition: T) {
+        motorController.setSelectedSensorPosition(model.toNativeUnitPosition(newPosition).value.toInt(), pidIdx, 0)
     }
 }

@@ -6,8 +6,9 @@ import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.debug.LiveDashboard
 import frc.team4069.saturn.lib.localization.Localization
 import frc.team4069.saturn.lib.mathematics.units.Length
+import frc.team4069.saturn.lib.mathematics.units.Rotation2d
 import frc.team4069.saturn.lib.motor.SaturnMotor
-import frc.team4069.saturn.lib.sensors.SaturnPigeon
+import frc.team4069.saturn.lib.util.Source
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import com.team254.lib.physics.DifferentialDrive as DifferentialDriveModel
@@ -20,7 +21,7 @@ abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
     abstract val leftMotor: SaturnMotor<Length>
     abstract val rightMotor: SaturnMotor<Length>
 
-    abstract val gyro: SaturnPigeon
+    abstract val gyro: Source<Rotation2d>
 
     var robotPosition
         get() = localization.robotPosition
