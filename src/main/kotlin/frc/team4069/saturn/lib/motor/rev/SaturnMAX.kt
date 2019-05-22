@@ -11,9 +11,10 @@ import frc.team4069.saturn.lib.mathematics.units.derivedunits.acceleration
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.velocity
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitModel
 import frc.team4069.saturn.lib.motor.AbstractSaturnMotor
+import frc.team4069.saturn.lib.motor.SaturnMotor
 import kotlin.properties.Delegates
 
-class SaturnMAX<T: SIUnit<T>>(
+class SaturnMAX<T : SIUnit<T>>(
         val canSparkMax: CANSparkMax,
         val model: NativeUnitModel<T>
 ) : AbstractSaturnMotor<T>() {
@@ -72,4 +73,12 @@ class SaturnMAX<T: SIUnit<T>>(
     }
 
     override fun setNeutral() = setDutyCycle(0.0)
+
+    override fun follow(motor: SaturnMotor<*>): Boolean =
+            if (motor is SaturnMAX<*>) {
+                canSparkMax.follow(motor.canSparkMax)
+                true
+            } else {
+                super.follow(motor)
+            }
 }
