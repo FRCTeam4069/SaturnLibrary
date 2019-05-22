@@ -105,7 +105,7 @@ abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
         tankDrive(leftMotorOutput, rightMotorOutput)
     }
 
-    fun tankDrive(left: Double, right: Double) {
+    open fun tankDrive(left: Double, right: Double) {
         leftMotor.setDutyCycle(left, 0.0)
         rightMotor.setDutyCycle(right, 0.0)
     }

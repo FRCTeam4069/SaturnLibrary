@@ -131,6 +131,9 @@ abstract class SaturnRobot(val period: Time = 20.millisecond) : RobotBase() {
     protected open fun teleopInit() {}
     protected open fun disabledInit() {}
 
-    protected operator fun SaturnSubsystem.unaryPlus() = SubsystemHandler.addSubsystem(this)
+    protected fun addToSubsystemHandler(subsystem: SaturnSubsystem) {
+        SubsystemHandler.addSubsystem(subsystem)
+    }
+
     protected operator fun SaturnHID<*>.unaryPlus() = controls.add(this)
 }
