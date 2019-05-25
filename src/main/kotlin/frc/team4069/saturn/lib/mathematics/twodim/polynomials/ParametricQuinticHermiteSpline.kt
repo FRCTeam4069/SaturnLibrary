@@ -9,24 +9,22 @@ package frc.team4069.saturn.lib.mathematics.twodim.polynomials
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Translation2d
 import frc.team4069.saturn.lib.mathematics.units.Rotation2d
-import koma.end
-import koma.extensions.get
-import koma.mat
+import frc.team4069.keigen.*
 import kotlin.math.pow
 
 class ParametricQuinticHermiteSpline(
-    private val x0: Double,
-    private val x1: Double,
-    private val dx0: Double,
-    private val dx1: Double,
-    private var ddx0: Double,
-    private var ddx1: Double,
-    private val y0: Double,
-    private val y1: Double,
-    private val dy0: Double,
-    private val dy1: Double,
-    private var ddy0: Double,
-    private var ddy1: Double
+        private val x0: Double,
+        private val x1: Double,
+        private val dx0: Double,
+        private val dx1: Double,
+        private var ddx0: Double,
+        private var ddx1: Double,
+        private val y0: Double,
+        private val y1: Double,
+        private val dy0: Double,
+        private val dy1: Double,
+        private var ddy0: Double,
+        private var ddy1: Double
 ) : ParametricSpline() {
 
     constructor(start: Pose2d, end: Pose2d) : this(
@@ -44,8 +42,8 @@ class ParametricQuinticHermiteSpline(
             ddy1 = 0.0
     )
 
-    private var xCoefficients = mat[0.0, 0.0, 0.0, 0.0, 0.0, 0.0].T
-    private var yCoefficients = mat[0.0, 0.0, 0.0, 0.0, 0.0, 0.0].T
+    private var xCoefficients = zeros(`6`)
+    private var yCoefficients = zeros(`6`)
 
     private val ax get() = xCoefficients[0]
     private val bx get() = xCoefficients[1]
@@ -73,16 +71,16 @@ class ParametricQuinticHermiteSpline(
 
     // Perform hermite matrix multiplication to compute polynomial coefficients
     private fun computeCoefficients() {
-        val hermite = mat[
-                -06.0, -03.0, -00.5, +00.5, -03.0, +06.0 end
-                        +15.0, +08.0, +01.5, -01.0, +07.0, -15.0 end
-                        -10.0, -06.0, -01.5, +00.5, -04.0, +10.0 end
-                        +00.0, +00.0, +00.5, +00.0, +00.0, +00.0 end
-                        +00.0, +01.0, +00.0, +00.0, +00.0, +00.0 end
-                        +01.0, +00.0, +00.0, +00.0, +00.0, +00.0]
+        val hermite = mat[`6`, `6`,
+                -06.0, -03.0, -00.5, +00.5, -03.0, +06.0,
+                +15.0, +08.0, +01.5, -01.0, +07.0, -15.0,
+                -10.0, -06.0, -01.5, +00.5, -04.0, +10.0,
+                +00.0, +00.0, +00.5, +00.0, +00.0, +00.0,
+                +00.0, +01.0, +00.0, +00.0, +00.0, +00.0,
+                +01.0, +00.0, +00.0, +00.0, +00.0, +00.0]
 
-        val x = mat[x0, dx0, ddx0, ddx1, dx1, x1].T
-        val y = mat[y0, dy0, ddy0, ddy1, dy1, y1].T
+        val x = vec[`6`, x0, dx0, ddx0, ddx1, dx1, x1]
+        val y = vec[`6`, y0, dy0, ddy0, ddy1, dy1, y1]
 
         xCoefficients = hermite * x
         yCoefficients = hermite * y

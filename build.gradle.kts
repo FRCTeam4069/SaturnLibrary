@@ -10,6 +10,8 @@ plugins {
 
 repositories {
     jcenter()
+    mavenLocal()
+    maven("https://jitpack.io")
     maven { setUrl("http://dl.bintray.com/kyonifer/maven") }
     maven { setUrl("https://jitpack.io") }
 }
@@ -18,7 +20,8 @@ dependencies {
     // Kotlin Standard Library and Coroutines
     compile(kotlin("stdlib"))
     compile("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.1.0")
-    compile("com.kyonifer:koma-core-ejml:0.12")
+//    compile("com.kyonifer:koma-core-ejml:0.12")
+    compile("com.github.FRCTeam4069:Keigen:6fd82041a3")
     testCompile("junit:junit:4.12")
 
     // WPILib

@@ -1,20 +1,8 @@
 package frc.team4069.saturn.lib.mathematics.statespace.coeffs
 
-import frc.team4069.saturn.lib.mathematics.statespace.RealMatrix
-import koma.util.validation.validate
+import frc.team4069.keigen.*
 
-data class StateSpaceControllerCoeffs(val inputs: Int, val states: Int,
-                                      val K: RealMatrix,
-                                      val Kff: RealMatrix,
-                                      val Umin: RealMatrix,
-                                      val Umax: RealMatrix) {
-    init {
-        // Validate dimensions of matrices. Can't be done at compile-time sadly
-        validate {
-            K("K") { inputs x states }
-            Kff("Kff") { inputs x states }
-            Umin("Umin") { inputs x 1 }
-            Umax("Umax") { inputs x 1 }
-        }
-    }
-}
+data class StateSpaceControllerCoeffs<I: `100`, S: `100`>(val K: Matrix<I, S>,
+                                                          val Kff: Matrix<I, S>,
+                                                          val Umin: Vector<I>,
+                                                          val Umax: Vector<I>)
