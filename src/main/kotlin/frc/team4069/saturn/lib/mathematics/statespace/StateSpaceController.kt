@@ -1,16 +1,12 @@
 package frc.team4069.saturn.lib.mathematics.statespace
 
 import frc.team4069.saturn.lib.mathematics.statespace.coeffs.StateSpaceControllerCoeffs
-import koma.extensions.get
-import koma.extensions.set
-import koma.util.validation.validate
-import koma.zeros
 import frc.team4069.keigen.*
 
 /**
  * A state space controller for the given plant
  */
-class StateSpaceController<I: `100`, S: `100`, O: `100`>(coeffs: StateSpaceControllerCoeffs<I, S>, val plant: StateSpacePlant<I, S, O>) {
+class StateSpaceController<States: `100`, Inputs: `100`, Outputs: `100`>(coeffs: StateSpaceControllerCoeffs<States, Inputs>, val plant: StateSpacePlant<States, Inputs, Outputs>) {
     private val index = 0
     private val coefficients = mutableListOf(coeffs)
 
@@ -20,33 +16,33 @@ class StateSpaceController<I: `100`, S: `100`, O: `100`>(coeffs: StateSpaceContr
     /**
      * The gain matrix
      */
-    val K: Matrix<I, S> get() = coefficients[index].K
+    val K: Matrix<Inputs, States> get() = coefficients[index].K
 
     /**
      * The feedforward gain matrix
      */
-    val Kff: Matrix<I, S> get() = coefficients[index].Kff
+    val Kff: Matrix<Inputs, States> get() = coefficients[index].Kff
 
     /**
      * The minimum value the control input can take
      */
-    val Umin: Vector<I> get() = coefficients[index].Umin
+    val Umin: Vector<Inputs> get() = coefficients[index].Umin
 
     /**
      * The maximum value the control input can take
      */
-    val Umax: Vector<I> get() = coefficients[index].Umax
+    val Umax: Vector<Inputs> get() = coefficients[index].Umax
 
     /**
      * The reference vector
      */
-    var r: Vector<S> = zeros(states)
+    var r: Vector<States> = zeros(states)
         private set
 
     /**
      * The input vector (Note that it is an input to the plant)
      */
-    var u: Vector<I> = zeros(inputs)
+    var u: Vector<Inputs> = zeros(inputs)
         private set
 
     /**
@@ -60,7 +56,7 @@ class StateSpaceController<I: `100`, S: `100`, O: `100`>(coeffs: StateSpaceContr
     /**
      * Updates the state of this controller with the given state `x` without updating the reference
      */
-    fun update(x: Vector<S>) {
+    fun update(x: Vector<States>) {
         u = K * (r - x) + Kff * (r - plant.A * r)
         capU()
     }
@@ -68,7 +64,7 @@ class StateSpaceController<I: `100`, S: `100`, O: `100`>(coeffs: StateSpaceContr
     /**
      * Updates the state of this controller with the given state `x`, along with the next reference for the controller
      */
-    fun update(x: Vector<S>, nextR: Vector<S>) {
+    fun update(x: Vector<States>, nextR: Vector<States>) {
         u = K * (r - x) + Kff * (nextR - plant.A * r)
         r = nextR
         capU()
