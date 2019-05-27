@@ -10,15 +10,15 @@ plugins {
 
 repositories {
     jcenter()
-    maven { setUrl("http://dl.bintray.com/kyonifer/maven") }
-    maven { setUrl("https://jitpack.io") }
+    mavenLocal()
+    maven("https://jitpack.io")
 }
 
 dependencies {
     // Kotlin Standard Library and Coroutines
     compile(kotlin("stdlib"))
     compile("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.1.0")
-    compile("com.kyonifer:koma-core-ejml:0.12")
+    compile("com.github.FRCTeam4069:Keigen:1.2.0")
     testCompile("junit:junit:4.12")
 
     // WPILib
@@ -33,7 +33,7 @@ publishing {
         create<MavenPublication>("mavenLocal") {
             groupId = "frc.team4069"
             artifactId = "SaturnLibrary"
-            version = "2019.05.22"
+            version = "2019.05.27"
             
             from(components["java"])
         }

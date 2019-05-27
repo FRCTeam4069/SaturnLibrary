@@ -1,19 +1,9 @@
 package frc.team4069.saturn.lib.mathematics.statespace.coeffs
 
-import frc.team4069.saturn.lib.mathematics.statespace.RealMatrix
-import koma.util.validation.validate
+import frc.team4069.keigen.*
 
-data class StateSpacePlantCoeffs(val inputs: Int, val states: Int, val outputs: Int,
-                                 val A: RealMatrix,
-                                 val B: RealMatrix,
-                                 val C: RealMatrix,
-                                 val D: RealMatrix) {
-    init {
-        validate {
-            A("A") { states x states }
-            B("B") { states x inputs }
-            C("C") { outputs x states }
-            D("D") { outputs x inputs }
-        }
-    }
-}
+data class StateSpacePlantCoeffs<States: `50`, Inputs: `50`, Outputs: `50`>(val states: Nat<States>, val inputs: Nat<Inputs>, val outputs: Nat<Outputs>,
+                                                                  val A: Matrix<States, States>,
+                                                                  val B: Matrix<States, Inputs>,
+                                                                  val C: Matrix<Outputs, States>,
+                                                                  val D: Matrix<Outputs, Inputs>)

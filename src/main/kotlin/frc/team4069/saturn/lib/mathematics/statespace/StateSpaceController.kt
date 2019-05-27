@@ -1,18 +1,12 @@
 package frc.team4069.saturn.lib.mathematics.statespace
 
 import frc.team4069.saturn.lib.mathematics.statespace.coeffs.StateSpaceControllerCoeffs
-import koma.extensions.get
-import koma.extensions.set
-import koma.matrix.Matrix
-import koma.util.validation.validate
-import koma.zeros
-
-typealias RealMatrix = Matrix<Double> // Faster to type
+import frc.team4069.keigen.*
 
 /**
  * A state space controller for the given plant
  */
-class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateSpacePlant) {
+class StateSpaceController<States: `50`, Inputs: `50`, Outputs: `50`>(coeffs: StateSpaceControllerCoeffs<States, Inputs>, val plant: StateSpacePlant<States, Inputs, Outputs>) {
     private val index = 0
     private val coefficients = mutableListOf(coeffs)
 
@@ -22,47 +16,47 @@ class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateS
     /**
      * The gain matrix
      */
-    val K: RealMatrix get() = coefficients[index].K
+    val K: Matrix<Inputs, States> get() = coefficients[index].K
 
     /**
      * The feedforward gain matrix
      */
-    val Kff: RealMatrix get() = coefficients[index].Kff
+    val Kff: Matrix<Inputs, States> get() = coefficients[index].Kff
 
     /**
      * The minimum value the control input can take
      */
-    val Umin: RealMatrix get() = coefficients[index].Umin
+    val Umin: Vector<Inputs> get() = coefficients[index].Umin
 
     /**
      * The maximum value the control input can take
      */
-    val Umax: RealMatrix get() = coefficients[index].Umax
+    val Umax: Vector<Inputs> get() = coefficients[index].Umax
 
     /**
      * The reference vector
      */
-    var r = zeros(states, 1)
+    var r: Vector<States> = zeros(states)
         private set
 
     /**
      * The input vector (Note that it is an input to the plant)
      */
-    var u = zeros(inputs, 1)
+    var u: Vector<Inputs> = zeros(inputs)
         private set
 
     /**
      * Resets the reference and input for this controller
      */
     fun reset() {
-        r = zeros(states, 1)
-        u = zeros(inputs, 1)
+        r = zeros(states)
+        u = zeros(inputs)
     }
 
     /**
      * Updates the state of this controller with the given state `x` without updating the reference
      */
-    fun update(x: RealMatrix) {
+    fun update(x: Vector<States>) {
         u = K * (r - x) + Kff * (r - plant.A * r)
         capU()
     }
@@ -70,12 +64,7 @@ class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateS
     /**
      * Updates the state of this controller with the given state `x`, along with the next reference for the controller
      */
-    fun update(x: RealMatrix, nextR: RealMatrix) {
-        validate {
-            x("x") { states x 1 }
-            nextR("r") { states x 1 }
-        }
-
+    fun update(x: Vector<States>, nextR: Vector<States>) {
         u = K * (r - x) + Kff * (nextR - plant.A * r)
         r = nextR
         capU()
@@ -85,8 +74,8 @@ class StateSpaceController(coeffs: StateSpaceControllerCoeffs, val plant: StateS
      * Clamps the value of u to be between Umin and Umax
      */
     private fun capU() {
-        for (i in 0 until inputs) {
-            u[i, 0] = u[i, 0].coerceIn(Umin[i, 0], Umax[i, 0])
+        for (i in 0 until inputs.i) {
+            u[i] = u[i].coerceIn(Umin[i], Umax[i])
         }
     }
 }
