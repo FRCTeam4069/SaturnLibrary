@@ -1,6 +1,7 @@
 package frc.team4069.saturn.lib.util
 
 /* ktlint-disable no-wildcard-imports */
+import edu.wpi.first.hal.NotifierJNI
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.Frequency
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.hertz
 import kotlinx.coroutines.*
@@ -25,15 +26,19 @@ suspend fun CoroutineScope.loopFrequency(
     frequency: Int = 50,
     block: suspend CoroutineScope.() -> Unit
 ) {
-    val timeBetweenUpdate = TimeUnit.SECONDS.toNanos(1) / frequency
-    // Stores when the next update should happen
-    var nextNS = System.nanoTime() + timeBetweenUpdate
-    while (isActive) {
+    val timeBetweenUpdate = TimeUnit.SECONDS.toMicros(1) / frequency
+    val notifier = NotifierJNI.initializeNotifier()
+
+    var nextUs = TimeUnit.NANOSECONDS.toMicros(System.nanoTime()) + timeBetweenUpdate
+
+    while(isActive) {
         block(this)
-        val delayNeeded = nextNS - System.nanoTime()
-        nextNS += timeBetweenUpdate
-        delay(delayNeeded / 1000000L)
+        nextUs += timeBetweenUpdate
+        NotifierJNI.updateNotifierAlarm(notifier, nextUs)
+        NotifierJNI.waitForNotifierAlarm(notifier)
     }
+
+    NotifierJNI.cleanNotifier(notifier)
 }
 
 inline fun disposableHandle(crossinline block: () -> Unit) = object : DisposableHandle {
