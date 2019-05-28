@@ -2,7 +2,9 @@ package frc.team4069.saturn.lib
 
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
+import edu.wpi.first.hal.NotifierJNI
 import edu.wpi.first.wpilibj.RobotBase
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
@@ -13,9 +15,12 @@ import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.mathematics.units.Time
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.hertz
 import frc.team4069.saturn.lib.mathematics.units.millisecond
+import frc.team4069.saturn.lib.mathematics.units.second
 import frc.team4069.saturn.lib.util.BrownoutWatchdog
+import frc.team4069.saturn.lib.util.SaturnNotifier
 import frc.team4069.saturn.lib.util.launchFrequency
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.runBlocking
 
 const val kLanguageKotlin = 6
 
@@ -40,6 +45,10 @@ abstract class SaturnRobot(val period: Time = 20.millisecond) : RobotBase() {
     }
 
     private val brownoutWatchdog = BrownoutWatchdog(::notifyBrownout)
+
+//    val notifier = NotifierJNI.initializeNotifier()
+//    var expirationTime = -1.0
+    val notifier = SaturnNotifier((1 / period.second).toInt())
 
     protected var brownoutThreshold
         get() = brownoutWatchdog.threshold
@@ -73,58 +82,66 @@ abstract class SaturnRobot(val period: Time = 20.millisecond) : RobotBase() {
 
         HAL.observeUserProgramStarting()
 
-        GlobalScope.launchFrequency((1 / period.second).hertz) {
-//            m_ds.waitForData()
+        notifier.updateAlarm()
 
-            val newMode = when {
-                isDisabled -> Mode.DISABLED
-                isAutonomous -> Mode.AUTONOMOUS
-                isOperatorControl -> Mode.TELEOP
-                isTest -> Mode.TEST
-                else -> TODO("Robot is in invalid mode!")
-            }
-
-            if(currentMode != newMode) {
-                when(newMode) {
-                    Mode.DISABLED -> {
-                        disabledInit()
-                        SubsystemHandler.zeroOutputs()
-                    }
-                    Mode.AUTONOMOUS -> {
-                        autonomousInit()
-                        SubsystemHandler.autoReset()
-                    }
-                    Mode.TELEOP -> {
-                        teleopInit()
-                        SubsystemHandler.teleopReset()
-                    }
-                    else -> {}
+        runBlocking {
+            while (true) {
+                val curTime = notifier.waitForAlarm()
+                if(curTime == 0L) {
+                    break
                 }
+
+                val newMode = when {
+                    isDisabled -> Mode.DISABLED
+                    isAutonomous -> Mode.AUTONOMOUS
+                    isOperatorControl -> Mode.TELEOP
+                    isTest -> Mode.TEST
+                    else -> TODO("Robot is in invalid mode!")
+                }
+
+                if (currentMode != newMode) {
+                    when (newMode) {
+                        Mode.DISABLED -> {
+                            disabledInit()
+                            SubsystemHandler.zeroOutputs()
+                        }
+                        Mode.AUTONOMOUS -> {
+                            autonomousInit()
+                            SubsystemHandler.autoReset()
+                        }
+                        Mode.TELEOP -> {
+                            teleopInit()
+                            SubsystemHandler.teleopReset()
+                        }
+                        else -> {
+                        }
+                    }
+                }
+
+                currentMode = newMode
+
+                when (newMode) {
+                    Mode.DISABLED -> HAL.observeUserProgramDisabled()
+                    Mode.AUTONOMOUS -> HAL.observeUserProgramAutonomous()
+                    Mode.TELEOP -> HAL.observeUserProgramTeleop()
+                    Mode.TEST -> HAL.observeUserProgramTest()
+                    Mode.NONE -> throw IllegalStateException("Mode cannot be NONE")
+                }
+
+                brownoutWatchdog.feed()
+                controls.forEach { it.update() }
+                SmartDashboard.updateValues()
+                Shuffleboard.update()
+
+                Scheduler.getInstance().run()
+
+                periodic()
+
+                notifier.updateAlarm()
             }
-
-            currentMode = newMode
-
-            when(newMode) {
-                Mode.DISABLED -> HAL.observeUserProgramDisabled()
-                Mode.AUTONOMOUS -> HAL.observeUserProgramAutonomous()
-                Mode.TELEOP -> HAL.observeUserProgramTeleop()
-                Mode.TEST -> HAL.observeUserProgramTest()
-                Mode.NONE -> throw IllegalStateException("Mode cannot be NONE")
-            }
-
-            brownoutWatchdog.feed()
-            controls.forEach { it.update() }
-            SmartDashboard.updateValues()
-            Shuffleboard.update()
-
-            Scheduler.getInstance().run()
-
-            periodic()
         }
 
-        while(true) {
-            Thread.sleep(60 * 60)
-        }
+        notifier.close() // We only leave the loop if something has gone wrong, so dispose of the notifier
     }
 
     protected open fun autonomousInit() {}
