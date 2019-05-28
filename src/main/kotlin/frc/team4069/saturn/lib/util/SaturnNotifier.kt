@@ -49,7 +49,7 @@ class SaturnNotifier(frequency: Int) : AutoCloseable {
     }
 
     /**
-     * Disposes of the internal notifier handle, and **invalidates** the associated [FalconNotifier]
+     * Disposes of the internal notifier handle, and **invalidates** the associated [SaturnNotifier]
      *
      * This should be the last function called before the instance goes out of scope for garbage collection.
      * Alarm resetting should not be done if the notifier has been closed.
