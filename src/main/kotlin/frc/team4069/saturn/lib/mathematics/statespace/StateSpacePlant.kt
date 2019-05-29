@@ -6,7 +6,7 @@ import frc.team4069.keigen.*
 /**
  * A state space plant with the given system matrices
  */
-class StateSpacePlant<States: `50`, Inputs: `50`, Outputs: `50`>(coeffs: StateSpacePlantCoeffs<States, Inputs, Outputs>) {
+class StateSpacePlant<States: Num, Inputs: Num, Outputs: Num>(coeffs: StateSpacePlantCoeffs<States, Inputs, Outputs>) {
 
     private val index = 0
     private val coefficients = mutableListOf(coeffs)

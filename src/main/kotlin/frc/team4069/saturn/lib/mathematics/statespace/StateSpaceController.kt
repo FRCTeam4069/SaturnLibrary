@@ -6,7 +6,7 @@ import frc.team4069.keigen.*
 /**
  * A state space controller for the given plant
  */
-class StateSpaceController<States: `50`, Inputs: `50`, Outputs: `50`>(coeffs: StateSpaceControllerCoeffs<States, Inputs>, val plant: StateSpacePlant<States, Inputs, Outputs>) {
+class StateSpaceController<States: Num, Inputs: Num, Outputs: Num>(coeffs: StateSpaceControllerCoeffs<States, Inputs>, val plant: StateSpacePlant<States, Inputs, Outputs>) {
     private val index = 0
     private val coefficients = mutableListOf(coeffs)
 

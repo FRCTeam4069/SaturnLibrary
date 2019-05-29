@@ -6,7 +6,7 @@ import frc.team4069.keigen.*
 /**
  * A state space observer for the given state space loop
  */
-class StateSpaceObserver<States: `50`, Inputs: `50`, Outputs: `50`>(coeffs: StateSpaceObserverCoeffs<States, Outputs>, val plant: StateSpacePlant<States, Inputs, Outputs>) {
+class StateSpaceObserver<States: Num, Inputs: Num, Outputs: Num>(coeffs: StateSpaceObserverCoeffs<States, Outputs>, val plant: StateSpacePlant<States, Inputs, Outputs>) {
     private val coefficients = mutableListOf(coeffs)
     private val index = 0
 
