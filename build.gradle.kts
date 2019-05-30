@@ -18,7 +18,7 @@ dependencies {
     // Kotlin Standard Library and Coroutines
     compile(kotlin("stdlib"))
     compile("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.1.0")
-    compile("com.github.FRCTeam4069:Keigen:1.3.0")
+    compile("com.github.FRCTeam4069:Keigen:1.4.0")
     testCompile("junit:junit:4.12")
 
     // WPILib
