@@ -6,13 +6,13 @@ import frc.team4069.saturn.lib.mathematics.units.derivedunits.LinearAcceleration
 import frc.team4069.saturn.lib.mathematics.units.derivedunits.LinearVelocity
 import frc.team4069.saturn.lib.mathematics.units.meter
 import frc.team4069.saturn.lib.util.DeltaTime
+import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sign
-import kotlin.math.abs
 
 class TrapezoidalProfile private constructor(
         val distance: Double,
-        val maxVelocity: Double,
+        maxVelocity: Double,
         val maxAcceleration: Double,
         val initialX: Double
 ) : IKinematicController {
@@ -29,10 +29,10 @@ class TrapezoidalProfile private constructor(
     private val tCruise: Double
     private val xCruise: Double
 
-    // If the target is lower than the initial position, the profile will have to be negated
-    private val sign = sign(distance - initialX)
+    private val sign: Double
 
     init {
+        this.sign = sign(distance - initialX)
         val distance = abs(distance - initialX)
         tAccel = (maxVelocity / maxAcceleration).let {
             if (x(it, 0.0, 0.0, maxAcceleration) < distance / 2) {
@@ -42,9 +42,13 @@ class TrapezoidalProfile private constructor(
                 cruiseVelocity / maxAcceleration
             }
         }
+
         xAccel = x(tAccel, 0.0, 0.0, maxAcceleration)
 
-        tCruise = ((distance - (2 * xAccel)) / cruiseVelocity).coerceAtLeast(0.0)
+        // cruiseVelocity is potentially modified above, this stops a division by zero edge case
+        tCruise = if(cruiseVelocity != 0.0) {
+            ((distance - (2 * xAccel)) / cruiseVelocity).coerceAtLeast(0.0)
+        } else 0.0
         xCruise = x(tCruise, 0.0, cruiseVelocity, 0.0)
     }
 
