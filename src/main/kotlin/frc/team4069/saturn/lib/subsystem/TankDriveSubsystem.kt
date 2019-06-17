@@ -5,13 +5,13 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.debug.LiveDashboard
 import frc.team4069.saturn.lib.localization.Localization
+import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTracker
 import frc.team4069.saturn.lib.mathematics.units.Length
 import frc.team4069.saturn.lib.mathematics.units.Rotation2d
 import frc.team4069.saturn.lib.motor.SaturnMotor
 import frc.team4069.saturn.lib.util.Source
 import kotlin.math.absoluteValue
 import kotlin.math.max
-import com.team254.lib.physics.DifferentialDrive as DifferentialDriveModel
 
 abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
     private var quickStopAccumulator = 0.0
@@ -22,6 +22,9 @@ abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
     abstract val rightMotor: SaturnMotor<Length>
 
     abstract val gyro: Source<Rotation2d>
+
+    abstract val trajectoryTracker: TrajectoryTracker
+    abstract val driveModel: DifferentialDriveModel
 
     var robotPosition
         get() = localization.robotPosition
@@ -43,6 +46,8 @@ abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
         LiveDashboard.robotX = robotPosition.translation.x.feet
         LiveDashboard.robotY = robotPosition.translation.y.feet
     }
+
+    abstract fun setOutput(output: TrajectoryTracker.TrajectoryTrackerOutput)
 
     fun curvatureDrive(
             linearPercent: Double,

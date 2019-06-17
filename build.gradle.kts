@@ -17,7 +17,7 @@ repositories {
 dependencies {
     // Kotlin Standard Library and Coroutines
     compile(kotlin("stdlib"))
-    compile("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.1.0")
+    compile("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.2.1")
     compile("com.github.FRCTeam4069:Keigen:1.4.0")
     testCompile("junit:junit:4.12")
 
@@ -33,7 +33,7 @@ publishing {
         create<MavenPublication>("mavenLocal") {
             groupId = "frc.team4069"
             artifactId = "SaturnLibrary"
-            version = "2019.05.28"
+            version = "2019.06.16"
             
             from(components["java"])
         }

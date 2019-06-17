@@ -29,10 +29,9 @@ class TrapezoidalProfile private constructor(
     private val tCruise: Double
     private val xCruise: Double
 
-    private val sign: Double
+    private val sign: Double = sign(distance - initialX)
 
     init {
-        this.sign = sign(distance - initialX)
         val distance = abs(distance - initialX)
         tAccel = (maxVelocity / maxAcceleration).let {
             if (x(it, 0.0, 0.0, maxAcceleration) < distance / 2) {
