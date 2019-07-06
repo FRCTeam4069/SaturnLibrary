@@ -1,6 +1,7 @@
 package frc.team4069.saturn.lib.mathematics.twodim.control
 
 import com.team254.lib.physics.DifferentialDrive
+import edu.wpi.first.wpilibj.Timer
 import frc.team4069.saturn.lib.mathematics.epsilonEquals
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
@@ -84,7 +85,6 @@ open class RamseteController(
 
     private val locationListeners = mutableMapOf<Rectangle2d, () -> Unit>()
 
-    var lastTime = -1L
     val iterator = trajectory.iterator()
 
     val referencePoint
@@ -100,8 +100,8 @@ open class RamseteController(
 
     fun addMarker(container: Rectangle2d, callback: () -> Unit) = locationListeners.put(container, callback)
 
-    fun update(robotPose: Pose2d, currentTime: Long = System.currentTimeMillis()): DifferentialDrive.ChassisState {
-        val dt = deltaTimeController.updateTime(currentTime.milli.second)
+    fun update(robotPose: Pose2d, currentTime: Time = Timer.getFPGATimestamp().second): DifferentialDrive.ChassisState {
+        val dt = deltaTimeController.updateTime(currentTime)
 
         val error = referencePose inFrameOfReferenceOf robotPose
         val vd = referencePoint.state.velocity.value // m/s
@@ -113,8 +113,6 @@ open class RamseteController(
         val w = wd + b * vd * sinc(angleError) * error.translation.yRaw + k1(vd, wd) * angleError
 
         iterator.advance(dt)
-
-        lastTime = currentTime
 
         locationListeners.filter { (rect, _) -> rect.contains(robotPose.translation) }
                 .forEach { (rect, listener) ->
