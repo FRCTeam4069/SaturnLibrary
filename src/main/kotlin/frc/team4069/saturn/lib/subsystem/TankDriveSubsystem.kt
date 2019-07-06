@@ -13,7 +13,7 @@ import frc.team4069.saturn.lib.util.Source
 import kotlin.math.absoluteValue
 import kotlin.math.max
 
-abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
+abstract class TankDriveSubsystem : SaturnSubsystem() {
     private var quickStopAccumulator = 0.0
 
     abstract val localization: Localization
@@ -37,7 +37,7 @@ abstract class TankDriveSubsystem : SaturnSubsystem("Drive Subsystem") {
         }.startPeriodic(1.0 / 100.0)
     }
 
-    override fun zeroOutputs() {
+    override fun setNeutral() {
         tankDrive(0.0, 0.0)
     }
 

@@ -21,7 +21,7 @@ fun CoroutineScope.launchFrequency(
 
 
 suspend fun CoroutineScope.loopFrequency(
-    frequency: Int = 50,
+    frequency: Int,
     block: suspend CoroutineScope.() -> Unit
 ) {
     val notifier = SaturnNotifier(frequency)
