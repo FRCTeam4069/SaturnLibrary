@@ -10,7 +10,7 @@ package frc.team4069.saturn.lib.mathematics.twodim.trajectory.constraints
 
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rectangle2d
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.LinearVelocity
+import frc.team4069.saturn.lib.mathematics.units.LinearVelocity
 
 class VelocityLimitRegionConstraint(
     val region: Rectangle2d,

@@ -4,17 +4,18 @@ import com.revrobotics.CANPIDController
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
 import com.revrobotics.ControlType
+import frc.team4069.saturn.lib.mathematics.units.Key
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Acceleration
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Velocity
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.acceleration
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.velocity
+import frc.team4069.saturn.lib.mathematics.units.acceleration
+import frc.team4069.saturn.lib.mathematics.units.derived.AccelerationT
+import frc.team4069.saturn.lib.mathematics.units.derived.VelocityT
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitModel
+import frc.team4069.saturn.lib.mathematics.units.velocity
 import frc.team4069.saturn.lib.motor.AbstractSaturnMotor
 import frc.team4069.saturn.lib.motor.SaturnMotor
 import kotlin.properties.Delegates
 
-class SaturnMAX<T : SIUnit<T>>(
+class SaturnMAX<T : Key>(
         val canSparkMax: CANSparkMax,
         val model: NativeUnitModel<T>
 ) : AbstractSaturnMotor<T>() {
@@ -38,10 +39,10 @@ class SaturnMAX<T : SIUnit<T>>(
         canSparkMax.enableVoltageCompensation(newValue)
     }
 
-    override var motionProfileCruiseVelocity: Velocity<T> by Delegates.observable(model.zero.velocity) { _, _, newValue ->
+    override var motionProfileCruiseVelocity: SIUnit<VelocityT<T>> by Delegates.observable(model.zero.velocity) { _, _, newValue ->
         controller.setSmartMotionMaxVelocity(model.toNativeUnitVelocity(newValue).value * 60, 0)
     }
-    override var motionProfileAcceleration: Acceleration<T> by Delegates.observable(model.zero.acceleration) { _, _, newValue ->
+    override var motionProfileAcceleration: SIUnit<AccelerationT<T>> by Delegates.observable(model.zero.acceleration) { _, _, newValue ->
         controller.setSmartMotionMaxAccel(model.toNativeUnitAcceleration(newValue).value * 60.0, 0)
     }
 
@@ -57,14 +58,14 @@ class SaturnMAX<T : SIUnit<T>>(
         controller.setReference(dutyCycle, ControlType.kDutyCycle, 0, arbitraryFeedForward)
     }
 
-    override fun setVelocity(velocity: Velocity<T>, arbitraryFeedForward: Double) {
+    override fun setVelocity(velocity: SIUnit<VelocityT<T>>, arbitraryFeedForward: Double) {
         controller.setReference(
                 model.toNativeUnitVelocity(velocity).value * 60,
                 ControlType.kVelocity, 0, arbitraryFeedForward
         )
     }
 
-    override fun setPosition(position: T, arbitraryFeedForward: Double) {
+    override fun setPosition(position: SIUnit<T>, arbitraryFeedForward: Double) {
         controller.setReference(
                 model.toNativeUnitPosition(position).value,
                 if (useMotionProfileForPosition) ControlType.kSmartMotion else ControlType.kPosition,

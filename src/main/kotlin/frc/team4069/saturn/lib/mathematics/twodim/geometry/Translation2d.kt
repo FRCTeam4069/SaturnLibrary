@@ -10,9 +10,10 @@ package frc.team4069.saturn.lib.mathematics.twodim.geometry
 
 import frc.team4069.saturn.lib.mathematics.lerp
 import frc.team4069.saturn.lib.mathematics.units.Length
-import frc.team4069.saturn.lib.mathematics.units.Rotation2d
+import frc.team4069.saturn.lib.mathematics.units.conversions.meter
 import frc.team4069.saturn.lib.mathematics.units.meter
 import frc.team4069.saturn.lib.types.VaryInterpolatable
+import kotlin.math.hypot
 
 fun Rotation2d.toTranslation() = Translation2d(cos, sin)
 
@@ -42,7 +43,7 @@ data class Translation2d(
     )
 
     val norm
-        get() = Math.hypot(xRaw, yRaw)
+        get() = hypot(xRaw, yRaw)
 
     override fun interpolate(endValue: Translation2d, t: Double) = when {
         t <= 0 -> this

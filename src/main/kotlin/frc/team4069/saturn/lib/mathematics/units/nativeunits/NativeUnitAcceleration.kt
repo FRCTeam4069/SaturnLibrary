@@ -1,9 +1,9 @@
 package frc.team4069.saturn.lib.mathematics.units.nativeunits
 
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Acceleration
-import frc.team4069.saturn.lib.mathematics.units.second
+import frc.team4069.saturn.lib.mathematics.units.*
+import frc.team4069.saturn.lib.mathematics.units.derived.AccelerationT
 
-typealias NativeUnitAcceleration = Acceleration<NativeUnit>
+typealias NativeUnitAcceleration = SIUnit<AccelerationT<NativeUnit>>
 
 val Number.STUPer100msPerSecond: NativeUnitAcceleration
     get() = STUPer100ms / 1.second

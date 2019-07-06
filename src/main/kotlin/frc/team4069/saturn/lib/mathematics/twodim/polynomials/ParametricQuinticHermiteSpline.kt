@@ -8,8 +8,8 @@ package frc.team4069.saturn.lib.mathematics.twodim.polynomials
 
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Translation2d
-import frc.team4069.saturn.lib.mathematics.units.Rotation2d
 import frc.team4069.keigen.*
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
 import kotlin.math.pow
 
 class ParametricQuinticHermiteSpline(

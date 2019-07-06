@@ -2,13 +2,13 @@ package frc.team4069.saturn.lib.motor.ctre
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import frc.team4069.saturn.lib.mathematics.units.ElectricCurrent
-import frc.team4069.saturn.lib.mathematics.units.SIUnit
-import frc.team4069.saturn.lib.mathematics.units.Time
+import frc.team4069.saturn.lib.mathematics.units.*
+import frc.team4069.saturn.lib.mathematics.units.conversions.amp
+import frc.team4069.saturn.lib.mathematics.units.conversions.millisecond
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitModel
 import kotlin.properties.Delegates
 
-class SaturnSRX<T: SIUnit<T>>(
+class SaturnSRX<T: Key>(
         val talon: TalonSRX,
         model: NativeUnitModel<T>
 ) : SaturnCTRE<T>(talon, model) {
@@ -32,8 +32,8 @@ class SaturnSRX<T: SIUnit<T>>(
     }
 
     data class CurrentLimitConfig(
-            val peakCurrentLimit: ElectricCurrent,
+            val peakCurrentLimit: SIUnit<Ampere>,
             val peakCurrentLimitDuration: Time,
-            val continuousCurrentLimit: ElectricCurrent
+            val continuousCurrentLimit: SIUnit<Ampere>
     )
 }

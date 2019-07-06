@@ -1,10 +1,8 @@
 package frc.team4069.saturn.lib.mathematics.onedim.control
 
-import frc.team4069.saturn.lib.mathematics.units.Length
-import frc.team4069.saturn.lib.mathematics.units.Time
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.LinearAcceleration
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.LinearVelocity
-import frc.team4069.saturn.lib.mathematics.units.meter
+import frc.team4069.saturn.lib.mathematics.units.*
+import frc.team4069.saturn.lib.mathematics.units.conversions.meter
+import frc.team4069.saturn.lib.mathematics.units.conversions.second
 import frc.team4069.saturn.lib.util.DeltaTime
 import kotlin.math.abs
 import kotlin.math.pow

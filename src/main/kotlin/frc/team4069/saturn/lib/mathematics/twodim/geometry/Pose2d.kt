@@ -10,10 +10,9 @@ package frc.team4069.saturn.lib.mathematics.twodim.geometry
 
 import frc.team4069.saturn.lib.mathematics.epsilonEquals
 import frc.team4069.saturn.lib.mathematics.kEpsilon
-import frc.team4069.saturn.lib.mathematics.units.Length
-import frc.team4069.saturn.lib.mathematics.units.Rotation2d
-import frc.team4069.saturn.lib.mathematics.units.degree
-import frc.team4069.saturn.lib.mathematics.units.feet
+import frc.team4069.saturn.lib.mathematics.units.*
+import frc.team4069.saturn.lib.mathematics.units.conversions.feet
+import frc.team4069.saturn.lib.mathematics.units.conversions.meter
 import frc.team4069.saturn.lib.types.VaryInterpolatable
 import kotlin.math.absoluteValue
 
@@ -21,7 +20,7 @@ import kotlin.math.absoluteValue
 
 data class Pose2d(
     val translation: Translation2d = Translation2d(),
-    val rotation: Rotation2d = 0.degree
+    val rotation: Rotation2d = Rotation2d(0.0)
 ) : VaryInterpolatable<Pose2d> {
 
     infix fun fuzzyEquals(other: Pose2d): Boolean {
@@ -33,8 +32,14 @@ data class Pose2d(
     constructor(
         x: Length,
         y: Length,
-        rotation: Rotation2d = 0.degree
+        rotation: Rotation2d = Rotation2d(0.0)
     ) : this(Translation2d(x, y), rotation)
+
+    constructor(
+            x: Length,
+            y: Length,
+            rotation: SIUnit<Radian> = 0.radian
+    ) : this(Translation2d(x, y), rotation.toRotation2d())
 
     val twist: Twist2d
         get() {

@@ -2,6 +2,7 @@ package frc.team4069.saturn.lib.localization
 
 import edu.wpi.first.wpilibj.Timer
 import frc.team4069.saturn.lib.mathematics.units.Time
+import frc.team4069.saturn.lib.mathematics.units.conversions.second
 import frc.team4069.saturn.lib.mathematics.units.second
 import frc.team4069.saturn.lib.types.Interpolatable
 import frc.team4069.saturn.lib.util.Source

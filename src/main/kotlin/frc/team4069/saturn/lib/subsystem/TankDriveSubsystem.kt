@@ -6,8 +6,10 @@ import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.debug.LiveDashboard
 import frc.team4069.saturn.lib.localization.Localization
 import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTracker
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
 import frc.team4069.saturn.lib.mathematics.units.Length
-import frc.team4069.saturn.lib.mathematics.units.Rotation2d
+import frc.team4069.saturn.lib.mathematics.units.Meter
+import frc.team4069.saturn.lib.mathematics.units.conversions.feet
 import frc.team4069.saturn.lib.motor.SaturnMotor
 import frc.team4069.saturn.lib.util.Source
 import kotlin.math.absoluteValue
@@ -18,8 +20,8 @@ abstract class TankDriveSubsystem : SaturnSubsystem() {
 
     abstract val localization: Localization
 
-    abstract val leftMotor: SaturnMotor<Length>
-    abstract val rightMotor: SaturnMotor<Length>
+    abstract val leftMotor: SaturnMotor<Meter>
+    abstract val rightMotor: SaturnMotor<Meter>
 
     abstract val gyro: Source<Rotation2d>
 

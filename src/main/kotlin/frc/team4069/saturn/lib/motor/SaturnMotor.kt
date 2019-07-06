@@ -1,15 +1,13 @@
 package frc.team4069.saturn.lib.motor
 
-import frc.team4069.saturn.lib.mathematics.units.Length
-import frc.team4069.saturn.lib.mathematics.units.Rotation2d
-import frc.team4069.saturn.lib.mathematics.units.SIUnit
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Acceleration
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Velocity
+import frc.team4069.saturn.lib.mathematics.units.*
+import frc.team4069.saturn.lib.mathematics.units.derived.AccelerationT
+import frc.team4069.saturn.lib.mathematics.units.derived.VelocityT
 
-typealias LinearFalconMotor = SaturnMotor<Length>
-typealias AngularFalconMotor = SaturnMotor<Rotation2d>
+typealias LinearFalconMotor = SaturnMotor<Meter>
+typealias AngularFalconMotor = SaturnMotor<Radian>
 
-interface SaturnMotor<T : SIUnit<T>> {
+interface SaturnMotor<T : Key> {
 
     /**
      * The encoder attached to the motor
@@ -39,12 +37,12 @@ interface SaturnMotor<T : SIUnit<T>> {
      *  Peak target velocity that the on board motion profile generator will use
      *  Unit is [T]/s
      */
-    var motionProfileCruiseVelocity: Velocity<T>
+    var motionProfileCruiseVelocity: SIUnit<VelocityT<T>>
     /**
      *  Acceleration that the on board motion profile generator will
      *  Unit is [T]/s/s
      */
-    var motionProfileAcceleration: Acceleration<T>
+    var motionProfileAcceleration: SIUnit<AccelerationT<T>>
     /**
      * Enables the use of on board motion profiling for position mode
      */
@@ -65,12 +63,12 @@ interface SaturnMotor<T : SIUnit<T>> {
     /**
      * Sets the output [velocity] in [T]/s and [arbitraryFeedForward] in volts
      */
-    fun setVelocity(velocity: Velocity<T>, arbitraryFeedForward: Double = 0.0)
+    fun setVelocity(velocity: SIUnit<VelocityT<T>>, arbitraryFeedForward: Double = 0.0)
 
     /**
      * Sets the output [position] in [T] and [arbitraryFeedForward] in volts
      */
-    fun setPosition(position: T, arbitraryFeedForward: Double = 0.0)
+    fun setPosition(position: SIUnit<T>, arbitraryFeedForward: Double = 0.0)
 
     /**
      * Sets the output of the motor to neutral

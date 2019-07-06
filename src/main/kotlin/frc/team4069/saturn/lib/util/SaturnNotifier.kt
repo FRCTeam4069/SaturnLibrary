@@ -4,6 +4,7 @@ import edu.wpi.first.hal.NotifierJNI
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.Notifier
 import frc.team4069.saturn.lib.mathematics.units.Time
+import frc.team4069.saturn.lib.mathematics.units.conversions.microsecond
 import frc.team4069.saturn.lib.mathematics.units.second
 import java.util.concurrent.TimeUnit
 

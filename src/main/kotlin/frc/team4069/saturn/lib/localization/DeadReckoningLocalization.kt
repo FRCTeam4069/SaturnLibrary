@@ -1,9 +1,9 @@
 package frc.team4069.saturn.lib.localization
 
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Twist2d
 import frc.team4069.saturn.lib.mathematics.units.Length
-import frc.team4069.saturn.lib.mathematics.units.Rotation2d
 import frc.team4069.saturn.lib.util.Source
 
 class DeadReckoningLocalization(robotHeading: Source<Rotation2d>,

@@ -9,7 +9,7 @@
 package frc.team4069.saturn.lib.mathematics.twodim.geometry
 
 import frc.team4069.saturn.lib.mathematics.lerp
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Curvature
+import frc.team4069.saturn.lib.mathematics.units.Curvature
 import frc.team4069.saturn.lib.types.Interpolatable
 import frc.team4069.saturn.lib.types.VaryInterpolatable
 

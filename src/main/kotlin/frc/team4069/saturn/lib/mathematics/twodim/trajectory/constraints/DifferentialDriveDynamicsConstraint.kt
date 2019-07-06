@@ -2,11 +2,12 @@ package frc.team4069.saturn.lib.mathematics.twodim.trajectory.constraints
 
 import com.team254.lib.physics.DifferentialDrive
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Volt
+import frc.team4069.saturn.lib.mathematics.units.SIUnit
+import frc.team4069.saturn.lib.mathematics.units.derived.Volt
 
 class DifferentialDriveDynamicsConstraint(
     private val drive: DifferentialDrive,
-    private val maxVoltage: Volt
+    private val maxVoltage: SIUnit<Volt>
 ) : TimingConstraint<Pose2dWithCurvature> {
 
     override fun getMaxVelocity(state: Pose2dWithCurvature): Double {
