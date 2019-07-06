@@ -2,7 +2,9 @@ package frc.team4069.saturn.lib.localization
 
 import edu.wpi.first.wpilibj.Timer
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
-import frc.team4069.saturn.lib.mathematics.units.Rotation2d
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
+import frc.team4069.saturn.lib.mathematics.units.Radian
+import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.Time
 import frc.team4069.saturn.lib.mathematics.units.radian
 import frc.team4069.saturn.lib.util.Source
@@ -16,8 +18,8 @@ abstract class Localization(
     // Interpolatable buffer for previous poses
     private val interpolatableLocalizationBuffer = TimeInterpolatableBuffer<Pose2d>()
 
-    private var prevHeading = 0.radian
-    private var headingOffset = 0.radian
+    private var prevHeading = Rotation2d(0.0)
+    private var headingOffset = Rotation2d(0.0)
 
 
     init {
@@ -54,6 +56,6 @@ abstract class Localization(
     protected abstract fun update(deltaHeading: Rotation2d): Pose2d
 
     override fun invoke() = robotPosition
-    operator fun get(t: Time) = get(t.second)
+    operator fun get(t: Time) = get(t.value)
     internal operator fun get(timestamp: Double) = interpolatableLocalizationBuffer[timestamp]
 }

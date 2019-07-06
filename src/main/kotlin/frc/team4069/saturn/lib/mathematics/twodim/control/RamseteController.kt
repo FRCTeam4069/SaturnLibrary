@@ -9,7 +9,6 @@ import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedEntry
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedTrajectory
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TrajectorySamplePoint
 import frc.team4069.saturn.lib.mathematics.units.*
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.velocity
 import frc.team4069.saturn.lib.util.DeltaTime
 import kotlin.math.pow
 import kotlin.math.sin
@@ -102,7 +101,7 @@ open class RamseteController(
     fun addMarker(container: Rectangle2d, callback: () -> Unit) = locationListeners.put(container, callback)
 
     fun update(robotPose: Pose2d, currentTime: Long = System.currentTimeMillis()): DifferentialDrive.ChassisState {
-        val dt = deltaTimeController.updateTime(currentTime.millisecond)
+        val dt = deltaTimeController.updateTime(currentTime.milli.second)
 
         val error = referencePose inFrameOfReferenceOf robotPose
         val vd = referencePoint.state.velocity.value // m/s

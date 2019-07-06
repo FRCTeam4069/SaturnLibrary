@@ -1,8 +1,9 @@
 package frc.team4069.saturn.lib.motor
 
+import frc.team4069.saturn.lib.mathematics.units.Key
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
 
-abstract class AbstractSaturnMotor<T: SIUnit<T>> : SaturnMotor<T> {
+abstract class AbstractSaturnMotor<T: Key> : SaturnMotor<T> {
     override var useMotionProfileForPosition: Boolean = false
 
     override fun follow(motor: SaturnMotor<*>): Boolean {

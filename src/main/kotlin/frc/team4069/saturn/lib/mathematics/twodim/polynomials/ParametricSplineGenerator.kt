@@ -9,20 +9,20 @@ package frc.team4069.saturn.lib.mathematics.twodim.polynomials
 /* ktlint-disable no-wildcard-imports */
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
 import frc.team4069.saturn.lib.mathematics.units.Length
-import frc.team4069.saturn.lib.mathematics.units.Rotation2d
 import java.util.*
 
 object ParametricSplineGenerator {
     private const val kMinSampleSize = 1
 
     private fun parameterizeSpline(
-        s: ParametricSpline,
-        maxDx: Length,
-        maxDy: Length,
-        maxDTheta: Rotation2d,
-        t0: Double = 0.0,
-        t1: Double = 1.0
+            s: ParametricSpline,
+            maxDx: Length,
+            maxDy: Length,
+            maxDTheta: Rotation2d,
+            t0: Double = 0.0,
+            t1: Double = 1.0
     ): ArrayList<Pose2dWithCurvature> {
 
         val rv = ArrayList<Pose2dWithCurvature>()

@@ -7,11 +7,10 @@
 package frc.team4069.saturn.lib.mathematics.twodim.geometry
 
 import frc.team4069.saturn.lib.mathematics.kEpsilon
-import frc.team4069.saturn.lib.mathematics.units.Length
-import frc.team4069.saturn.lib.mathematics.units.Rotation2d
-import frc.team4069.saturn.lib.mathematics.units.meter
+import frc.team4069.saturn.lib.mathematics.units.*
 import kotlin.math.absoluteValue
 import kotlin.math.cos
+import kotlin.math.hypot
 import kotlin.math.sin
 
 class Twist2d(
@@ -20,14 +19,16 @@ class Twist2d(
         val dTheta: Rotation2d
 ) {
 
-    val dx get() = _dx.meter
-    val dy get() = _dy.meter
+    val dx = _dx.meter
+    val dy = _dy.meter
 
     constructor(dx: Length, dy: Length, dTheta: Rotation2d)
             : this(dx.value, dy.value, dTheta)
 
-    val norm
-        get() = if (dy.value == 0.0) dx.absoluteValue else Math.hypot(dx.value, dy.value).meter
+    constructor(dx: Length, dy: Length, dTheta: SIUnit<Radian>)
+        : this(dx.value, dy.value, dTheta.toRotation2d())
+
+    val norm = if (dy.value == 0.0) dx.absoluteValue else hypot(dx.value, dy.value).meter
 
     val asPose: Pose2d
         get() {

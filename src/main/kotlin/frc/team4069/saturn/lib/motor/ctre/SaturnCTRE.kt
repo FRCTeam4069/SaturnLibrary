@@ -4,19 +4,20 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.IMotorController
 import com.ctre.phoenix.motorcontrol.NeutralMode
+import frc.team4069.saturn.lib.mathematics.units.Key
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Acceleration
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Velocity
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.acceleration
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.velocity
+import frc.team4069.saturn.lib.mathematics.units.acceleration
+import frc.team4069.saturn.lib.mathematics.units.derived.AccelerationT
+import frc.team4069.saturn.lib.mathematics.units.derived.VelocityT
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitModel
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.STUPer100ms
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.STUPer100msPerSecond
+import frc.team4069.saturn.lib.mathematics.units.velocity
 import frc.team4069.saturn.lib.motor.AbstractSaturnMotor
 import frc.team4069.saturn.lib.motor.SaturnMotor
 import kotlin.properties.Delegates
 
-abstract class SaturnCTRE<T : SIUnit<T>>(
+abstract class SaturnCTRE<T : Key>(
         val motorController: IMotorController,
         val model: NativeUnitModel<T>
 ) : AbstractSaturnMotor<T>() {
@@ -44,11 +45,12 @@ abstract class SaturnCTRE<T : SIUnit<T>>(
         motorController.enableVoltageCompensation(true)
     }
 
-    override var motionProfileCruiseVelocity: Velocity<T> by Delegates.observable(model.zero.velocity) { _, _, newValue ->
+    override var motionProfileCruiseVelocity: SIUnit<VelocityT<T>> by Delegates.observable(model.zero.velocity) { _, _, newValue ->
         motorController.configMotionCruiseVelocity(model.toNativeUnitVelocity(newValue).STUPer100ms.toInt(), 0)
     }
-    override var motionProfileAcceleration: Acceleration<T> by Delegates.observable(model.zero.acceleration) { _, _, newValue ->
+    override var motionProfileAcceleration: SIUnit<AccelerationT<T>> by Delegates.observable(model.zero.acceleration) { _, _, newValue ->
         motorController.configMotionAcceleration(model.toNativeUnitAcceleration(newValue).STUPer100msPerSecond.toInt(), 0)
+
     }
 
     init {
@@ -72,7 +74,7 @@ abstract class SaturnCTRE<T : SIUnit<T>>(
                     )
             )
 
-    override fun setVelocity(velocity: Velocity<T>, arbitraryFeedForward: Double) =
+    override fun setVelocity(velocity: SIUnit<VelocityT<T>>, arbitraryFeedForward: Double) =
             sendDemand(
                     Demand(
                             ControlMode.Velocity, model.toNativeUnitVelocity(velocity).STUPer100ms,
@@ -80,7 +82,7 @@ abstract class SaturnCTRE<T : SIUnit<T>>(
                     )
             )
 
-    override fun setPosition(position: T, arbitraryFeedForward: Double) =
+    override fun setPosition(position: SIUnit<T>, arbitraryFeedForward: Double) =
             sendDemand(
                     Demand(
                             if (useMotionProfileForPosition) ControlMode.MotionMagic else ControlMode.Position,

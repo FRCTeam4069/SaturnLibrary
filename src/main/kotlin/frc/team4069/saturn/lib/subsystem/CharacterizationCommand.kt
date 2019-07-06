@@ -4,6 +4,7 @@ import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.RobotController
 import edu.wpi.first.wpilibj.Timer
 import frc.team4069.saturn.lib.commands.SaturnCommand
+import frc.team4069.saturn.lib.mathematics.units.conversions.meter
 
 class CharacterizationCommand(val driveSubsystem: TankDriveSubsystem) : SaturnCommand(driveSubsystem) {
     val speed = NetworkTableInstance.getDefault().getEntry("/robot/autospeed")

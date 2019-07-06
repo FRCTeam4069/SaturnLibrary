@@ -1,8 +1,8 @@
 package frc.team4069.saturn.lib.util
 
 /* ktlint-disable no-wildcard-imports */
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.Frequency
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.hertz
+import frc.team4069.saturn.lib.mathematics.units.Frequency
+import frc.team4069.saturn.lib.mathematics.units.hertz
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext

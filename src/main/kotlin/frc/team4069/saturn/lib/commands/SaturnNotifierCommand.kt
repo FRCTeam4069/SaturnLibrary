@@ -2,7 +2,6 @@ package frc.team4069.saturn.lib.commands
 
 import edu.wpi.first.wpilibj.experimental.command.Subsystem
 import frc.team4069.saturn.lib.mathematics.units.Time
-import frc.team4069.saturn.lib.mathematics.units.derivedunits.invert
 import frc.team4069.saturn.lib.util.launchFrequency
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
