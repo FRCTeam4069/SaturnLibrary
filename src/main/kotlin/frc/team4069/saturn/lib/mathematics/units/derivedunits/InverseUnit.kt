@@ -29,6 +29,8 @@ val Number.attohertz get() = Frequency(toDouble() * SIConstants.kAtto)
 val Number.zeptohertz get() = Frequency(toDouble() * SIConstants.kZepto)
 val Number.yoctohertz get() = Frequency(toDouble() * SIConstants.kYocto)
 
+fun <T: SIUnit<T>> T.invert(): InverseUnit<T> = InverseUnit(value, this)
+
 @Suppress("FunctionName")
 fun Curvature(value: Double) = Curvature(value, 0.meter)
 

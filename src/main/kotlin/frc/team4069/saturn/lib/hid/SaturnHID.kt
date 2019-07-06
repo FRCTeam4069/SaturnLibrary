@@ -1,7 +1,7 @@
 package frc.team4069.saturn.lib.hid
 
 import edu.wpi.first.wpilibj.GenericHID
-import frc.team4069.saturn.lib.commands.SaturnCommand
+import edu.wpi.first.wpilibj.experimental.command.Command
 import frc.team4069.saturn.lib.util.BooleanSource
 import kotlin.properties.Delegates
 
@@ -63,13 +63,13 @@ class SaturnHIDButtonBuilder(source: HIDSource, private val threshold: Double) :
     private val changeOn = mutableListOf<HIDControlListener>()
     private val changeOff = mutableListOf<HIDControlListener>()
 
-    fun change(command: SaturnCommand) {
+    fun change(command: Command) {
         changeOn(command)
-        changeOff { command.stop() }
+        changeOff(command)
     }
 
-    fun changeOn(command: SaturnCommand) = changeOn { command.start() }
-    fun changeOff(command: SaturnCommand) = changeOff { command.start() }
+    fun changeOn(command: Command) = changeOn { command.schedule() }
+    fun changeOff(command: Command) = changeOff { command.cancel() }
 
     fun whileOff(block: HIDControlListener) = whileOff.add(block)
     fun whileOn(block: HIDControlListener) = whileOn.add(block)

@@ -15,17 +15,13 @@ class TrajectoryTrackerCommand(val driveSubsystem: TankDriveSubsystem,
     private lateinit var tracker: TrajectoryTracker
     private var finished = false
 
-    init {
-        finishCondition += { finished }
-    }
-
-    override suspend fun initialize() {
+    override fun initialize() {
         tracker = driveSubsystem.trajectoryTracker
         tracker.reset(trajectory())
         LiveDashboard.isFollowingPath = true
     }
 
-    override suspend fun execute() {
+    override fun execute() {
         driveSubsystem.setOutput(tracker.update(driveSubsystem.robotPosition))
 
         val referencePose = tracker.referencePoint!!.state.state.pose
@@ -36,8 +32,8 @@ class TrajectoryTrackerCommand(val driveSubsystem: TankDriveSubsystem,
         finished = tracker.isFinished
     }
 
-    override suspend fun dispose() {
-        driveSubsystem.zeroOutputs()
+    override fun end(interrupted: Boolean) {
+        driveSubsystem.setNeutral()
         LiveDashboard.isFollowingPath = false
     }
 }

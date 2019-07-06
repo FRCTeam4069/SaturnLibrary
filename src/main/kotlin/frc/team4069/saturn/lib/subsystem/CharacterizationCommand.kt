@@ -12,7 +12,7 @@ class CharacterizationCommand(val driveSubsystem: TankDriveSubsystem) : SaturnCo
     var priorSpd = 0.0
     val telemetry = Array<Number>(9) { 0 }
 
-    override suspend fun execute() {
+    override fun execute() {
         val now = Timer.getFPGATimestamp()
 
         val lpos = driveSubsystem.leftMotor.encoder.position.meter
