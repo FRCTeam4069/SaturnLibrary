@@ -36,8 +36,8 @@ class RamseteTracker(private val b: Double, private val zeta: Double) : Trajecto
 
         val angleError = error.rotation.value
 
-        val v = vd * error.rotation.cos + k1(vd, wd) * error.translation.xRaw
-        val w = wd + b * vd * sinc(angleError) * error.translation.yRaw + k1(vd, wd) * angleError
+        val v = vd * error.rotation.cos + k1(vd, wd) * error.translation.x.value
+        val w = wd + b * vd * sinc(angleError) * error.translation.y.value + k1(vd, wd) * angleError
 
         locationMarkers.filter { (rect, _) -> rect.contains(robotState.translation) }
                 .forEach { (rect, listener) ->

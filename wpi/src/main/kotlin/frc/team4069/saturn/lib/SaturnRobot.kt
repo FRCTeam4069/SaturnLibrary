@@ -8,12 +8,13 @@ import edu.wpi.first.wpilibj.experimental.command.CommandScheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.commands.SubsystemHandler
-import frc.team4069.saturn.lib.mathematics.units.Time
+import frc.team4069.saturn.lib.mathematics.units.SIUnit
+import frc.team4069.saturn.lib.mathematics.units.Second
 import frc.team4069.saturn.lib.mathematics.units.milli
 
 const val kLanguageKotlin = 6
 
-abstract class SaturnRobot(val period: Time = 20.milli.second) {
+abstract class SaturnRobot(val period: SIUnit<Second> = 20.milli.second) {
 
     protected val wrappedValue = WpiTimedRobot()
 

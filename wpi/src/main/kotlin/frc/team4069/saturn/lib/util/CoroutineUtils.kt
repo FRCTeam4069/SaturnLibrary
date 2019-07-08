@@ -1,17 +1,18 @@
 package frc.team4069.saturn.lib.util
 
 /* ktlint-disable no-wildcard-imports */
-import frc.team4069.saturn.lib.mathematics.units.Frequency
+import frc.team4069.saturn.lib.mathematics.units.SIUnit
+import frc.team4069.saturn.lib.mathematics.units.derived.Hertz
 import frc.team4069.saturn.lib.mathematics.units.hertz
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 fun CoroutineScope.launchFrequency(
-    frequency: Frequency = 50.hertz,
-    context: CoroutineContext = EmptyCoroutineContext,
-    start: CoroutineStart = CoroutineStart.DEFAULT,
-    block: suspend CoroutineScope.() -> Unit
+        frequency: SIUnit<Hertz> = 50.hertz,
+        context: CoroutineContext = EmptyCoroutineContext,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: suspend CoroutineScope.() -> Unit
 ): Job {
     if (frequency.value <= 0) throw IllegalArgumentException("Frequency cannot be lower then 1!")
     return launch(context, start) {

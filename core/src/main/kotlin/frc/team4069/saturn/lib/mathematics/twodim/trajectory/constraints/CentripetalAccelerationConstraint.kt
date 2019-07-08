@@ -7,23 +7,17 @@
 package frc.team4069.saturn.lib.mathematics.twodim.trajectory.constraints
 
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
-import frc.team4069.saturn.lib.mathematics.units.LinearAcceleration
-import frc.team4069.saturn.lib.mathematics.units.acceleration
-import frc.team4069.saturn.lib.mathematics.units.meter
+import frc.team4069.saturn.lib.mathematics.units.SIUnit
+import frc.team4069.saturn.lib.mathematics.units.conversions.LinearAcceleration
 import kotlin.math.absoluteValue
+import kotlin.math.sqrt
 
 class CentripetalAccelerationConstraint(
-    val mMaxCentripetalAccelRaw: Double
+    val mMaxCentripetalAccel: SIUnit<LinearAcceleration>
 ) : TimingConstraint<Pose2dWithCurvature> {
 
-    val mMaxCentripetalAccel
-        get() = mMaxCentripetalAccelRaw.meter.acceleration
-
-    constructor(mMaxCentripetalAccel: LinearAcceleration) :
-            this(mMaxCentripetalAccel.value)
-
     override fun getMaxVelocity(state: Pose2dWithCurvature) =
-            Math.sqrt((mMaxCentripetalAccelRaw / state.curvature.curvature.value).absoluteValue)
+            sqrt((mMaxCentripetalAccel.value / state.curvature.curvature.value).absoluteValue)
 
     override fun getMinMaxAcceleration(
         state: Pose2dWithCurvature,

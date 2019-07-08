@@ -19,6 +19,8 @@ object Ampere : Key()
  */
 object Radian : Key()
 
+object NativeUnit : Key()
+
 /**
  * Represents the construct T/U. example usage is Velocity: Fraction<Length, Time>
  */

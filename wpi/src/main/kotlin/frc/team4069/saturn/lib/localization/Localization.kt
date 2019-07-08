@@ -5,7 +5,7 @@ import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
 import frc.team4069.saturn.lib.mathematics.units.Radian
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
-import frc.team4069.saturn.lib.mathematics.units.Time
+import frc.team4069.saturn.lib.mathematics.units.Second
 import frc.team4069.saturn.lib.mathematics.units.radian
 import frc.team4069.saturn.lib.util.Source
 
@@ -56,6 +56,6 @@ abstract class Localization(
     protected abstract fun update(deltaHeading: Rotation2d): Pose2d
 
     override fun invoke() = robotPosition
-    operator fun get(t: Time) = get(t.value)
+    operator fun get(t: SIUnit<Second>) = get(t.value)
     internal operator fun get(timestamp: Double) = interpolatableLocalizationBuffer[timestamp]
 }

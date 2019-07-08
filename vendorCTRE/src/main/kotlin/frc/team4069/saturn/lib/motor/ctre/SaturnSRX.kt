@@ -33,7 +33,7 @@ class SaturnSRX<T: Key>(
 
     data class CurrentLimitConfig(
             val peakCurrentLimit: SIUnit<Ampere>,
-            val peakCurrentLimitDuration: Time,
+            val peakCurrentLimitDuration: SIUnit<Second>,
             val continuousCurrentLimit: SIUnit<Ampere>
     )
 }

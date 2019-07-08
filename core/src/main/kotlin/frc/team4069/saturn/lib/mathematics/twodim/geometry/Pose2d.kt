@@ -24,20 +24,20 @@ data class Pose2d(
 ) : VaryInterpolatable<Pose2d> {
 
     infix fun fuzzyEquals(other: Pose2d): Boolean {
-        return translation.xRaw epsilonEquals other.translation.xRaw &&
-                translation.yRaw epsilonEquals other.translation.yRaw &&
+        return translation.x epsilonEquals other.translation.x &&
+                translation.y epsilonEquals other.translation.y &&
                 rotation.radian epsilonEquals other.rotation.radian
     }
 
     constructor(
-        x: Length,
-        y: Length,
+        x: SIUnit<Meter>,
+        y: SIUnit<Meter>,
         rotation: Rotation2d = Rotation2d(0.0)
     ) : this(Translation2d(x, y), rotation)
 
     constructor(
-            x: Length,
-            y: Length,
+            x: SIUnit<Meter>,
+            y: SIUnit<Meter>,
             rotation: SIUnit<Radian> = 0.radian
     ) : this(Translation2d(x, y), rotation.toRotation2d())
 
@@ -58,7 +58,7 @@ data class Pose2d(
         }
 
     val mirror
-        get() = Pose2d(Translation2d(translation.xRaw, 27.feet.meter - translation.yRaw), -rotation)
+        get() = Pose2d(Translation2d(translation.x, 27.feet - translation.y), -rotation)
 
     infix fun inFrameOfReferenceOf(fieldRelativeOrigin: Pose2d) = (-fieldRelativeOrigin) + this
 

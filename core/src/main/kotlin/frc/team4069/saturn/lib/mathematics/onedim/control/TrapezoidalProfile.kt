@@ -1,30 +1,25 @@
 package frc.team4069.saturn.lib.mathematics.onedim.control
 
 import frc.team4069.saturn.lib.mathematics.units.*
-import frc.team4069.saturn.lib.mathematics.units.conversions.meter
-import frc.team4069.saturn.lib.mathematics.units.conversions.second
+import frc.team4069.saturn.lib.mathematics.units.conversions.LinearAcceleration
+import frc.team4069.saturn.lib.mathematics.units.conversions.LinearVelocity
 import frc.team4069.saturn.lib.util.DeltaTime
-import kotlin.math.abs
 import kotlin.math.pow
-import kotlin.math.sign
+import kotlin.math.sqrt
 
 class TrapezoidalProfile private constructor(
-        val distance: Double,
-        maxVelocity: Double,
-        val maxAcceleration: Double,
-        val initialX: Double
+        val distance: SIUnit<Meter>,
+        maxVelocity: SIUnit<LinearVelocity>,
+        val maxAcceleration: SIUnit<LinearAcceleration>,
+        val initialX: SIUnit<Meter>
 ) : IKinematicController {
-
-    constructor(distance: Length, maxVelocity: LinearVelocity, maxAcceleration: LinearAcceleration,
-                initialX: Length = 0.meter)
-            : this(distance.meter, maxVelocity.value, maxAcceleration.value, initialX.meter)
 
     private var cruiseVelocity = maxVelocity
 
-    private val tAccel: Double
+    private val tAccel: SIUnit<Second>
     private val xAccel: Double
 
-    private val tCruise: Double
+    private val tCruise: SIUnit<Second>
     private val xCruise: Double
 
     private val sign: Double = sign(distance - initialX)
@@ -32,21 +27,21 @@ class TrapezoidalProfile private constructor(
     init {
         val distance = abs(distance - initialX)
         tAccel = (maxVelocity / maxAcceleration).let {
-            if (x(it, 0.0, 0.0, maxAcceleration) < distance / 2) {
-                it
+            if (x(it.value, 0.0, 0.0, maxAcceleration.value) < distance.value / 2) {
+                it.value.second // gross
             } else {
-                cruiseVelocity = maxAcceleration * Math.sqrt(distance / maxAcceleration)
-                cruiseVelocity / maxAcceleration
+                cruiseVelocity = (maxAcceleration.value * sqrt((distance / maxAcceleration).value)).meter.velocity
+                (cruiseVelocity / maxAcceleration).value.second
             }
         }
 
-        xAccel = x(tAccel, 0.0, 0.0, maxAcceleration)
+        xAccel = x(tAccel.value, 0.0, 0.0, maxAcceleration.value)
 
         // cruiseVelocity is potentially modified above, this stops a division by zero edge case
-        tCruise = if(cruiseVelocity != 0.0) {
-            ((distance - (2 * xAccel)) / cruiseVelocity).coerceAtLeast(0.0)
-        } else 0.0
-        xCruise = x(tCruise, 0.0, cruiseVelocity, 0.0)
+        tCruise = if(cruiseVelocity.value != 0.0) {
+            ((distance.value - (2 * xAccel)) / cruiseVelocity.value).coerceAtLeast(0.0).second
+        } else 0.second
+        xCruise = x(tCruise.value, 0.0, cruiseVelocity.value, 0.0)
     }
 
     val t1 = tAccel
@@ -54,39 +49,39 @@ class TrapezoidalProfile private constructor(
     val t3 = 2 * tAccel + tCruise
 
     // Loops
-    private var elapsed = 0.0
+    private var elapsed = 0.second
 
     private val deltaTime = DeltaTime()
 
-    override fun getVelocity(currentTime: Time): PVAData {
-        val dt = deltaTime.updateTime(currentTime).second
+    override fun getVelocity(currentTime: SIUnit<Second>): PVAData {
+        val dt = deltaTime.updateTime(currentTime)
         elapsed += dt
 
         return when {
             elapsed < t1 -> {
                 val t = elapsed
                 PVAData(
-                        x(t, initialX, 0.0, sign * maxAcceleration),
-                        v(t, 0.0, sign * maxAcceleration),
-                        sign * maxAcceleration)
+                        x(t.value, initialX.value, 0.0, sign * maxAcceleration.value),
+                        v(t.value, 0.0, sign * maxAcceleration.value),
+                        sign * maxAcceleration.value)
             }
             elapsed < t2 -> {
                 val t = elapsed - t1
                 PVAData(
-                        x(t, sign * xAccel + initialX, sign * cruiseVelocity, 0.0),
-                        v(t, sign * cruiseVelocity, 0.0),
+                        x(t.value, sign * xAccel + initialX.value, sign * cruiseVelocity.value, 0.0),
+                        v(t.value, sign * cruiseVelocity.value, 0.0),
                         0.0
                 )
             }
             elapsed < t3 -> {
                 val t = elapsed - t2
                 PVAData(
-                        x(t, sign * (xAccel + xCruise) + initialX, sign * cruiseVelocity, sign * -maxAcceleration),
-                        v(t, sign * cruiseVelocity, sign * -maxAcceleration),
-                        sign * -maxAcceleration
+                        x(t.value, sign * (xAccel + xCruise) + initialX.value, sign * cruiseVelocity.value, sign * -maxAcceleration.value),
+                        v(t.value, sign * cruiseVelocity.value, sign * -maxAcceleration.value),
+                        sign * -maxAcceleration.value
                 )
             }
-            else -> PVAData(distance, 0.0, 0.0)
+            else -> PVAData(distance.value, 0.0, 0.0)
         }
     }
 

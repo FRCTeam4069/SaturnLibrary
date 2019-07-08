@@ -9,7 +9,8 @@
 package frc.team4069.saturn.lib.mathematics.twodim.geometry
 
 import frc.team4069.saturn.lib.mathematics.lerp
-import frc.team4069.saturn.lib.mathematics.units.Curvature
+import frc.team4069.saturn.lib.mathematics.units.SIUnit
+import frc.team4069.saturn.lib.mathematics.units.derived.Curvature
 import frc.team4069.saturn.lib.types.Interpolatable
 import frc.team4069.saturn.lib.types.VaryInterpolatable
 
@@ -43,8 +44,8 @@ data class Pose2dWithCurvature(
  * @param dkds derivative of curvature
  */
 data class Pose2dCurvature(
-    val curvature: Curvature,
-    val dkds: Double
+        val curvature: SIUnit<Curvature>,
+        val dkds: Double
 ) : Interpolatable<Pose2dCurvature> {
     override fun interpolate(endValue: Pose2dCurvature, t: Double) =
         Pose2dCurvature(

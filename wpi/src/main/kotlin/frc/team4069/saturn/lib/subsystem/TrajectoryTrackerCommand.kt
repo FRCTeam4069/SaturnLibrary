@@ -5,14 +5,15 @@ import frc.team4069.saturn.lib.debug.LiveDashboard
 import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTracker
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedTrajectory
-import frc.team4069.saturn.lib.mathematics.units.Time
+import frc.team4069.saturn.lib.mathematics.units.SIUnit
+import frc.team4069.saturn.lib.mathematics.units.Second
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
 import frc.team4069.saturn.lib.mathematics.units.milli
 import frc.team4069.saturn.lib.util.Source
 
 class TrajectoryTrackerCommand(val driveSubsystem: TankDriveSubsystem,
                                val trajectory: Source<TimedTrajectory<Pose2dWithCurvature>>,
-                               val dt: Time = 20.milli.second) : SaturnCommand(driveSubsystem) {
+                               val dt: SIUnit<Second> = 20.milli.second) : SaturnCommand(driveSubsystem) {
     private lateinit var tracker: TrajectoryTracker
     private var finished = false
 
