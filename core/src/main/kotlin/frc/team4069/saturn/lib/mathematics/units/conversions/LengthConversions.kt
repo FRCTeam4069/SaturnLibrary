@@ -1,3 +1,6 @@
+/**
+ * Contains extra utils for converting to and from length units
+ */
 package frc.team4069.saturn.lib.mathematics.units.conversions
 
 import frc.team4069.saturn.lib.mathematics.units.Meter
@@ -16,15 +19,122 @@ object SILengthConstants {
     const val kLightYearToMeter = 9460730472580800.0
 }
 
-val Number.thou get() = SIUnit<Meter>(toDouble() * SILengthConstants.kThouToMeter)
-val Number.line get() = SIUnit<Meter>(toDouble() * SILengthConstants.kLineToMeter)
-val Number.inch get() = SIUnit<Meter>(toDouble() * SILengthConstants.kInchToMeter)
-val Number.feet get() = SIUnit<Meter>(toDouble() * SILengthConstants.kFeetToMeter)
-val Number.yard get() = SIUnit<Meter>(toDouble() * SILengthConstants.kYardToMeter)
-val Number.mile get() = SIUnit<Meter>(toDouble() * SILengthConstants.kMileToMeter)
-val Number.league get() = SIUnit<Meter>(toDouble() * SILengthConstants.kLeagueToMeter)
-val Number.nauticalMile get() = SIUnit<Meter>(toDouble() * SILengthConstants.kNauticalMile)
-val Number.lightYear get() = SIUnit<Meter>(toDouble() * SILengthConstants.kLightYearToMeter)
+val Double.thou
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kThouToMeter
+    )
+val Float.thou
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kThouToMeter
+    )
+val Int.thou
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kThouToMeter
+    )
+
+val Double.line
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kLineToMeter
+    )
+val Float.line
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kLineToMeter
+    )
+val Int.line
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kLineToMeter
+    )
+
+val Double.inch
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kInchToMeter
+    )
+val Float.inch
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kInchToMeter
+    )
+val Int.inch
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kInchToMeter
+    )
+
+val Double.feet
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kFeetToMeter
+    )
+val Float.feet
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kFeetToMeter
+    )
+val Int.feet
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kFeetToMeter
+    )
+
+val Double.yard
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kYardToMeter
+    )
+val Float.yard
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kYardToMeter
+    )
+val Int.yard
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kYardToMeter
+    )
+
+val Double.mile
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kMileToMeter
+    )
+val Float.mile
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kMileToMeter
+    )
+val Int.mile
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kMileToMeter
+    )
+
+val Double.league
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kLeagueToMeter
+    )
+val Float.league
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kLeagueToMeter
+    )
+val Int.league
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kLeagueToMeter
+    )
+
+val Double.nauticalMile
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kNauticalMile
+    )
+val Float.nauticalMile
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kNauticalMile
+    )
+val Int.nauticalMile
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kNauticalMile
+    )
+
+val Double.lightYear
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kLightYearToMeter
+    )
+val Float.lightYear
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kLightYearToMeter
+    )
+val Int.lightYear
+    get() = SIUnit<Meter>(
+            toDouble() * SILengthConstants.kLightYearToMeter
+    )
 
 val SIUnit<Meter>.thou get() = value / SILengthConstants.kThouToMeter
 val SIUnit<Meter>.line get() = value / SILengthConstants.kLineToMeter

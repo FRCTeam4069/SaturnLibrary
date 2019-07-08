@@ -20,12 +20,6 @@ object Ampere : Key()
 object Radian : Key()
 
 /**
- * Once again not an SI base unit, however it is important in FRC and can't be expressed
- * as a composition of other base units
- */
-object NativeUnit : Key()
-
-/**
  * Represents the construct T/U. example usage is Velocity: Fraction<Length, Time>
  */
 class Fraction<Numer: Key, Denom: Key> : Key()

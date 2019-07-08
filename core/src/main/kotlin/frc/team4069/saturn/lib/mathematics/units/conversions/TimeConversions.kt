@@ -12,11 +12,70 @@ object SITimeConstants {
     const val kMomentToSecond = 90
 }
 
-val Number.minute get() = SIUnit<Second>(toDouble() * SITimeConstants.kMinuteToSecond)
-val Number.hour get() = SIUnit<Second>(toDouble() * SITimeConstants.kHourToSecond)
-val Number.day get() = SIUnit<Second>(toDouble() * SITimeConstants.kDayToSecond)
-val Number.week get() = SIUnit<Second>(toDouble() * SITimeConstants.kWeekToSecond)
-val Number.moment get() = SIUnit<Second>(toDouble() * SITimeConstants.kMomentToSecond)
+val Double.minute
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kMinuteToSecond
+    )
+val Float.minute
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kMinuteToSecond
+    )
+val Int.minute
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kMinuteToSecond
+    )
+
+val Double.hour
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kHourToSecond
+    )
+val Float.hour
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kHourToSecond
+    )
+val Int.hour
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kHourToSecond
+    )
+
+val Double.day
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kDayToSecond
+    )
+val Float.day
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kDayToSecond
+    )
+val Int.day
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kDayToSecond
+    )
+
+val Double.week
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kWeekToSecond
+    )
+val Float.week
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kWeekToSecond
+    )
+val Int.week
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kWeekToSecond
+    )
+
+val Double.moment
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kMomentToSecond
+    )
+val Float.moment
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kMomentToSecond
+    )
+val Int.moment
+    get() = SIUnit<Second>(
+            toDouble() * SITimeConstants.kMomentToSecond
+    )
 
 val SIUnit<Second>.minute get() = value / SITimeConstants.kMinuteToSecond
 val SIUnit<Second>.hour get() = value / SITimeConstants.kHourToSecond
