@@ -1,44 +1,41 @@
-
 import edu.wpi.first.toolchain.NativePlatforms
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+version = "2020.0.0"
 
 plugins {
-    kotlin("jvm") version "1.3.31"
-    id("edu.wpi.first.GradleRIO") version "2019.3.2"
+    kotlin("jvm") version "1.3.41" apply false
+    id("edu.wpi.first.GradleRIO") version "2019.4.1" apply false
     maven
     `maven-publish`
 }
 
-repositories {
-    jcenter()
-    mavenLocal()
-    maven("https://jitpack.io")
-}
+subprojects {
+    apply {
+        plugin("kotlin")
+        plugin("maven")
+        plugin("maven-publish")
+    }
 
-dependencies {
-    // Kotlin Standard Library and Coroutines
-    compile(kotlin("stdlib"))
-    compile("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.2.1")
-    compile("com.github.Oblarg:command-rewrite-jitpack:1.1.4")
-    compile("com.github.FRCTeam4069:Keigen:1.5.0")
-    testCompile("junit:junit:4.12")
-
-    // WPILib
-    wpi.deps.wpilib().forEach { compile(it) }
-    wpi.deps.vendor.java().forEach { compile(it) }
-    wpi.deps.vendor.jni(NativePlatforms.roborio).forEach { nativeZip(it) }
-    wpi.deps.vendor.jni(NativePlatforms.desktop).forEach { nativeDesktopZip(it) }
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenLocal") {
-            groupId = "frc.team4069"
-            artifactId = "SaturnLibrary"
-            version = "2019.06.16"
-            
-            from(components["java"])
+    tasks {
+        withType<KotlinCompile>().configureEach {
+            kotlinOptions {
+                jvmTarget = "1.8"
+                freeCompilerArgs += "-XXLanguage:+InlineClasses"
+            }
         }
-    } 
+    }
+    repositories {
+        jcenter()
+        maven("https://jitpack.io")
+    }
+
+    dependencies {
+        // Kotlin Standard Library and Coroutines
+        "compile"(kotlin("stdlib"))
+        "compile"("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.2.1")
+        "testCompile"("junit:junit:4.12")
+    }
 }
 
 tasks.withType<Wrapper>().configureEach {
