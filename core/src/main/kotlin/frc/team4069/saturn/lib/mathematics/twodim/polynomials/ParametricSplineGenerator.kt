@@ -10,7 +10,8 @@ package frc.team4069.saturn.lib.mathematics.twodim.polynomials
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
-import frc.team4069.saturn.lib.mathematics.units.Length
+import frc.team4069.saturn.lib.mathematics.units.Meter
+import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import java.util.*
 
 object ParametricSplineGenerator {
@@ -18,8 +19,8 @@ object ParametricSplineGenerator {
 
     private fun parameterizeSpline(
             s: ParametricSpline,
-            maxDx: Length,
-            maxDy: Length,
+            maxDx: SIUnit<Meter>,
+            maxDy: SIUnit<Meter>,
             maxDTheta: Rotation2d,
             t0: Double = 0.0,
             t1: Double = 1.0
@@ -38,8 +39,8 @@ object ParametricSplineGenerator {
 
     fun parameterizeSplines(
         splines: List<ParametricSpline>,
-        maxDx: Length,
-        maxDy: Length,
+        maxDx: SIUnit<Meter>,
+        maxDy: SIUnit<Meter>,
         maxDTheta: Rotation2d
     ): List<Pose2dWithCurvature> {
         val rv = ArrayList<Pose2dWithCurvature>()
@@ -58,8 +59,8 @@ object ParametricSplineGenerator {
         rv: MutableList<Pose2dWithCurvature>,
         t0: Double,
         t1: Double,
-        maxDx: Length,
-        maxDy: Length,
+        maxDx: SIUnit<Meter>,
+        maxDy: SIUnit<Meter>,
         maxDTheta: Rotation2d
     ) {
         val p0 = s.getPoint(t0)

@@ -13,7 +13,7 @@ class SaturnCTREEncoder<T: Key>(
         val pidIdx: Int = 0,
         model: NativeUnitModel<T>
 ) : AbstractSaturnEncoder<T>(model) {
-    override val rawVelocity: NativeUnitVelocity
+    override val rawVelocity: SIUnit<NativeUnitVelocity>
         get() = motorController.getSelectedSensorVelocity(pidIdx).STUPer100ms
 
     override val rawPosition: SIUnit<NativeUnit>

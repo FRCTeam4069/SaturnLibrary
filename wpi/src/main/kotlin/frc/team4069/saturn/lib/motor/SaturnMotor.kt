@@ -1,8 +1,8 @@
 package frc.team4069.saturn.lib.motor
 
 import frc.team4069.saturn.lib.mathematics.units.*
-import frc.team4069.saturn.lib.mathematics.units.derived.AccelerationT
-import frc.team4069.saturn.lib.mathematics.units.derived.VelocityT
+import frc.team4069.saturn.lib.mathematics.units.derived.Acceleration
+import frc.team4069.saturn.lib.mathematics.units.derived.Velocity
 
 typealias LinearFalconMotor = SaturnMotor<Meter>
 typealias AngularFalconMotor = SaturnMotor<Radian>
@@ -37,12 +37,12 @@ interface SaturnMotor<T : Key> {
      *  Peak target velocity that the on board motion profile generator will use
      *  Unit is [T]/s
      */
-    var motionProfileCruiseVelocity: SIUnit<VelocityT<T>>
+    var motionProfileCruiseVelocity: SIUnit<Velocity<T>>
     /**
      *  Acceleration that the on board motion profile generator will
      *  Unit is [T]/s/s
      */
-    var motionProfileAcceleration: SIUnit<AccelerationT<T>>
+    var motionProfileAcceleration: SIUnit<Acceleration<T>>
     /**
      * Enables the use of on board motion profiling for position mode
      */
@@ -63,7 +63,7 @@ interface SaturnMotor<T : Key> {
     /**
      * Sets the output [velocity] in [T]/s and [arbitraryFeedForward] in volts
      */
-    fun setVelocity(velocity: SIUnit<VelocityT<T>>, arbitraryFeedForward: Double = 0.0)
+    fun setVelocity(velocity: SIUnit<Velocity<T>>, arbitraryFeedForward: Double = 0.0)
 
     /**
      * Sets the output [position] in [T] and [arbitraryFeedForward] in volts

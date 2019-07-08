@@ -3,12 +3,14 @@ package frc.team4069.saturn.lib.localization
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Twist2d
-import frc.team4069.saturn.lib.mathematics.units.Length
+import frc.team4069.saturn.lib.mathematics.units.Meter
+import frc.team4069.saturn.lib.mathematics.units.SIUnit
+import frc.team4069.saturn.lib.mathematics.units.meter
 import frc.team4069.saturn.lib.util.Source
 
 class DeadReckoningLocalization(robotHeading: Source<Rotation2d>,
-                                val leftEncoder: Source<Length>,
-                                val rightEncoder: Source<Length>
+                                val leftEncoder: Source<SIUnit<Meter>>,
+                                val rightEncoder: Source<SIUnit<Meter>>
 ) : Localization(robotHeading) {
     private var prevLeft = 0.0
     private var prevRight = 0.0
@@ -34,6 +36,6 @@ class DeadReckoningLocalization(robotHeading: Source<Rotation2d>,
 
     private fun forwardKinematics(dl: Double, dr: Double, rotationDelta: Rotation2d): Twist2d {
         val dx = (dl + dr) / 2.0
-        return Twist2d(dx, 0.0, rotationDelta)
+        return Twist2d(dx.meter, 0.meter, rotationDelta)
     }
 }

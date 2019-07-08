@@ -3,7 +3,8 @@ package frc.team4069.saturn.lib.util
 import edu.wpi.first.hal.NotifierJNI
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.Notifier
-import frc.team4069.saturn.lib.mathematics.units.Time
+import frc.team4069.saturn.lib.mathematics.units.SIUnit
+import frc.team4069.saturn.lib.mathematics.units.Second
 import frc.team4069.saturn.lib.mathematics.units.conversions.microsecond
 import frc.team4069.saturn.lib.mathematics.units.second
 import java.util.concurrent.TimeUnit
@@ -32,7 +33,7 @@ class SaturnNotifier(frequency: Int) : AutoCloseable {
      * Updates the notifier alarm. Should be called when the alarm is tripped to
      * reset the ticker
      */
-    fun updateAlarm(currentTime: Time = Timer.getFPGATimestamp().second) {
+    fun updateAlarm(currentTime: SIUnit<Second> = Timer.getFPGATimestamp().second) {
         if (closed) {
             throw IllegalStateException("updateAlarm() called on a disposed notifier! Check usages of close() for the relevant instance")
         }

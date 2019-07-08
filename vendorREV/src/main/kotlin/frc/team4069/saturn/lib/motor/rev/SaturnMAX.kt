@@ -7,8 +7,8 @@ import com.revrobotics.ControlType
 import frc.team4069.saturn.lib.mathematics.units.Key
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.acceleration
-import frc.team4069.saturn.lib.mathematics.units.derived.AccelerationT
-import frc.team4069.saturn.lib.mathematics.units.derived.VelocityT
+import frc.team4069.saturn.lib.mathematics.units.derived.Acceleration
+import frc.team4069.saturn.lib.mathematics.units.derived.Velocity
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitModel
 import frc.team4069.saturn.lib.mathematics.units.velocity
 import frc.team4069.saturn.lib.motor.AbstractSaturnMotor
@@ -39,10 +39,10 @@ class SaturnMAX<T : Key>(
         canSparkMax.enableVoltageCompensation(newValue)
     }
 
-    override var motionProfileCruiseVelocity: SIUnit<VelocityT<T>> by Delegates.observable(model.zero.velocity) { _, _, newValue ->
+    override var motionProfileCruiseVelocity: SIUnit<Velocity<T>> by Delegates.observable(model.zero.velocity) { _, _, newValue ->
         controller.setSmartMotionMaxVelocity(model.toNativeUnitVelocity(newValue).value * 60, 0)
     }
-    override var motionProfileAcceleration: SIUnit<AccelerationT<T>> by Delegates.observable(model.zero.acceleration) { _, _, newValue ->
+    override var motionProfileAcceleration: SIUnit<Acceleration<T>> by Delegates.observable(model.zero.acceleration) { _, _, newValue ->
         controller.setSmartMotionMaxAccel(model.toNativeUnitAcceleration(newValue).value * 60.0, 0)
     }
 
@@ -58,7 +58,7 @@ class SaturnMAX<T : Key>(
         controller.setReference(dutyCycle, ControlType.kDutyCycle, 0, arbitraryFeedForward)
     }
 
-    override fun setVelocity(velocity: SIUnit<VelocityT<T>>, arbitraryFeedForward: Double) {
+    override fun setVelocity(velocity: SIUnit<Velocity<T>>, arbitraryFeedForward: Double) {
         controller.setReference(
                 model.toNativeUnitVelocity(velocity).value * 60,
                 ControlType.kVelocity, 0, arbitraryFeedForward

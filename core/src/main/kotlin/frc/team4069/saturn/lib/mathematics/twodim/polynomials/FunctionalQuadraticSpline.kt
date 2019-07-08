@@ -1,14 +1,15 @@
 package frc.team4069.saturn.lib.mathematics.twodim.polynomials
 
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Translation2d
+import frc.team4069.saturn.lib.mathematics.units.*
 
 class FunctionalQuadraticSpline(
     private val p1: Translation2d,
     private val p2: Translation2d,
     private val p3: Translation2d
 ) {
-    private val a get() = p3.xRaw * (p2.yRaw - p1.yRaw) + p2.xRaw * (p1.yRaw - p3.yRaw) + p1.xRaw * (p3.yRaw - p2.yRaw)
-    private val b get() = p3.xRaw * p3.xRaw * (p1.yRaw - p2.yRaw) + p2.xRaw * p2.xRaw * (p3.yRaw - p1.yRaw) + p1.xRaw * p1.xRaw * (p2.yRaw - p3.yRaw)
+    private val a get() = (p3.x * (p2.y - p1.y) + p2.x * (p1.y - p3.y) + p1.x * (p3.y - p2.y)).value
+    private val b get() = (p3.x * p3.x * (p1.y - p2.y) + p2.x * p2.x * (p3.y - p1.y) + p1.x * p1.x * (p2.y - p3.y)).value
 
     val vertexXCoordinate get() = -b / (2 * a)
 }

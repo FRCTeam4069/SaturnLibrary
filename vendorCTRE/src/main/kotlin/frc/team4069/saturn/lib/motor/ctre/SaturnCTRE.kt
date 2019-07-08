@@ -7,8 +7,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import frc.team4069.saturn.lib.mathematics.units.Key
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.acceleration
-import frc.team4069.saturn.lib.mathematics.units.derived.AccelerationT
-import frc.team4069.saturn.lib.mathematics.units.derived.VelocityT
+import frc.team4069.saturn.lib.mathematics.units.derived.Acceleration
+import frc.team4069.saturn.lib.mathematics.units.derived.Velocity
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitModel
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.STUPer100ms
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.STUPer100msPerSecond
@@ -45,10 +45,10 @@ abstract class SaturnCTRE<T : Key>(
         motorController.enableVoltageCompensation(true)
     }
 
-    override var motionProfileCruiseVelocity: SIUnit<VelocityT<T>> by Delegates.observable(model.zero.velocity) { _, _, newValue ->
+    override var motionProfileCruiseVelocity: SIUnit<Velocity<T>> by Delegates.observable(model.zero.velocity) { _, _, newValue ->
         motorController.configMotionCruiseVelocity(model.toNativeUnitVelocity(newValue).STUPer100ms.toInt(), 0)
     }
-    override var motionProfileAcceleration: SIUnit<AccelerationT<T>> by Delegates.observable(model.zero.acceleration) { _, _, newValue ->
+    override var motionProfileAcceleration: SIUnit<Acceleration<T>> by Delegates.observable(model.zero.acceleration) { _, _, newValue ->
         motorController.configMotionAcceleration(model.toNativeUnitAcceleration(newValue).STUPer100msPerSecond.toInt(), 0)
 
     }
@@ -74,7 +74,7 @@ abstract class SaturnCTRE<T : Key>(
                     )
             )
 
-    override fun setVelocity(velocity: SIUnit<VelocityT<T>>, arbitraryFeedForward: Double) =
+    override fun setVelocity(velocity: SIUnit<Velocity<T>>, arbitraryFeedForward: Double) =
             sendDemand(
                     Demand(
                             ControlMode.Velocity, model.toNativeUnitVelocity(velocity).STUPer100ms,

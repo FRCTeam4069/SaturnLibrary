@@ -7,6 +7,10 @@ import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedEntry
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedTrajectory
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TrajectorySamplePoint
 import frc.team4069.saturn.lib.mathematics.units.*
+import frc.team4069.saturn.lib.mathematics.units.conversions.AngularAcceleration
+import frc.team4069.saturn.lib.mathematics.units.conversions.AngularVelocity
+import frc.team4069.saturn.lib.mathematics.units.conversions.LinearAcceleration
+import frc.team4069.saturn.lib.mathematics.units.conversions.LinearVelocity
 import frc.team4069.saturn.lib.util.DeltaTime
 
 abstract class TrajectoryTracker {
@@ -32,7 +36,7 @@ abstract class TrajectoryTracker {
         deltaTime.reset()
     }
 
-    fun update(robotState: Pose2d, currentTime: Time = System.currentTimeMillis().milli.second): TrajectoryTrackerOutput {
+    fun update(robotState: Pose2d, currentTime: SIUnit<Second> = System.currentTimeMillis().milli.second): TrajectoryTrackerOutput {
         if(this.iterator == null || this.isFinished) {
             return TrajectoryTrackerOutput()
         }
@@ -63,17 +67,17 @@ abstract class TrajectoryTracker {
     protected abstract fun calculate(robotState: Pose2d, referencePoint: TrajectorySamplePoint<TimedEntry<Pose2dWithCurvature>>): TrajectoryTrackerVelocityOutput
 
     protected data class TrajectoryTrackerVelocityOutput(
-            val linearVelocity: LinearVelocity,
-            val angularVelocity: AngularVelocity
+            val linearVelocity: SIUnit<LinearVelocity>,
+            val angularVelocity: SIUnit<AngularVelocity>
     )
 
     private fun TrajectoryTrackerOutput.toVelocityOutput() = TrajectoryTrackerVelocityOutput(linearVelocity, angularVelocity)
 
     data class TrajectoryTrackerOutput(
-            val linearVelocity: LinearVelocity,
-            val linearAcceleration: LinearAcceleration,
-            val angularVelocity: AngularVelocity,
-            val angularAcceleration: AngularAcceleration
+            val linearVelocity: SIUnit<LinearVelocity>,
+            val linearAcceleration: SIUnit<LinearAcceleration>,
+            val angularVelocity: SIUnit<AngularVelocity>,
+            val angularAcceleration: SIUnit<AngularAcceleration>
     ) {
         constructor() : this(0.meter.velocity, 0.meter.acceleration, 0.degree.velocity, 0.degree.acceleration)
     }

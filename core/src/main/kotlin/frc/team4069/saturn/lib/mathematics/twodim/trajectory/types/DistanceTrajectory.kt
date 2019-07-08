@@ -2,13 +2,14 @@ package frc.team4069.saturn.lib.mathematics.twodim.trajectory.types
 
 import frc.team4069.saturn.lib.mathematics.epsilonEquals
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryIterator
-import frc.team4069.saturn.lib.mathematics.units.Length
+import frc.team4069.saturn.lib.mathematics.units.Meter
+import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.meter
 import frc.team4069.saturn.lib.types.VaryInterpolatable
 
 class DistanceTrajectory<S : VaryInterpolatable<S>>(
     points: List<S>
-) : Trajectory<Length, S>(points) {
+) : Trajectory<SIUnit<Meter>, S>(points) {
 
     private val distances: List<Double>
 
@@ -19,7 +20,7 @@ class DistanceTrajectory<S : VaryInterpolatable<S>>(
         distances = tempDistances
     }
 
-    override fun sample(interpolant: Length) = sample(interpolant.value)
+    override fun sample(interpolant: SIUnit<Meter>) = sample(interpolant.value)
 
     fun sample(interpolant: Double) = when {
         interpolant >= lastInterpolant.value -> TrajectorySamplePoint(getPoint(points.size - 1))
@@ -56,6 +57,6 @@ class DistanceTrajectory<S : VaryInterpolatable<S>>(
 
 class DistanceIterator<S : VaryInterpolatable<S>>(
     trajectory: DistanceTrajectory<S>
-) : TrajectoryIterator<Length, S>(trajectory) {
-    override fun addition(a: Length, b: Length) = a + b
+) : TrajectoryIterator<SIUnit<Meter>, S>(trajectory) {
+    override fun addition(a: SIUnit<Meter>, b: SIUnit<Meter>) = a + b
 }
