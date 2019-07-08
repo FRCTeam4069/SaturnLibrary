@@ -1,1 +1,6 @@
 rootProject.name = "SaturnLibrary"
+include 'core'
+include 'vendorCTRE'
+include 'wpi'
+include 'vendorREV'
+
