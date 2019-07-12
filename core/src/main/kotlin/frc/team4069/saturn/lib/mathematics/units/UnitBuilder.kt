@@ -3,10 +3,10 @@ package frc.team4069.saturn.lib.mathematics.units
 import frc.team4069.saturn.lib.mathematics.units.derived.*
 
 val <T : Key> SIUnit<T>.velocity get() = SIUnit<Velocity<T>>(
-    value
+        value
 )
 val <T : Key> SIUnit<T>.acceleration get() = SIUnit<Acceleration<T>>(
-    value
+        value
 )
 
 /**
@@ -17,44 +17,44 @@ val <T : Key> SIUnit<T>.acceleration get() = SIUnit<Acceleration<T>>(
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS") //May change if Kotlin changes
 inline class UnitBuilder internal constructor(val value: Double) {
     val gram get() = SIUnit<Kilogram>(
-        value / 1000.0
+            value / 1000.0
     )
     val second get() = SIUnit<Second>(
-        value
+            value
     )
     val amp get() = SIUnit<Ampere>(
-        value
+            value
     )
     val coulomb get() = SIUnit<Coulomb>(
-        value
+            value
     )
     val volt get() = SIUnit<Volt>(
-        value
+            value
     )
     val ohm get() = SIUnit<Ohm>(
-        value
+            value
     )
     val newton get() = SIUnit<Newton>(
-        value
+            value
     )
     val joule get() = SIUnit<Joule>(
-        value
+            value
     )
     val hertz get() = SIUnit<Hertz>(
-        value
+            value
     )
     val curvature get() = SIUnit<Curvature>(
-        value
+            value
     )
     val meter get() = SIUnit<Meter>(
-        value
+            value
     )
 
     val radian get() = SIUnit<Radian>(
-        value
+            value
     )
     val degree get() = SIUnit<Radian>(
-        Math.toRadians(value)
+            Math.toRadians(value)
     )
 }
 
@@ -89,42 +89,42 @@ val Number.yocto get() = UnitBuilder(toDouble() * SIConstants.kYocto)
  * Prefixless getters for all defined units.
  */
 val Number.gram get() = SIUnit<Kilogram>(
-    toDouble() / 1000.0
+        toDouble() / 1000.0
 )
 val Number.second get() = SIUnit<Second>(
-    toDouble()
+        toDouble()
 )
 val Number.amp get() = SIUnit<Ampere>(
-    toDouble()
+        toDouble()
 )
 val Number.coulomb get() = SIUnit<Coulomb>(
-    toDouble()
+        toDouble()
 )
 val Number.volt get() = SIUnit<Volt>(
-    toDouble()
+        toDouble()
 )
 val Number.ohm get() = SIUnit<Ohm>(
-    toDouble()
+        toDouble()
 )
 val Number.newton get() = SIUnit<Newton>(
-    toDouble()
+        toDouble()
 )
 val Number.joule get() = SIUnit<Joule>(
-    toDouble()
+        toDouble()
 )
 val Number.hertz get() = SIUnit<Hertz>(
-    toDouble()
+        toDouble()
 )
 val Number.curvature get() = SIUnit<Curvature>(
-    toDouble()
+        toDouble()
 )
 val Number.meter get() = SIUnit<Meter>(
-    toDouble()
+        toDouble()
 )
 
 val Number.radian get() = SIUnit<Radian>(
-    toDouble()
+        toDouble()
 )
 val Number.degree get() = SIUnit<Radian>(
-    Math.toRadians(toDouble())
+        Math.toRadians(toDouble())
 )

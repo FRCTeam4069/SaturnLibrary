@@ -33,42 +33,42 @@ val Float.yocto get() = UnitBuilder(toDouble() * SIConstants.kYocto)
  * Prefixless getters for all defined units.
  */
 val Float.gram get() = SIUnit<Kilogram>(
-    toDouble() / 1000.0
+        toDouble() / 1000.0
 )
 val Float.second get() = SIUnit<Second>(
-    toDouble()
+        toDouble()
 )
 val Float.amp get() = SIUnit<Ampere>(
-    toDouble()
+        toDouble()
 )
 val Float.coulomb get() = SIUnit<Coulomb>(
-    toDouble()
+        toDouble()
 )
 val Float.volt get() = SIUnit<Volt>(
-    toDouble()
+        toDouble()
 )
 val Float.ohm get() = SIUnit<Ohm>(
-    toDouble()
+        toDouble()
 )
 val Float.newton get() = SIUnit<Newton>(
-    toDouble()
+        toDouble()
 )
 val Float.joule get() = SIUnit<Joule>(
-    toDouble()
+        toDouble()
 )
 val Float.hertz get() = SIUnit<Hertz>(
-    toDouble()
+        toDouble()
 )
 val Float.curvature get() = SIUnit<Curvature>(
-    toDouble()
+        toDouble()
 )
 val Float.meter get() = SIUnit<Meter>(
-    toDouble()
+        toDouble()
 )
 
 val Float.radian get() = SIUnit<Radian>(
-    toDouble()
+        toDouble()
 )
 val Float.degree get() = SIUnit<Radian>(
-    Math.toRadians(toDouble())
+        Math.toRadians(toDouble())
 )

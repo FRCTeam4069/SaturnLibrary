@@ -3,8 +3,10 @@ package frc.team4069.saturn.lib.mathematics.twodim.control
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rectangle2d
+import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryIterator
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedEntry
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedTrajectory
+import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.Trajectory
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TrajectorySamplePoint
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.AngularAcceleration
@@ -14,71 +16,68 @@ import frc.team4069.saturn.lib.mathematics.units.conversions.LinearVelocity
 import frc.team4069.saturn.lib.util.DeltaTime
 
 abstract class TrajectoryTracker {
-    private var currentTrajectory: TimedTrajectory<Pose2dWithCurvature>? = null
-    protected val locationMarkers = mutableMapOf<Rectangle2d, () -> Unit>()
+
+    private var trajectoryIterator: TrajectoryIterator<SIUnit<Second>, TimedEntry<Pose2dWithCurvature>>? = null
+    private var deltaTimeController = DeltaTime()
     private var previousVelocity: TrajectoryTrackerVelocityOutput? = null
-    private val deltaTime = DeltaTime()
 
-    val iterator get() = currentTrajectory?.iterator()
-    val referencePoint get() = iterator?.currentState
+    val referencePoint get() = trajectoryIterator?.currentState
+    val isFinished get() = trajectoryIterator?.isDone ?: true
 
-    val isFinished
-        get() = iterator?.isDone ?: true
-
-    fun addMarker(area: Rectangle2d, callback: () -> Unit) {
-        locationMarkers += area to callback
-    }
-
-    fun reset(trajectory: TimedTrajectory<Pose2dWithCurvature>) {
-        currentTrajectory = trajectory
-        locationMarkers.clear()
+    fun reset(trajectory: Trajectory<SIUnit<Second>, TimedEntry<Pose2dWithCurvature>>) {
+        trajectoryIterator = trajectory.iterator()
+        deltaTimeController.reset()
         previousVelocity = null
-        deltaTime.reset()
     }
 
-    fun update(robotState: Pose2d, currentTime: SIUnit<Second> = System.currentTimeMillis().milli.second): TrajectoryTrackerOutput {
-        if(this.iterator == null || this.isFinished) {
-            return TrajectoryTrackerOutput()
+    fun nextState(
+            currentRobotPose: Pose2d,
+            currentTime: SIUnit<Second> = System.currentTimeMillis().milli.second
+    ): TrajectoryTrackerOutput {
+        val iterator = trajectoryIterator
+        require(iterator != null) {
+            "You cannot get the next state from the TrajectoryTracker without a trajectory! Call TrajectoryTracker#reset first!"
         }
-        val dt = deltaTime.updateTime(currentTime)
-        iterator!!.advance(dt)
+        val deltaTime = deltaTimeController.updateTime(currentTime)
+        iterator.advance(deltaTime)
 
-        val velocity = calculate(robotState, referencePoint!!) // referencePoint will never be null since we validated that the iterator is nonnull
+        val velocity = calculateState(iterator, currentRobotPose)
         val previousVelocity = this.previousVelocity
         this.previousVelocity = velocity
 
-        return if(previousVelocity == null) {
+        // Calculate Acceleration (useful for drive dynamics)
+        return if (previousVelocity == null || deltaTime.value <= 0) {
             TrajectoryTrackerOutput(
-                    velocity.linearVelocity,
-                    0.meter.acceleration,
-                    velocity.angularVelocity,
-                    0.degree.acceleration
+                    linearVelocity = velocity.linearVelocity,
+                    linearAcceleration = 0.meter.acceleration,
+                    angularVelocity = velocity.angularVelocity,
+                    angularAcceleration = 0.radian.acceleration
             )
-        }else {
+        } else {
             TrajectoryTrackerOutput(
-                    velocity.linearVelocity,
-                    (velocity.linearVelocity - previousVelocity.linearVelocity) / dt,
-                    velocity.angularVelocity,
-                    (velocity.angularVelocity - previousVelocity.angularVelocity) / dt
+                    linearVelocity = velocity.linearVelocity,
+                    linearAcceleration = (velocity.linearVelocity - previousVelocity.linearVelocity) / deltaTime,
+                    angularVelocity = velocity.angularVelocity,
+                    angularAcceleration = (velocity.angularVelocity - previousVelocity.angularVelocity) / deltaTime
             )
         }
     }
 
-    protected abstract fun calculate(robotState: Pose2d, referencePoint: TrajectorySamplePoint<TimedEntry<Pose2dWithCurvature>>): TrajectoryTrackerVelocityOutput
+    protected abstract fun calculateState(
+            iterator: TrajectoryIterator<SIUnit<Second>, TimedEntry<Pose2dWithCurvature>>,
+            robotPose: Pose2d
+    ): TrajectoryTrackerVelocityOutput
 
     protected data class TrajectoryTrackerVelocityOutput(
-            val linearVelocity: SIUnit<LinearVelocity>,
-            val angularVelocity: SIUnit<AngularVelocity>
+            internal val linearVelocity: SIUnit<LinearVelocity>,
+            internal val angularVelocity: SIUnit<AngularVelocity>
     )
-
-    private fun TrajectoryTrackerOutput.toVelocityOutput() = TrajectoryTrackerVelocityOutput(linearVelocity, angularVelocity)
-
-    data class TrajectoryTrackerOutput(
-            val linearVelocity: SIUnit<LinearVelocity>,
-            val linearAcceleration: SIUnit<LinearAcceleration>,
-            val angularVelocity: SIUnit<AngularVelocity>,
-            val angularAcceleration: SIUnit<AngularAcceleration>
-    ) {
-        constructor() : this(0.meter.velocity, 0.meter.acceleration, 0.degree.velocity, 0.degree.acceleration)
-    }
 }
+
+data class TrajectoryTrackerOutput(
+        val linearVelocity: SIUnit<LinearVelocity>,
+        val linearAcceleration: SIUnit<LinearAcceleration>,
+        val angularVelocity: SIUnit<AngularVelocity>,
+        val angularAcceleration: SIUnit<AngularAcceleration>
+)
+

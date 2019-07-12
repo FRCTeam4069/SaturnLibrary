@@ -5,6 +5,7 @@ import frc.team4069.saturn.lib.mathematics.epsilonEquals
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rectangle2d
+import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryIterator
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedEntry
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedTrajectory
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TrajectorySamplePoint
@@ -14,51 +15,46 @@ import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-// https://www.dis.uniroma1.it/~labrob/pub/papers/Ramsete01.pdf
-// Equation 5.12
-class RamseteTracker(private val b: Double, private val zeta: Double) : TrajectoryTracker() {
-    init {
-        if (zeta !in 0.0..1.0) {
-            throw IllegalArgumentException("Zeta must be in (0, 1)")
-        }
+class RamseteTracker(
+        private val kBeta: Double,
+        private val kZeta: Double
+) : TrajectoryTracker() {
 
-        if (b <= 0.0) {
-            throw IllegalArgumentException("b must be > 0")
-        }
+    /**
+     * Calculate desired chassis velocity using Ramsete.
+     */
+    override fun calculateState(
+            iterator: TrajectoryIterator<SIUnit<Second>, TimedEntry<Pose2dWithCurvature>>,
+            robotPose: Pose2d
+    ): TrajectoryTrackerVelocityOutput {
+        val referenceState = iterator.currentState.state
+
+        // Calculate goal in robot's coordinates
+        val error = referenceState.state.pose inFrameOfReferenceOf robotPose
+
+        // Get reference linear and angular velocities
+        val vd = referenceState.velocity
+        val wd = (vd * referenceState.state.curvature.curvature).value
+
+        // Compute gain
+        val k1 = 2 * kZeta * sqrt(wd * wd + kBeta * vd.value * vd.value)
+
+        // Get angular error in bounded radians
+        val angleError = error.rotation.radian
+
+        return TrajectoryTrackerVelocityOutput(
+                linearVelocity = vd * error.rotation.cos + (k1 * error.translation.x).velocity,
+                angularVelocity = (wd + kBeta * vd.value * sinc(angleError) * error.translation.y.value + k1 * angleError).radian.velocity
+        )
     }
 
-    override fun calculate(robotState: Pose2d, referencePoint: TrajectorySamplePoint<TimedEntry<Pose2dWithCurvature>>): TrajectoryTrackerVelocityOutput {
-        val referencePose = referencePoint.state.state.pose
-
-        val error = referencePose inFrameOfReferenceOf robotState
-        val vd = referencePoint.state.velocity.value // m/s
-        val wd = vd * referencePoint.state.state.curvature.curvature.value // thank you prateek, very cool!
-
-        val angleError = error.rotation.value
-
-        val v = vd * error.rotation.cos + k1(vd, wd) * error.translation.x.value
-        val w = wd + b * vd * sinc(angleError) * error.translation.y.value + k1(vd, wd) * angleError
-
-        locationMarkers.filter { (rect, _) -> rect.contains(robotState.translation) }
-                .forEach { (rect, listener) ->
-                    locationMarkers.remove(rect)
-                    listener()
-                }
-
-        return TrajectoryTrackerVelocityOutput(v.meter.velocity, w.radian.velocity)
-    }
-
-    fun k1(vd: Double, wd: Double): Double {
-        return 2 * zeta * sqrt(wd.pow(2) + b * vd.pow(2))
-    }
+    private operator fun <T: Key> Double.times(unit: SIUnit<T>) = unit * this
 
     companion object {
-        private fun sinc(theta: Double): Double {
-            return if (theta epsilonEquals 0.0) {
-                1.0 // return the limit in cases where it approaches 0
-            } else {
-                sin(theta) / theta
-            }
-        }
+        private fun sinc(theta: Double) =
+                if (theta epsilonEquals 0.0) {
+                    1.0
+                } else sin(theta) / theta
     }
+
 }
