@@ -16,18 +16,12 @@
 
 package frc.team4069.saturn.lib.mathematics.twodim.control
 
-import com.team254.lib.physics.DifferentialDrive
 import frc.team4069.saturn.lib.mathematics.epsilonEquals
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rectangle2d
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryIterator
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedEntry
-import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedTrajectory
-import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TrajectorySamplePoint
 import frc.team4069.saturn.lib.mathematics.units.*
-import frc.team4069.saturn.lib.util.DeltaTime
-import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
@@ -50,17 +44,17 @@ class RamseteTracker(
 
         // Get reference linear and angular velocities
         val vd = referenceState.velocity
-        val wd = (vd * referenceState.state.curvature.curvature).value
+        val wd = vd * referenceState.state.curvature.curvature
 
         // Compute gain
-        val k1 = 2 * kZeta * sqrt(wd * wd + kBeta * vd.value * vd.value)
+        val k1 = 2 * kZeta * sqrt(wd.pow2().value + kBeta * vd.pow2().value)
 
         // Get angular error in bounded radians
         val angleError = error.rotation.radian
 
         return TrajectoryTrackerVelocityOutput(
                 linearVelocity = vd * error.rotation.cos + (k1 * error.translation.x).velocity,
-                angularVelocity = (wd + kBeta * vd.value * sinc(angleError) * error.translation.y.value + k1 * angleError).radian.velocity
+                angularVelocity = (wd.value + kBeta * vd.value * sinc(angleError) * error.translation.y.value + k1 * angleError).radian.velocity
         )
     }
 

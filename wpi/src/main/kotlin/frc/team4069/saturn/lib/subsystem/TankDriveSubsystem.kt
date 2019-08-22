@@ -22,6 +22,7 @@ import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.debug.LiveDashboard
 import frc.team4069.saturn.lib.localization.Localization
 import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTracker
+import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTrackerOutput
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
 import frc.team4069.saturn.lib.mathematics.units.Meter
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
@@ -64,7 +65,7 @@ abstract class TankDriveSubsystem : SaturnSubsystem() {
         LiveDashboard.robotY = robotPosition.translation.y.feet
     }
 
-    abstract fun setOutput(output: TrajectoryTracker.TrajectoryTrackerOutput)
+    abstract fun setOutput(output: TrajectoryTrackerOutput)
 
     fun curvatureDrive(
             linearPercent: Double,

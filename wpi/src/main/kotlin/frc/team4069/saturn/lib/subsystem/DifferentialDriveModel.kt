@@ -17,6 +17,7 @@
 package frc.team4069.saturn.lib.subsystem
 
 import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTracker
+import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTrackerOutput
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.LinearVelocity
 import kotlin.math.sign
@@ -27,7 +28,7 @@ data class DifferentialDriveModel(
         val kA: Double,
         val kS: Double
 ) {
-    fun getDemand(output: TrajectoryTracker.TrajectoryTrackerOutput): DifferentialDriveDemand {
+    fun getDemand(output: TrajectoryTrackerOutput): DifferentialDriveDemand {
         val (leftVel, rightVel, leftAcc, rightAcc) = inverseKinematics(output)
         val leftArbFF = kV * leftVel + kA * leftAcc + kS * sign(leftVel)
         val rightArbFF = kV * rightVel + kA * rightAcc + kS * sign(rightVel)
@@ -35,7 +36,7 @@ data class DifferentialDriveModel(
         return DifferentialDriveDemand(leftVel.meter.velocity, rightVel.meter.velocity, leftArbFF, rightArbFF)
     }
 
-    private fun inverseKinematics(output: TrajectoryTracker.TrajectoryTrackerOutput): WheelState {
+    private fun inverseKinematics(output: TrajectoryTrackerOutput): WheelState {
         val leftVel = ((-wheelBase.value * output.angularVelocity.value + 2 * output.linearVelocity.value) / 2.0)
         val rightVel = ((wheelBase.value * output.angularVelocity.value + 2 * output.linearVelocity.value) / 2.0)
 

@@ -16,8 +16,4 @@
 
 package frc.team4069.saturn.lib.mathematics.units
 
-import frc.team4069.saturn.lib.mathematics.units.conversions.AngularVelocity
-import frc.team4069.saturn.lib.mathematics.units.conversions.LinearVelocity
-import frc.team4069.saturn.lib.mathematics.units.derived.Curvature
-
-operator fun SIUnit<LinearVelocity>.times(curvature: SIUnit<Curvature>) = SIUnit<AngularVelocity>(value * curvature.value)
+operator fun <T: Key, U: Key, K: Key> SIUnit<Fraction<T, U>>.times(other: SIUnit<Fraction<K, T>>): SIUnit<Fraction<K, U>> = SIUnit(value * other.value)
