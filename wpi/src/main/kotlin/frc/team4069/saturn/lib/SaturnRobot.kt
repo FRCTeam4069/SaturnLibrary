@@ -98,8 +98,12 @@ abstract class SaturnRobot(val period: SIUnit<Second> = 20.milli.second) {
     protected open fun testPeriodic() {}
     protected open fun disabledPeriodic() {}
 
-    open operator fun SaturnSubsystem.unaryPlus() {
+    protected fun addToSubsystemHandler(subsystem: SaturnSubsystem) {
         SubsystemHandler.add(this)
+    }
+
+    open operator fun SaturnSubsystem.unaryPlus() {
+        addToSubsystemHandler(this)
     }
 
     fun start() {
