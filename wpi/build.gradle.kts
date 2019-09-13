@@ -4,10 +4,6 @@ plugins {
     id("edu.wpi.first.GradleRIO")
 }
 
-version = "2020.0.0"
-
-
-
 repositories {
     maven { setUrl("https://maven.woke.engineer/") }
 }
@@ -20,3 +16,16 @@ dependencies {
     wpi.deps.wpilibDesktopJni().forEach { nativeDesktopZip(it) }
     wpi.deps.wpilibJars().forEach { compile(it) }
 }
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenLocal") {
+            groupId = "frc.team4069.saturn.lib"
+            artifactId = "wpi"
+            version = version
+
+            from(components["java"])
+        }
+    }
+}
+version = "2020.0.0"
