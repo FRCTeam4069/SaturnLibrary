@@ -23,7 +23,7 @@ import frc.team4069.saturn.lib.util.DeltaTime
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class TrapezoidalProfile private constructor(
+class TrapezoidalProfile(
         val distance: SIUnit<Meter>,
         maxVelocity: SIUnit<LinearVelocity>,
         val maxAcceleration: SIUnit<LinearAcceleration>,

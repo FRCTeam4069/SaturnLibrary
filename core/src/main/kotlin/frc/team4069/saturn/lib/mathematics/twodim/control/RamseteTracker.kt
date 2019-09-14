@@ -58,8 +58,6 @@ class RamseteTracker(
         )
     }
 
-    private operator fun <T: Key> Double.times(unit: SIUnit<T>) = unit * this
-
     companion object {
         private fun sinc(theta: Double) =
                 if (theta epsilonEquals 0.0) {
