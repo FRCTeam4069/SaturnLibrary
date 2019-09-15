@@ -31,6 +31,9 @@ import frc.team4069.saturn.lib.mathematics.units.conversions.feet
 import frc.team4069.saturn.lib.mathematics.units.conversions.meter
 import frc.team4069.saturn.lib.types.VaryInterpolatable
 import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
 
 // Stores a pose on the field. Contains a translation and a rotation
 
@@ -85,6 +88,28 @@ data class Pose2d(
                     translation + (other.translation * rotation),
                     rotation + other.rotation
             )
+
+    fun exp(twist: Twist2d): Pose2d {
+        val dx = twist.dx.value
+        val dy = twist.dy.value
+        val dtheta = twist.dTheta.value
+
+        val sinTheta = sin(dtheta)
+        val cosTheta = cos(dtheta)
+
+        val s: Double
+        val c: Double
+        if(dtheta.absoluteValue < kEpsilon) {
+            s = 1.0 - 1.0 / 6.0 * dtheta.pow(2)
+            c = 0.5 * dtheta
+        } else {
+            s = sinTheta / dtheta
+            c = (1 - cosTheta) / dtheta
+        }
+
+        val transform = Pose2d(Translation2d((dx * s - dy * c).meter, (dx * c + dy * s).meter))
+        return this + transform
+    }
 
     operator fun unaryMinus(): Pose2d {
         val invertedRotation = -rotation

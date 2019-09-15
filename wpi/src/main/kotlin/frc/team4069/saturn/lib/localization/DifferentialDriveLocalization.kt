@@ -24,9 +24,9 @@ import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.meter
 import frc.team4069.saturn.lib.util.Source
 
-class DeadReckoningLocalization(robotHeading: Source<Rotation2d>,
-                                val leftEncoder: Source<SIUnit<Meter>>,
-                                val rightEncoder: Source<SIUnit<Meter>>
+class DifferentialDriveLocalization(robotHeading: Source<Rotation2d>,
+                                    val leftEncoder: Source<SIUnit<Meter>>,
+                                    val rightEncoder: Source<SIUnit<Meter>>
 ) : Localization(robotHeading) {
     private var prevLeft = 0.0
     private var prevRight = 0.0
