@@ -21,11 +21,8 @@ import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryIterator
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedEntry
-import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.Trajectory
 import frc.team4069.saturn.lib.mathematics.units.*
-import frc.team4069.saturn.lib.mathematics.units.conversions.AngularVelocity
 import frc.team4069.saturn.lib.mathematics.units.conversions.LinearVelocity
-import frc.team4069.saturn.lib.util.DeltaTime
 import kotlin.math.absoluteValue
 import kotlin.math.sqrt
 
@@ -67,3 +64,8 @@ class LTVUnicycleTracker(val kX: Double,
         return kY0 + (kY1 - kY0) * sqrt(value.absoluteValue)
     }
 }
+
+/**
+ * LTV Unicycle Tracker with gains determined with q_elems = [0.1, 0.1, 10deg], r_elems = [3.93m/s, 180deg/s]
+ */
+val DefaultLTVTracker = LTVUnicycleTracker(39.300, 31.416, 31.416, 18.000)
