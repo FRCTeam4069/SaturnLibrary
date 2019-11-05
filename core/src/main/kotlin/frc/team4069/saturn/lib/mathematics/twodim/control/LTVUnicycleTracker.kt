@@ -56,7 +56,7 @@ class LTVUnicycleTracker(val kX: Double,
 
     private fun K(v: SIUnit<LinearVelocity>): Matrix<`2`, `3`> {
         return mat(`2`, `3`).fill(kX, 0.0, 0.0,
-                           0.0, kY(v) * sign(v), kTheta * sqrt(v.value.absoluteValue))
+                0.0, kY(v) * sign(v), kTheta * sqrt(v.value.absoluteValue))
     }
 
     private fun kY(v: SIUnit<LinearVelocity>): Double {
@@ -66,6 +66,11 @@ class LTVUnicycleTracker(val kX: Double,
 }
 
 /**
- * LTV Unicycle Tracker with gains determined with q_elems = [0.1, 0.1, 10deg], r_elems = [3.93m/s, 180deg/s]
+ * LTV Unicycle Tracker with gains determined with q_elems = [0.3, 0.5, 20deg], r_elems = [3.44m/s, 180deg/s]
  */
-val DefaultLTVTracker = LTVUnicycleTracker(39.300, 31.416, 31.416, 18.000)
+val DefaultLTVTracker = LTVUnicycleTracker(
+        kX = 10.226960455896352,
+        kY0 = 5.743092173917074,
+        kY1 = 5.704580270256358,
+        kTheta = 8.841822353363662
+)
