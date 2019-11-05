@@ -31,25 +31,32 @@ import kotlin.math.sqrt
  * Gains are determined via LQR.
  *
  * (https://file.tavsys.net/control/controls-engineering-in-frc.pdf Theorem 8.7.2)
+ *
+ * kX, kY0, kY1, and kTheta are tuning gains from LQR
+ * robotVelocity is supplied by user code to determine the measured robot linear velocity
  */
 class LTVUnicycleTracker(val kX: Double,
                          val kY0: Double,
                          val kY1: Double,
-                         val kTheta: Double) : TrajectoryTracker() {
+                         val kTheta: Double,
+                         val robotVelocity: () -> SIUnit<LinearVelocity>) : TrajectoryTracker() {
 
     override fun calculateState(iterator: TrajectoryIterator<SIUnit<Second>, TimedEntry<Pose2dWithCurvature>>, robotPose: Pose2d): TrajectoryTrackerVelocityOutput {
         val referenceState = iterator.currentState.state
 
+        // Get desired and actual velocities
+        val v = robotVelocity()
         val vd = referenceState.velocity
         val wd = vd * referenceState.state.curvature.curvature
 
-        val Kff = mat(`1`, `2`).fill(vd.value, wd.value)
-        val K = K(vd)
+        // Calculate gain matrix at current robot velocity
+        val K = K(v)
 
         val error = referenceState.state.pose inFrameOfReferenceOf robotPose
 
         val errorVec = vec(`3`).fill(error.translation.x.value, error.translation.y.value, error.rotation.value)
-        val u = K * errorVec //+ Kff * () (Feedforward later)
+        // u = K(r - x), feedforward term is desired trajectory velocities
+        val u = K * errorVec + vec(`2`).fill(vd.value, wd.value)
 
         return TrajectoryTrackerVelocityOutput(u[0].meter.velocity, u[1].radian.velocity)
     }
@@ -64,13 +71,3 @@ class LTVUnicycleTracker(val kX: Double,
         return kY0 + (kY1 - kY0) * sqrt(value.absoluteValue)
     }
 }
-
-/**
- * LTV Unicycle Tracker with gains determined with q_elems = [0.3, 0.5, 20deg], r_elems = [3.44m/s, 180deg/s]
- */
-val DefaultLTVTracker = LTVUnicycleTracker(
-        kX = 10.226960455896352,
-        kY0 = 5.743092173917074,
-        kY1 = 5.704580270256358,
-        kTheta = 8.841822353363662
-)

@@ -57,7 +57,7 @@ abstract class TrajectoryTracker {
         val deltaTime = deltaTimeController.updateTime(currentTime)
         iterator.advance(deltaTime)
 
-        val velocity = calculateState(iterator, currentRobotPose)
+        val velocity = calculateState(iterator, currentRobotPose, deltaTime)
         val previousVelocity = this.previousVelocity
         this.previousVelocity = velocity
 
