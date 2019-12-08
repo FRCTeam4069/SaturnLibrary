@@ -26,6 +26,7 @@ import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTrackerOutpu
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
 import frc.team4069.saturn.lib.mathematics.units.Meter
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
+import frc.team4069.saturn.lib.mathematics.units.volt
 import frc.team4069.saturn.lib.motor.SaturnMotor
 import frc.team4069.saturn.lib.util.Source
 import kotlin.math.absoluteValue
@@ -129,8 +130,8 @@ abstract class TankDriveSubsystem : SaturnSubsystem() {
     }
 
     open fun tankDrive(left: Double, right: Double) {
-        leftMotor.setDutyCycle(left, 0.0)
-        rightMotor.setDutyCycle(right, 0.0)
+        leftMotor.setDutyCycle(left, 0.volt)
+        rightMotor.setDutyCycle(right, 0.volt)
     }
 
     companion object {
