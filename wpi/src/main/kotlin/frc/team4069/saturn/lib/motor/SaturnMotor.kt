@@ -19,6 +19,7 @@ package frc.team4069.saturn.lib.motor
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.derived.Acceleration
 import frc.team4069.saturn.lib.mathematics.units.derived.Velocity
+import frc.team4069.saturn.lib.mathematics.units.derived.Volt
 
 typealias LinearFalconMotor = SaturnMotor<Meter>
 typealias AngularFalconMotor = SaturnMotor<Radian>
@@ -69,22 +70,22 @@ interface SaturnMotor<T : Key> {
     /**
      * Sets the output [voltage] in volts and [arbitraryFeedForward] in volts
      */
-    fun setVoltage(voltage: Double, arbitraryFeedForward: Double = 0.0)
+    fun setVoltage(voltage: SIUnit<Volt>, arbitraryFeedForward: SIUnit<Volt> = 0.volt)
 
     /**
      * Sets the output [dutyCycle] in percent and [arbitraryFeedForward] in volts
      */
-    fun setDutyCycle(dutyCycle: Double, arbitraryFeedForward: Double = 0.0)
+    fun setDutyCycle(dutyCycle: Double, arbitraryFeedForward: SIUnit<Volt> = 0.volt)
 
     /**
      * Sets the output [velocity] in [T]/s and [arbitraryFeedForward] in volts
      */
-    fun setVelocity(velocity: SIUnit<Velocity<T>>, arbitraryFeedForward: Double = 0.0)
+    fun setVelocity(velocity: SIUnit<Velocity<T>>, arbitraryFeedForward: SIUnit<Volt> = 0.volt)
 
     /**
      * Sets the output [position] in [T] and [arbitraryFeedForward] in volts
      */
-    fun setPosition(position: SIUnit<T>, arbitraryFeedForward: Double = 0.0)
+    fun setPosition(position: SIUnit<T>, arbitraryFeedForward: SIUnit<Volt> = 0.volt)
 
     /**
      * Sets the output of the motor to neutral

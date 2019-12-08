@@ -20,15 +20,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.IMotorController
 import com.ctre.phoenix.motorcontrol.NeutralMode
-import frc.team4069.saturn.lib.mathematics.units.Key
-import frc.team4069.saturn.lib.mathematics.units.SIUnit
-import frc.team4069.saturn.lib.mathematics.units.acceleration
+import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.derived.Acceleration
 import frc.team4069.saturn.lib.mathematics.units.derived.Velocity
+import frc.team4069.saturn.lib.mathematics.units.derived.Volt
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitModel
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.STUPer100ms
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.STUPer100msPerSecond
-import frc.team4069.saturn.lib.mathematics.units.velocity
 import frc.team4069.saturn.lib.motor.AbstractSaturnMotor
 import frc.team4069.saturn.lib.motor.SaturnMotor
 import kotlin.properties.Delegates
@@ -41,7 +39,7 @@ abstract class SaturnCTRE<T : Key>(
     private var lastDemand =
             Demand(ControlMode.Disabled, 0.0, DemandType.Neutral, 0.0)
 
-    private var compVoltage = 12.0
+    private var compVoltage = 12.volt
 
     override val encoder = SaturnCTREEncoder(motorController, 0, model)
 
@@ -74,7 +72,7 @@ abstract class SaturnCTRE<T : Key>(
         motorController.enableVoltageCompensation(true)
     }
 
-    override fun setVoltage(voltage: Double, arbitraryFeedForward: Double) =
+    override fun setVoltage(voltage: SIUnit<Volt>, arbitraryFeedForward: SIUnit<Volt>) =
             sendDemand(
                     Demand(
                             ControlMode.PercentOutput, voltage / compVoltage,
@@ -82,7 +80,7 @@ abstract class SaturnCTRE<T : Key>(
                     )
             )
 
-    override fun setDutyCycle(dutyCycle: Double, arbitraryFeedForward: Double) =
+    override fun setDutyCycle(dutyCycle: Double, arbitraryFeedForward: SIUnit<Volt>) =
             sendDemand(
                     Demand(
                             ControlMode.PercentOutput, dutyCycle,
@@ -90,7 +88,7 @@ abstract class SaturnCTRE<T : Key>(
                     )
             )
 
-    override fun setVelocity(velocity: SIUnit<Velocity<T>>, arbitraryFeedForward: Double) =
+    override fun setVelocity(velocity: SIUnit<Velocity<T>>, arbitraryFeedForward: SIUnit<Volt>) =
             sendDemand(
                     Demand(
                             ControlMode.Velocity, model.toNativeUnitVelocity(velocity).STUPer100ms,
@@ -98,7 +96,7 @@ abstract class SaturnCTRE<T : Key>(
                     )
             )
 
-    override fun setPosition(position: SIUnit<T>, arbitraryFeedForward: Double) =
+    override fun setPosition(position: SIUnit<T>, arbitraryFeedForward: SIUnit<Volt>) =
             sendDemand(
                     Demand(
                             if (useMotionProfileForPosition) ControlMode.MotionMagic else ControlMode.Position,

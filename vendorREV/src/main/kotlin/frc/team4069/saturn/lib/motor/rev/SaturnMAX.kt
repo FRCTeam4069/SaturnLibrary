@@ -25,6 +25,7 @@ import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.acceleration
 import frc.team4069.saturn.lib.mathematics.units.derived.Acceleration
 import frc.team4069.saturn.lib.mathematics.units.derived.Velocity
+import frc.team4069.saturn.lib.mathematics.units.derived.Volt
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitModel
 import frc.team4069.saturn.lib.mathematics.units.velocity
 import frc.team4069.saturn.lib.motor.AbstractSaturnMotor
@@ -66,26 +67,26 @@ class SaturnMAX<T : Key>(
         canSparkMax.enableVoltageCompensation(12.0)
     }
 
-    override fun setVoltage(voltage: Double, arbitraryFeedForward: Double) {
-        controller.setReference(voltage, ControlType.kVoltage, 0, arbitraryFeedForward)
+    override fun setVoltage(voltage: SIUnit<Volt>, arbitraryFeedForward: SIUnit<Volt>) {
+        controller.setReference(voltage.value, ControlType.kVoltage, 0, arbitraryFeedForward.value)
     }
 
-    override fun setDutyCycle(dutyCycle: Double, arbitraryFeedForward: Double) {
-        controller.setReference(dutyCycle, ControlType.kDutyCycle, 0, arbitraryFeedForward)
+    override fun setDutyCycle(dutyCycle: Double, arbitraryFeedForward: SIUnit<Volt>) {
+        controller.setReference(dutyCycle, ControlType.kDutyCycle, 0, arbitraryFeedForward.value)
     }
 
-    override fun setVelocity(velocity: SIUnit<Velocity<T>>, arbitraryFeedForward: Double) {
+    override fun setVelocity(velocity: SIUnit<Velocity<T>>, arbitraryFeedForward: SIUnit<Volt>) {
         controller.setReference(
                 model.toNativeUnitVelocity(velocity).value * 60,
-                ControlType.kVelocity, 0, arbitraryFeedForward
+                ControlType.kVelocity, 0, arbitraryFeedForward.value
         )
     }
 
-    override fun setPosition(position: SIUnit<T>, arbitraryFeedForward: Double) {
+    override fun setPosition(position: SIUnit<T>, arbitraryFeedForward: SIUnit<Volt>) {
         controller.setReference(
                 model.toNativeUnitPosition(position).value,
                 if (useMotionProfileForPosition) ControlType.kSmartMotion else ControlType.kPosition,
-                0, arbitraryFeedForward
+                0, arbitraryFeedForward.value
         )
     }
 
