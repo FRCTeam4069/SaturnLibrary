@@ -43,13 +43,13 @@ class NativeUnitRotationModel(
             sensorUnitsPerRotation * (value / 360.degree)
 }
 
-class NativeUnitSensorModel(sensorUnitsPerRotation: SIUnit<NativeUnit> = kDefaultSensorUnitsPerRotation) : NativeUnitModel<NativeUnit>(sensorUnitsPerRotation, 0.STU) {
-    override fun fromNativeUnitPosition(value: SIUnit<NativeUnit>): SIUnit<NativeUnit> {
-        return value
+class NativeUnitSensorModel<T: Key>(sensorUnitsPerRotation: SIUnit<NativeUnit> = kDefaultSensorUnitsPerRotation) : NativeUnitModel<T>(sensorUnitsPerRotation, SIUnit(0.0)) {
+    override fun fromNativeUnitPosition(value: SIUnit<NativeUnit>): SIUnit<T> {
+        return SIUnit(value.value)
     }
 
-    override fun toNativeUnitPosition(value: SIUnit<NativeUnit>): SIUnit<NativeUnit> {
-        return value
+    override fun toNativeUnitPosition(value: SIUnit<T>): SIUnit<NativeUnit> {
+        return SIUnit(value.value)
     }
 }
 

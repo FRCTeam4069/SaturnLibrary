@@ -17,11 +17,10 @@
 package frc.team4069.saturn.lib.motor.rev
 
 import com.revrobotics.CANEncoder
+import frc.team4069.saturn.lib.mathematics.TAU
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.minute
-import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitModel
-import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitVelocity
-import frc.team4069.saturn.lib.mathematics.units.nativeunits.STU
+import frc.team4069.saturn.lib.mathematics.units.nativeunits.*
 import frc.team4069.saturn.lib.motor.AbstractSaturnEncoder
 
 class SaturnMAXEncoder<T: Key>(

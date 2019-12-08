@@ -18,10 +18,12 @@ package frc.team4069.saturn.lib
 
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
+import edu.wpi.first.networktables.NetworkTableEntry
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.experimental.command.CommandScheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.commands.SubsystemHandler
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
@@ -67,6 +69,9 @@ abstract class SaturnRobot(val period: SIUnit<Second> = 20.milli.second) {
         override fun robotPeriodic() {
             this@SaturnRobot.robotPeriodic()
             CommandScheduler.getInstance().run()
+            shuffleboardValues.forEach { (widget, value) ->
+                widget.setValue(value())
+            }
         }
 
         override fun autonomousPeriodic() {
@@ -108,5 +113,9 @@ abstract class SaturnRobot(val period: SIUnit<Second> = 20.milli.second) {
 
     fun start() {
         RobotBase.startRobot { wrappedValue }
+    }
+
+    companion object {
+        val shuffleboardValues: MutableList<Pair<NetworkTableEntry, () -> Any>> = mutableListOf()
     }
 }

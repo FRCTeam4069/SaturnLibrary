@@ -37,7 +37,7 @@ class SaturnMAX<T : Key>(
 ) : AbstractSaturnMotor<T>() {
     constructor(id: Int, motorType: CANSparkMaxLowLevel.MotorType, model: NativeUnitModel<T>) : this(CANSparkMax(id, motorType), model)
 
-    private val controller: CANPIDController = canSparkMax.pidController
+    val controller: CANPIDController = canSparkMax.pidController
     override val encoder = SaturnMAXEncoder(canSparkMax.encoder, model)
 
     override val voltageOutput: Double
