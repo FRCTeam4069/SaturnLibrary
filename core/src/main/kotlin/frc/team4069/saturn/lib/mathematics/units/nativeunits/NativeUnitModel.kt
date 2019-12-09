@@ -35,11 +35,11 @@ class NativeUnitLengthModel(
 
 class NativeUnitRotationModel(
         sensorUnitsPerRotation: SIUnit<NativeUnit> = kDefaultSensorUnitsPerRotation
-) : NativeUnitModel<Radian>(sensorUnitsPerRotation, 0.degree) {
+) : NativeUnitModel<Unitless>(sensorUnitsPerRotation, 0.degree) {
     override fun fromNativeUnitPosition(value: SIUnit<NativeUnit>) =
             360.degree * (value / sensorUnitsPerRotation)
 
-    override fun toNativeUnitPosition(value: SIUnit<Radian>) =
+    override fun toNativeUnitPosition(value: SIUnit<Unitless>) =
             sensorUnitsPerRotation * (value / 360.degree)
 }
 

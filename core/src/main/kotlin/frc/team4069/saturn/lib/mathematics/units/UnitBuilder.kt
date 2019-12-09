@@ -66,10 +66,10 @@ inline class UnitBuilder internal constructor(val value: Double) {
             value
     )
 
-    val radian get() = SIUnit<Radian>(
+    val radian get() = SIUnit<Unitless>(
             value
     )
-    val degree get() = SIUnit<Radian>(
+    val degree get() = SIUnit<Unitless>(
             Math.toRadians(value)
     )
 }
@@ -138,9 +138,9 @@ val Number.meter get() = SIUnit<Meter>(
         toDouble()
 )
 
-val Number.radian get() = SIUnit<Radian>(
+val Number.radian get() = SIUnit<Unitless>(
         toDouble()
 )
-val Number.degree get() = SIUnit<Radian>(
+val Number.degree get() = SIUnit<Unitless>(
         Math.toRadians(toDouble())
 )

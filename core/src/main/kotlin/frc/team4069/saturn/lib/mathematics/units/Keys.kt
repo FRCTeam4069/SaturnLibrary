@@ -30,10 +30,9 @@ object Kilogram : Key()
 object Ampere : Key()
 
 /**
- * While not technically an SI base unit, angle measurements are very important for FRC, thus the radian
- * will be treated as a base unit by this library
+ * Any unitless quantity, e.g. radians
  */
-object Radian : Key()
+object Unitless : Key()
 
 object NativeUnit : Key()
 
@@ -46,8 +45,3 @@ class Fraction<Numer: Key, Denom: Key> : Key()
  * Represents the construct T * U. Example usage is Coulomb: Mult<Amp, Time>
  */
 class Mult<LHS: Key, RHS: Key> : Key()
-
-/**
- * Represents the construct 1/U. Example usage is Hertz: Inverse<Time>
- */
-class Inverse<T: Key> : Key()

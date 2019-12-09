@@ -18,14 +18,14 @@ package frc.team4069.saturn.lib.mathematics.twodim.geometry
 
 import frc.team4069.saturn.lib.mathematics.epsilonEquals
 import frc.team4069.saturn.lib.mathematics.kEpsilon
-import frc.team4069.saturn.lib.mathematics.units.Radian
+import frc.team4069.saturn.lib.mathematics.units.Unitless
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
 
-fun SIUnit<Radian>.toRotation2d() = Rotation2d(value)
+fun SIUnit<Unitless>.toRotation2d() = Rotation2d(value)
 
 class Rotation2d : Comparable<Rotation2d> {
     val value: Double
@@ -53,7 +53,7 @@ class Rotation2d : Comparable<Rotation2d> {
         value = atan2(sin, cos)
     }
 
-    fun toSI() = SIUnit<Radian>(value)
+    fun toSI() = SIUnit<Unitless>(value)
 
     val radian get() = value
     val degree get() = Math.toDegrees(value)

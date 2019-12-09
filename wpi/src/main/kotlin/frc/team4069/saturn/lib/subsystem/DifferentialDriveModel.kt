@@ -16,48 +16,49 @@
 
 package frc.team4069.saturn.lib.subsystem
 
-import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTracker
 import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTrackerOutput
 import frc.team4069.saturn.lib.mathematics.units.*
+import frc.team4069.saturn.lib.mathematics.units.conversions.LinearAcceleration
 import frc.team4069.saturn.lib.mathematics.units.conversions.LinearVelocity
-import kotlin.math.sign
+import frc.team4069.saturn.lib.mathematics.units.derived.AccelerationFeedforward
+import frc.team4069.saturn.lib.mathematics.units.derived.VelocityFeedforward
+import frc.team4069.saturn.lib.mathematics.units.derived.Volt
 
 data class DifferentialDriveModel(
         val wheelBase: SIUnit<Meter>,
-        val kV: Double,
-        val kA: Double,
-        val kS: Double
+        val kV: SIUnit<VelocityFeedforward>,
+        val kA: SIUnit<AccelerationFeedforward>,
+        val kS: SIUnit<Volt>
 ) {
     fun getDemand(output: TrajectoryTrackerOutput): DifferentialDriveDemand {
         val (leftVel, rightVel, leftAcc, rightAcc) = inverseKinematics(output)
         val leftArbFF = kV * leftVel + kA * leftAcc + kS * sign(leftVel)
         val rightArbFF = kV * rightVel + kA * rightAcc + kS * sign(rightVel)
 
-        return DifferentialDriveDemand(leftVel.meter.velocity, rightVel.meter.velocity, leftArbFF, rightArbFF)
+        return DifferentialDriveDemand(leftVel, rightVel, leftArbFF, rightArbFF)
     }
 
     private fun inverseKinematics(output: TrajectoryTrackerOutput): WheelState {
-        val leftVel = ((-wheelBase.value * output.angularVelocity.value + 2 * output.linearVelocity.value) / 2.0)
-        val rightVel = ((wheelBase.value * output.angularVelocity.value + 2 * output.linearVelocity.value) / 2.0)
+        val leftVel = ((-wheelBase * output.angularVelocity + 2 * output.linearVelocity) / 2.0)
+        val rightVel = ((wheelBase * output.angularVelocity + 2 * output.linearVelocity) / 2.0)
 
-        val leftAcc = ((-wheelBase.value * output.angularAcceleration.value + 2 * output.linearVelocity.value) / 2.0)
-        val rightAcc = ((wheelBase.value * output.angularAcceleration.value + 2 * output.linearAcceleration.value) / 2.0)
+        val leftAcc = ((-wheelBase * output.angularAcceleration + 2 * output.linearAcceleration) / 2.0)
+        val rightAcc = ((wheelBase * output.angularAcceleration + 2 * output.linearAcceleration) / 2.0)
 
         return WheelState(leftVel, rightVel, leftAcc, rightAcc)
     }
 
-    // Units are erased in this class because it's an intermediate to the actual output. All values are metric
     private data class WheelState(
-            val leftVel: Double,
-            val rightVel: Double,
-            val leftAcc: Double,
-            val rightAcc: Double
+            val leftVel: SIUnit<LinearVelocity>,
+            val rightVel: SIUnit<LinearVelocity>,
+            val leftAcc: SIUnit<LinearAcceleration>,
+            val rightAcc: SIUnit<LinearAcceleration>
     )
 
     data class DifferentialDriveDemand(
             val leftSetpoint: SIUnit<LinearVelocity>,
             val rightSetpoint: SIUnit<LinearVelocity>,
-            val leftArbFF: Double,
-            val rightArbFF: Double
+            val leftArbFF: SIUnit<Volt>,
+            val rightArbFF: SIUnit<Volt>
     )
 }

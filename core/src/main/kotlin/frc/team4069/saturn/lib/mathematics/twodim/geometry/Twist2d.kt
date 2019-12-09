@@ -34,7 +34,7 @@ class Twist2d(
         val dTheta: Rotation2d
 ) {
 
-    constructor(dx: SIUnit<Meter>, dy: SIUnit<Meter>, dTheta: SIUnit<Radian>)
+    constructor(dx: SIUnit<Meter>, dy: SIUnit<Meter>, dTheta: SIUnit<Unitless>)
         : this(dx, dy, dTheta.toRotation2d())
 
     val norm = if (dy.value == 0.0) dx.absoluteValue else hypot(dx, dy)

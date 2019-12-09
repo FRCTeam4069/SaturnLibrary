@@ -19,10 +19,8 @@ package frc.team4069.saturn.lib.localization
 import edu.wpi.first.wpilibj.Timer
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
-import frc.team4069.saturn.lib.mathematics.units.Radian
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.Second
-import frc.team4069.saturn.lib.mathematics.units.radian
 import frc.team4069.saturn.lib.util.Source
 
 abstract class Localization(

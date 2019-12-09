@@ -21,8 +21,8 @@ import frc.team4069.saturn.lib.mathematics.units.*
 typealias Velocity<T> = Fraction<T, Second>
 typealias Acceleration<T> = Fraction<Velocity<T>, Second>
 
-typealias Hertz = Inverse<Second>
-typealias Curvature = Fraction<Radian, Meter> // Not strictly correct but radians are unitless and it makes conversions easier
+typealias Hertz = Fraction<Unitless, Second>
+typealias Curvature = Fraction<Unitless, Meter> // Not strictly correct but radians are unitless and it makes conversions easier
 
 typealias Coulomb = Mult<Ampere, Second>
 typealias Volt = Fraction<Joule, Coulomb>
@@ -31,3 +31,6 @@ typealias Ohm = Fraction<Volt, Ampere>
 typealias Newton = Mult<Kilogram, Acceleration<Meter>>
 typealias Joule = Mult<Newton, Meter>
 typealias Watt = Fraction<Joule, Second>
+
+typealias VelocityFeedforward = Fraction<Volt, Velocity<Meter>>
+typealias AccelerationFeedforward = Fraction<Volt, Acceleration<Meter>>

@@ -22,7 +22,7 @@ import frc.team4069.saturn.lib.mathematics.units.derived.Velocity
 import frc.team4069.saturn.lib.mathematics.units.derived.Volt
 
 typealias LinearFalconMotor = SaturnMotor<Meter>
-typealias AngularFalconMotor = SaturnMotor<Radian>
+typealias AngularFalconMotor = SaturnMotor<Unitless>
 
 interface SaturnMotor<T : Key> {
 

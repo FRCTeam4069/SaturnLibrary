@@ -82,9 +82,9 @@ val Int.meter get() = SIUnit<Meter>(
         toDouble()
 )
 
-val Int.radian get() = SIUnit<Radian>(
+val Int.radian get() = SIUnit<Unitless>(
         toDouble()
 )
-val Int.degree get() = SIUnit<Radian>(
+val Int.degree get() = SIUnit<Unitless>(
         Math.toRadians(toDouble())
 )

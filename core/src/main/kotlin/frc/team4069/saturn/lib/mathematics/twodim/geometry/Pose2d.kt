@@ -28,7 +28,6 @@ import frc.team4069.saturn.lib.mathematics.epsilonEquals
 import frc.team4069.saturn.lib.mathematics.kEpsilon
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
-import frc.team4069.saturn.lib.mathematics.units.conversions.meter
 import frc.team4069.saturn.lib.types.VaryInterpolatable
 import kotlin.math.absoluteValue
 import kotlin.math.cos
@@ -57,7 +56,7 @@ data class Pose2d(
     constructor(
             x: SIUnit<Meter>,
             y: SIUnit<Meter>,
-            rotation: SIUnit<Radian> = 0.radian
+            rotation: SIUnit<Unitless> = 0.radian
     ) : this(Translation2d(x, y), rotation.toRotation2d())
 
     val twist: Twist2d

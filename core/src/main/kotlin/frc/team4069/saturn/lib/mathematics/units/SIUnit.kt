@@ -55,7 +55,7 @@ inline class SIUnit<T : Key>(val value: Double) : Comparable<SIUnit<T>> {
     fun pow2(): SIUnit<Mult<T, T>> = this * this
     fun pow3(): SIUnit<Mult<Mult<T, T>, T>> = this * this * this
 
-    fun invert() = SIUnit<Inverse<T>>(1.0 / value)
+    fun invert() = SIUnit<Fraction<Unitless, T>>(1.0 / value)
 
     fun safeRangeTo(endInclusive: SIUnit<T>) = min(this, endInclusive)..max(this, endInclusive)
 
