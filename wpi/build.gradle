@@ -16,6 +16,5 @@
 
 dependencies {
     api project(":core")
-    api "com.github.Oblarg:command-rewrite-jitpack:1.1.4"
     api wpi.deps.vendor.java()
 }

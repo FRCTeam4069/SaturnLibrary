@@ -16,12 +16,14 @@
 
 package frc.team4069.saturn.lib.mathematics.twodim.control
 
+import edu.wpi.first.wpilibj.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.epsilonEquals
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryIterator
-import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedEntry
+import frc.team4069.saturn.lib.mathematics.twodim.trajectory.curvature
+import frc.team4069.saturn.lib.mathematics.twodim.trajectory.velocity
 import frc.team4069.saturn.lib.mathematics.units.*
+import frc.team4069.saturn.lib.mathematics.units.conversions.AngularVelocity
+import frc.team4069.saturn.lib.mathematics.units.conversions.LinearVelocity
 import kotlin.math.sin
 import kotlin.math.sqrt
 
@@ -34,35 +36,38 @@ class RamseteTracker(
      * Calculate desired chassis velocity using Ramsete.
      */
     override fun calculateState(
-            iterator: TrajectoryIterator<SIUnit<Second>, TimedEntry<Pose2dWithCurvature>>,
+            iterator: TrajectoryIterator,
             robotPose: Pose2d
     ): TrajectoryTrackerVelocityOutput {
-        val referenceState = iterator.currentState.state
+        val referenceState = iterator.currentState
 
         // Calculate goal in robot's coordinates
-        val error = referenceState.state.pose inFrameOfReferenceOf robotPose
+        val error = referenceState.poseMeters.relativeTo(robotPose)
 
         // Get reference linear and angular velocities
         val vd = referenceState.velocity
-        val wd = vd * referenceState.state.curvature.curvature
+        val wd = vd * referenceState.curvature
 
         // Compute gain
         val k1 = 2 * kZeta * sqrt(wd.pow2().value + kBeta * vd.pow2().value)
 
         // Get angular error in bounded radians
-        val angleError = error.rotation.radian
+        val angleError = error.rotation.radians
 
         return TrajectoryTrackerVelocityOutput(
-                linearVelocity = vd * error.rotation.cos + (k1 * error.translation.x).velocity,
-                angularVelocity = (wd.value + kBeta * vd.value * sinc(angleError) * error.translation.y.value + k1 * angleError).radian.velocity
+                linearVelocity = (vd.value * error.rotation.cos + k1 * error.translation.x).meter.velocity,
+                angularVelocity = (wd.value + (kBeta * sinc(angleError)) * (vd.value * error.translation.y) + k1 * angleError).radian.velocity
         )
     }
 
     companion object {
-        private fun sinc(theta: Double) =
+        private fun sinc(theta: Double): Double =
                 if (theta epsilonEquals 0.0) {
                     1.0
                 } else sin(theta) / theta
     }
 
 }
+
+operator fun <T: Key, U: Key> SIUnit<Mult<Fraction<T, U>, Fraction<T, U>>>.times(other: SIUnit<Fraction<Unitless, T>>): SIUnit<Fraction<T, Mult<U, U>>>
+    = SIUnit(value * other.value)

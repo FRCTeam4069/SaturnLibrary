@@ -16,14 +16,10 @@
 
 package frc.team4069.saturn.lib.mathematics.twodim.control
 
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rectangle2d
+import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.trajectory.Trajectory
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryIterator
-import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedEntry
-import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedTrajectory
-import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.Trajectory
-import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TrajectorySamplePoint
+import frc.team4069.saturn.lib.mathematics.twodim.trajectory.iterator
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.AngularAcceleration
 import frc.team4069.saturn.lib.mathematics.units.conversions.AngularVelocity
@@ -33,14 +29,14 @@ import frc.team4069.saturn.lib.util.DeltaTime
 
 abstract class TrajectoryTracker {
 
-    private var trajectoryIterator: TrajectoryIterator<SIUnit<Second>, TimedEntry<Pose2dWithCurvature>>? = null
+    private var trajectoryIterator: TrajectoryIterator? = null
     private var deltaTimeController = DeltaTime()
     private var previousVelocity: TrajectoryTrackerVelocityOutput? = null
 
     val referencePoint get() = trajectoryIterator?.currentState
     val isFinished get() = trajectoryIterator?.isDone ?: true
 
-    fun reset(trajectory: Trajectory<SIUnit<Second>, TimedEntry<Pose2dWithCurvature>>) {
+    fun reset(trajectory: Trajectory) {
         trajectoryIterator = trajectory.iterator()
         deltaTimeController.reset()
         previousVelocity = null
@@ -80,7 +76,7 @@ abstract class TrajectoryTracker {
     }
 
     protected abstract fun calculateState(
-            iterator: TrajectoryIterator<SIUnit<Second>, TimedEntry<Pose2dWithCurvature>>,
+            iterator: TrajectoryIterator,
             robotPose: Pose2d
     ): TrajectoryTrackerVelocityOutput
 

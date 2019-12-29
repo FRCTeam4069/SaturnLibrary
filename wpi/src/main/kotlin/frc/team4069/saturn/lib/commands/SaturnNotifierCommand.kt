@@ -16,7 +16,7 @@
 
 package frc.team4069.saturn.lib.commands
 
-import edu.wpi.first.wpilibj.experimental.command.Subsystem
+import edu.wpi.first.wpilibj2.command.Subsystem
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.Second
 import frc.team4069.saturn.lib.util.launchFrequency

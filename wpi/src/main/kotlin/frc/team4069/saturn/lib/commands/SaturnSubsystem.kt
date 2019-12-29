@@ -16,15 +16,14 @@
 
 package frc.team4069.saturn.lib.commands
 
-import edu.wpi.first.wpilibj.command.Subsystem
-import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase
+import edu.wpi.first.wpilibj2.command.SubsystemBase
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicLong
 
 /**
  *  Kotlin wrapper for [SendableSubsystemBase]
  */
-abstract class SaturnSubsystem : SendableSubsystemBase() {
+abstract class SaturnSubsystem : SubsystemBase() {
     open fun lateInit() {}
     open fun autoReset() {}
     open fun teleopReset() {}

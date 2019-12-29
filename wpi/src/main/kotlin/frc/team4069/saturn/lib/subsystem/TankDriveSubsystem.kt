@@ -18,13 +18,18 @@ package frc.team4069.saturn.lib.subsystem
 
 import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
+import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.geometry.Rotation2d
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.debug.LiveDashboard
-import frc.team4069.saturn.lib.localization.Localization
 import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTracker
 import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTrackerOutput
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.x
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.y
 import frc.team4069.saturn.lib.mathematics.units.Meter
+import frc.team4069.saturn.lib.mathematics.units.SIUnit
+import frc.team4069.saturn.lib.mathematics.units.Unitless
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
 import frc.team4069.saturn.lib.mathematics.units.volt
 import frc.team4069.saturn.lib.motor.SaturnMotor
@@ -35,7 +40,7 @@ import kotlin.math.max
 abstract class TankDriveSubsystem : SaturnSubsystem() {
     private var quickStopAccumulator = 0.0
 
-    abstract val localization: Localization
+    abstract val localization: DifferentialDriveOdometry
 
     abstract val leftMotor: SaturnMotor<Meter>
     abstract val rightMotor: SaturnMotor<Meter>
@@ -46,13 +51,13 @@ abstract class TankDriveSubsystem : SaturnSubsystem() {
     abstract val driveModel: DifferentialDriveModel
 
     var robotPosition
-        get() = localization.robotPosition
-        set(value) = localization.reset(value)
+        get() = localization.poseMeters
+        set(value) = localization.resetPosition(value, gyro())
 
     override fun lateInit() {
-        localization.reset()
+        localization.resetPosition(Pose2d(), gyro())
         Notifier {
-            localization.update()
+            localization.update(gyro(), leftMotor.encoder.position.value, rightMotor.encoder.position.value)
         }.startPeriodic(1.0 / 100.0)
     }
 
@@ -61,9 +66,9 @@ abstract class TankDriveSubsystem : SaturnSubsystem() {
     }
 
     override fun periodic() {
-        LiveDashboard.robotHeading = robotPosition.rotation.radian
-        LiveDashboard.robotX = robotPosition.translation.x.feet
-        LiveDashboard.robotY = robotPosition.translation.y.feet
+        LiveDashboard.robotHeading = robotPosition.rotation.radians
+        LiveDashboard.robotX = robotPosition.translation.x().feet
+        LiveDashboard.robotY = robotPosition.translation.y().feet
     }
 
     abstract fun setOutput(output: TrajectoryTrackerOutput)

@@ -31,62 +31,56 @@ class ShuffleboardTabBuilder(name: String) {
 
     internal fun build() = tab
 
-    fun textView(name: String, value: () -> Any, block: ShuffleboardWidgetBuilder<Any>.() -> Unit) {
-        ShuffleboardWidgetBuilder(tab.add(name, value()).withWidget(BuiltInWidgets.kTextView), value)
+    fun textView(name: String, value: () -> Any, block: ShuffleboardWidgetBuilder<String>.() -> Unit) {
+        ShuffleboardWidgetBuilder(tab.addString(name) { value().toString() }.withWidget(BuiltInWidgets.kTextView))
                 .apply(block)
                 .build()
     }
 
-    fun numberSlider(name: String, value: () -> Number, block: ShuffleboardWidgetBuilder<Number>.() -> Unit) {
-        ShuffleboardWidgetBuilder(tab.add(name, value()).withWidget(BuiltInWidgets.kNumberSlider), value)
+    fun numberSlider(name: String, value: () -> Number, block: ShuffleboardWidgetBuilder<Double>.() -> Unit) {
+        ShuffleboardWidgetBuilder(tab.addNumber(name) { value().toDouble() }.withWidget(BuiltInWidgets.kNumberSlider))
                 .apply(block)
                 .build()
     }
 
-    fun numberBar(name: String, value: () -> Number, block: ShuffleboardWidgetBuilder<Number>.() -> Unit) {
-        ShuffleboardWidgetBuilder(tab.add(name, value()).withWidget(BuiltInWidgets.kNumberBar), value)
+    fun numberBar(name: String, value: () -> Number, block: ShuffleboardWidgetBuilder<Double>.() -> Unit) {
+        ShuffleboardWidgetBuilder(tab.addNumber(name) { value().toDouble() }.withWidget(BuiltInWidgets.kNumberBar))
                 .apply(block)
                 .build()
     }
 
-    fun dial(name: String, value: () -> Number, block: ShuffleboardWidgetBuilder<Number>.() -> Unit) {
-        ShuffleboardWidgetBuilder(tab.add(name, value()).withWidget(BuiltInWidgets.kDial), value)
-                .apply(block)
-                .build()
-    }
-
-    fun graph(name: String, value: () -> Any, block: ShuffleboardWidgetBuilder<Any>.() -> Unit) {
-        ShuffleboardWidgetBuilder(tab.add(name, value()).withWidget(BuiltInWidgets.kGraph), value)
+    fun dial(name: String, value: () -> Number, block: ShuffleboardWidgetBuilder<Double>.() -> Unit) {
+        ShuffleboardWidgetBuilder(tab.addNumber(name) { value().toDouble() }.withWidget(BuiltInWidgets.kDial))
                 .apply(block)
                 .build()
     }
 
     fun booleanBox(name: String, value: () -> Boolean, block: ShuffleboardWidgetBuilder<Boolean>.() -> Unit) {
-        ShuffleboardWidgetBuilder(tab.add(name, value()).withWidget(BuiltInWidgets.kBooleanBox), value)
+        ShuffleboardWidgetBuilder(tab.addBoolean(name, value).withWidget(BuiltInWidgets.kBooleanBox))
                 .apply(block)
                 .build()
     }
 
     fun toggleButton(name: String, value: () -> Boolean, block: ShuffleboardWidgetBuilder<Boolean>.() -> Unit) {
-        ShuffleboardWidgetBuilder(tab.add(name, value()).withWidget(BuiltInWidgets.kToggleButton), value)
+        ShuffleboardWidgetBuilder(tab.addBoolean(name, value).withWidget(BuiltInWidgets.kToggleButton))
                 .apply(block)
                 .build()
     }
 
     fun toggleSwitch(name: String, value: () -> Boolean, block: ShuffleboardWidgetBuilder<Boolean>.() -> Unit) {
-        ShuffleboardWidgetBuilder(tab.add(name, value()).withWidget(BuiltInWidgets.kToggleSwitch), value)
+        ShuffleboardWidgetBuilder(tab.addBoolean(name, value).withWidget(BuiltInWidgets.kToggleSwitch))
                 .apply(block)
                 .build()
     }
 
     fun voltageView(name: String, value: () -> Double, block: ShuffleboardWidgetBuilder<Double>.() -> Unit) {
-        ShuffleboardWidgetBuilder(tab.add(name, value()).withWidget(BuiltInWidgets.kVoltageView), value)
+        ShuffleboardWidgetBuilder(tab.addNumber(name, value).withWidget(BuiltInWidgets.kVoltageView))
                 .apply(block)
                 .build()
     }
 }
 
-class ShuffleboardWidgetBuilder<T>(private val widget: SimpleWidget, private val value: () -> T) {
+class ShuffleboardWidgetBuilder<T>(private val widget: SuppliedValueWidget<T>) {
     fun position(column: Int, row: Int) {
         widget.withPosition(column, row)
     }
@@ -99,15 +93,13 @@ class ShuffleboardWidgetBuilder<T>(private val widget: SimpleWidget, private val
         widget.withProperties(mapOf(*props))
     }
 
-    fun onChange(onChange: (T) -> Unit) {
-        widget.entry.addListener({ notif ->
-            onChange(notif.value as T)
-        }, EntryListenerFlags.kUpdate)
-    }
+//    fun onChange(onChange: (T) -> Unit) {
+//        widget.entry.addListener({ notif ->
+//            onChange(notif.value as T)
+//        }, EntryListenerFlags.kUpdate)
+//    }
 
-    fun build(): SimpleWidget {
-        SaturnRobot.shuffleboardValues.add(widget.entry to (value as () -> Any))
-
+    fun build(): SuppliedValueWidget<T> {
         return widget
     }
 }

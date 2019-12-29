@@ -16,10 +16,11 @@
 
 package frc.team4069.saturn.lib.commands
 
-import edu.wpi.first.wpilibj.experimental.command.SendableCommandBase
-import edu.wpi.first.wpilibj.experimental.command.Subsystem
+import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.Subsystem
 
-abstract class SaturnCommand(vararg subsystems: Subsystem) : SendableCommandBase() {
+
+abstract class SaturnCommand(vararg subsystems: Subsystem) : CommandBase() {
     init {
         addRequirements(*subsystems)
     }

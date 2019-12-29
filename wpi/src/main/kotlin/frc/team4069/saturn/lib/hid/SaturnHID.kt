@@ -17,7 +17,7 @@
 package frc.team4069.saturn.lib.hid
 
 import edu.wpi.first.wpilibj.GenericHID
-import edu.wpi.first.wpilibj.experimental.command.Command
+import edu.wpi.first.wpilibj2.command.Command
 import frc.team4069.saturn.lib.util.BooleanSource
 import kotlin.properties.Delegates
 

@@ -18,8 +18,8 @@ package frc.team4069.saturn.lib.sensors
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.sensors.PigeonIMU
+import edu.wpi.first.wpilibj.geometry.Rotation2d
 import frc.team4069.saturn.lib.mathematics.epsilonEquals
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
 import frc.team4069.saturn.lib.util.Source
 
 class SaturnPigeon(parentTalon: TalonSRX) : PigeonIMU(parentTalon), Source<Rotation2d> {
@@ -41,7 +41,7 @@ class SaturnPigeon(parentTalon: TalonSRX) : PigeonIMU(parentTalon), Source<Rotat
     }
 
     val fusedHeading: Rotation2d
-        get() = Rotation2d.fromDegrees(this.getFusedHeading())
+        get() = Rotation2d.fromDegrees(getFusedHeading())
 
     val pitch: Double
         get() {

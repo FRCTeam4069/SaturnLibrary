@@ -16,11 +16,11 @@
 
 package frc.team4069.saturn.lib.mathematics.twodim.control
 
+import edu.wpi.first.wpilibj.geometry.Pose2d
 import frc.team4069.keigen.*
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryIterator
-import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedEntry
+import frc.team4069.saturn.lib.mathematics.twodim.trajectory.curvature
+import frc.team4069.saturn.lib.mathematics.twodim.trajectory.velocity
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.LinearVelocity
 import kotlin.math.absoluteValue
@@ -41,20 +41,20 @@ class LTVUnicycleTracker(val kX: Double,
                          val kTheta: Double,
                          val robotVelocity: () -> SIUnit<LinearVelocity>) : TrajectoryTracker() {
 
-    override fun calculateState(iterator: TrajectoryIterator<SIUnit<Second>, TimedEntry<Pose2dWithCurvature>>, robotPose: Pose2d): TrajectoryTrackerVelocityOutput {
-        val referenceState = iterator.currentState.state
+    override fun calculateState(iterator: TrajectoryIterator, robotPose: Pose2d): TrajectoryTrackerVelocityOutput {
+        val referenceState = iterator.currentState
 
         // Get desired and actual velocities
         val v = robotVelocity()
         val vd = referenceState.velocity
-        val wd = vd * referenceState.state.curvature.curvature
+        val wd = vd * referenceState.curvature
 
         // Calculate gain matrix at current robot velocity
         val K = K(v)
 
-        val error = referenceState.state.pose inFrameOfReferenceOf robotPose
+        val error = referenceState.poseMeters.relativeTo(robotPose)
 
-        val errorVec = vec(`3`).fill(error.translation.x.value, error.translation.y.value, error.rotation.value)
+        val errorVec = vec(`3`).fill(error.translation.x, error.translation.y, error.rotation.radians)
         // u = K(r - x), feedforward term is desired trajectory velocities
         val u = K * errorVec + vec(`2`).fill(vd.value, wd.value)
 

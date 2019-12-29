@@ -16,19 +16,21 @@
 
 package frc.team4069.saturn.lib.subsystem
 
+import edu.wpi.first.wpilibj.trajectory.Trajectory
 import frc.team4069.saturn.lib.commands.SaturnCommand
 import frc.team4069.saturn.lib.debug.LiveDashboard
 import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTracker
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2dWithCurvature
-import frc.team4069.saturn.lib.mathematics.twodim.trajectory.types.TimedTrajectory
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.x
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.y
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.Second
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
 import frc.team4069.saturn.lib.mathematics.units.milli
+import frc.team4069.saturn.lib.mathematics.units.radian
 import frc.team4069.saturn.lib.util.Source
 
 class TrajectoryTrackerCommand(val driveSubsystem: TankDriveSubsystem,
-                               val trajectory: Source<TimedTrajectory<Pose2dWithCurvature>>,
+                               val trajectory: Source<Trajectory>,
                                val dt: SIUnit<Second> = 20.milli.second) : SaturnCommand(driveSubsystem) {
     private lateinit var tracker: TrajectoryTracker
     private var finished = false
@@ -42,10 +44,10 @@ class TrajectoryTrackerCommand(val driveSubsystem: TankDriveSubsystem,
     override fun execute() {
         driveSubsystem.setOutput(tracker.nextState(driveSubsystem.robotPosition))
 
-        val referencePose = tracker.referencePoint!!.state.state.pose
-        LiveDashboard.pathX = referencePose.translation.x.feet
-        LiveDashboard.pathY = referencePose.translation.y.feet
-        LiveDashboard.pathHeading = referencePose.rotation.radian
+        val referencePose = tracker.referencePoint!!.poseMeters
+        LiveDashboard.pathX = referencePose.translation.x().feet
+        LiveDashboard.pathY = referencePose.translation.y().feet
+        LiveDashboard.pathHeading = referencePose.rotation.radians
 
         finished = tracker.isFinished
     }

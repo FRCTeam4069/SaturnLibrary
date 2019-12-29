@@ -21,16 +21,17 @@ import edu.wpi.first.hal.HAL
 import edu.wpi.first.networktables.NetworkTableEntry
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
-import edu.wpi.first.wpilibj.experimental.command.CommandScheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget
+import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.commands.SubsystemHandler
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.Second
 import frc.team4069.saturn.lib.mathematics.units.milli
 
-const val kLanguageKotlin = 6
+const val kLanguage_Kotlin = 6 // Will be removed when kickoff wpilib comes out cause its been added
 
 abstract class SaturnRobot(val period: SIUnit<Second> = 20.milli.second) {
 
@@ -38,7 +39,7 @@ abstract class SaturnRobot(val period: SIUnit<Second> = 20.milli.second) {
 
     protected inner class WpiTimedRobot : TimedRobot(period.value) {
         init {
-            HAL.report(FRCNetComm.tResourceType.kResourceType_Language, kLanguageKotlin)
+            HAL.report(FRCNetComm.tResourceType.kResourceType_Language, kLanguage_Kotlin)
         }
 
         override fun robotInit() {
@@ -69,9 +70,6 @@ abstract class SaturnRobot(val period: SIUnit<Second> = 20.milli.second) {
         override fun robotPeriodic() {
             this@SaturnRobot.robotPeriodic()
             CommandScheduler.getInstance().run()
-            shuffleboardValues.forEach { (widget, value) ->
-                widget.setValue(value())
-            }
         }
 
         override fun autonomousPeriodic() {
@@ -113,9 +111,5 @@ abstract class SaturnRobot(val period: SIUnit<Second> = 20.milli.second) {
 
     fun start() {
         RobotBase.startRobot { wrappedValue }
-    }
-
-    companion object {
-        val shuffleboardValues: MutableList<Pair<NetworkTableEntry, () -> Any>> = mutableListOf()
     }
 }
