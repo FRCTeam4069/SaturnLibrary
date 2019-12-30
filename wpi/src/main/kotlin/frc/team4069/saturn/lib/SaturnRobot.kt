@@ -17,21 +17,17 @@
 package frc.team4069.saturn.lib
 
 import edu.wpi.first.hal.FRCNetComm
+import edu.wpi.first.hal.FRCNetComm.tInstances.kLanguage_Kotlin
 import edu.wpi.first.hal.HAL
-import edu.wpi.first.networktables.NetworkTableEntry
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
-import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.commands.SubsystemHandler
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.Second
 import frc.team4069.saturn.lib.mathematics.units.milli
-
-const val kLanguage_Kotlin = 6 // Will be removed when kickoff wpilib comes out cause its been added
 
 abstract class SaturnRobot(val period: SIUnit<Second> = 20.milli.second) {
 
