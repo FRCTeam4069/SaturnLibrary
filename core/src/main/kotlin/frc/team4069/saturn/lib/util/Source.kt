@@ -37,10 +37,6 @@ fun <T, O> Source<T>.map(block: (T) -> O): Source<O> = { block(this@map()) }
 @Suppress("FunctionName")
 fun <T> Source(value: T): Source<T> = { value }
 
-@Suppress("FunctionName")
-@Deprecated("Redundant", ReplaceWith("value"))
-fun <T> Source(value: () -> T): Source<T> = value
-
 fun DoubleSource.withThreshold(threshold: Double = 0.5): BooleanSource = map { this@withThreshold() >= threshold }
 
 fun DoubleSource.withDeadband(

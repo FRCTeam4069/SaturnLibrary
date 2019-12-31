@@ -23,20 +23,20 @@ import frc.team4069.saturn.lib.mathematics.units.second
 class DeltaTime(startTime: SIUnit<Second> = (-1).second) {
     var deltaTime = 0.second
         private set
-    var currentTime = startTime
+    var lastTime = startTime
         private set
 
-    fun updateTime(newTime: SIUnit<Second>): SIUnit<Second> {
-        deltaTime = if (currentTime.value < 0.0) {
+    fun updateTime(now: SIUnit<Second>): SIUnit<Second> {
+        deltaTime = if (lastTime.value < 0.0) {
             0.second
         } else {
-            newTime - currentTime
+            now - lastTime
         }
-        currentTime = newTime
+        lastTime = now
         return deltaTime
     }
 
     fun reset() {
-        currentTime = (-1).second
+        lastTime = (-1).second
     }
 }
