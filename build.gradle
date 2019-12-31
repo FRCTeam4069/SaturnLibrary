@@ -30,7 +30,7 @@ subprojects {
     apply plugin: "maven-publish"
 
     group = "frc.team4069.saturn.lib"
-    version = "2020.0.0"
+    version = "2020.1.1"
 
     repositories {
         jcenter()
