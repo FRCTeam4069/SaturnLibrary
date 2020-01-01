@@ -30,6 +30,9 @@ class SaturnSRX<T: Key>(
 ) : SaturnCTRE<T>(talon, model) {
     constructor(id: Int, model: NativeUnitModel<T>) : this(TalonSRX(id), model)
 
+    override val drawnCurrent: SIUnit<Ampere>
+        get() = talon.outputCurrent.amp
+
     init {
         talon.configFactoryDefault()
     }
