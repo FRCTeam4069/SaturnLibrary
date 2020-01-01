@@ -15,7 +15,6 @@
  */
 
 package frc.team4069.saturn.lib.motor.rev
-
 import com.revrobotics.*
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.derived.Acceleration
@@ -64,7 +63,7 @@ class SaturnMAX<T : Key>(
     override var brakeMode: Boolean by Delegates.observable(false) { _, _, newValue ->
         canSparkMax.idleMode = if (newValue) CANSparkMax.IdleMode.kBrake else CANSparkMax.IdleMode.kCoast
     }
-
+    
     override var voltageCompSaturation: SIUnit<Volt> by Delegates.observable(12.volt) { _, _, newValue ->
         canSparkMax.enableVoltageCompensation(newValue.value)
     }

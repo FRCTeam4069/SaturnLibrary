@@ -28,7 +28,7 @@ class SaturnPigeon(parentTalon: TalonSRX) : GyroBase(), Source<Rotation2d> {
     // fusedHeading is equivalent to yaw
     private var pitchOffset = Double.NaN
     private var rollOffset = Double.NaN
-
+  
     private val pigeon = PigeonIMU(parentTalon)
 
     init {
@@ -49,6 +49,7 @@ class SaturnPigeon(parentTalon: TalonSRX) : GyroBase(), Source<Rotation2d> {
     val pitch: Double
         get() {
             val ypr = DoubleArray(3)
+          
             pigeon.getYawPitchRoll(ypr)
             return if (pitchOffset.isFinite()) {
                 ypr[1] - pitchOffset
@@ -60,6 +61,7 @@ class SaturnPigeon(parentTalon: TalonSRX) : GyroBase(), Source<Rotation2d> {
     val roll: Double
         get() {
             val ypr = DoubleArray(3)
+
             pigeon.getYawPitchRoll(ypr)
 
             return if(rollOffset.isFinite()) {
@@ -72,6 +74,7 @@ class SaturnPigeon(parentTalon: TalonSRX) : GyroBase(), Source<Rotation2d> {
     val quaternion: Quaternion
         get() {
             val arr = DoubleArray(4)
+
             pigeon.get6dQuaternion(arr)
 
             return Quaternion(arr[0], arr[1], arr[2], arr[3])

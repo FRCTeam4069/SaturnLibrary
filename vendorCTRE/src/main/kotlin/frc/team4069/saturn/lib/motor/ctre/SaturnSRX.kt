@@ -32,7 +32,7 @@ class SaturnSRX<T: Key>(
 
     override val drawnCurrent: SIUnit<Ampere>
         get() = talon.outputCurrent.amp
-
+  
     init {
         talon.configFactoryDefault()
     }
