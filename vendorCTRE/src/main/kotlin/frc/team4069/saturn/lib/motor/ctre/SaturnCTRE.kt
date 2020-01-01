@@ -43,8 +43,8 @@ abstract class SaturnCTRE<T : Key>(
 
     override val encoder = SaturnCTREEncoder(motorController, 0, model)
 
-    override val voltageOutput: Double
-        get() = motorController.motorOutputVoltage
+    override val voltageOutput: SIUnit<Volt>
+        get() = motorController.motorOutputVoltage.volt
 
     override var outputInverted: Boolean by Delegates.observable(false) { _, _, newValue ->
         motorController.inverted = newValue
@@ -54,8 +54,8 @@ abstract class SaturnCTRE<T : Key>(
         motorController.setNeutralMode(if (newValue) NeutralMode.Brake else NeutralMode.Coast)
     }
 
-    override var voltageCompSaturation: Double by Delegates.observable(12.0) { _, _, newValue ->
-        motorController.configVoltageCompSaturation(newValue, 0)
+    override var voltageCompSaturation: SIUnit<Volt> by Delegates.observable(12.volt) { _, _, newValue ->
+        motorController.configVoltageCompSaturation(newValue.value, 0)
         motorController.enableVoltageCompensation(true)
     }
 

@@ -30,10 +30,16 @@ interface SaturnMotor<T : Key> {
      * The encoder attached to the motor
      */
     val encoder: SaturnEncoder<T>
+
     /**
      * The voltage output of the motor controller in volts
      */
-    val voltageOutput: Double
+    val voltageOutput: SIUnit<Volt>
+
+    /**
+     * The current being drawn by the motor controller in amps
+     */
+    val drawnCurrent: SIUnit<Ampere>
 
     /**
      * Inverts the output given to the motor
@@ -48,7 +54,7 @@ interface SaturnMotor<T : Key> {
     /**
      * Configures the max voltage output given to the motor
      */
-    var voltageCompSaturation: Double
+    var voltageCompSaturation: SIUnit<Volt>
 
     /**
      *  Peak target velocity that the on board motion profile generator will use
