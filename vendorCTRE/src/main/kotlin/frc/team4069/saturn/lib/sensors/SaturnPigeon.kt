@@ -18,15 +18,18 @@ package frc.team4069.saturn.lib.sensors
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.sensors.PigeonIMU
+import edu.wpi.first.wpilibj.GyroBase
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import frc.team4069.saturn.lib.mathematics.epsilonEquals
 import frc.team4069.saturn.lib.util.Source
 
-class SaturnPigeon(parentTalon: TalonSRX) : PigeonIMU(parentTalon), Source<Rotation2d> {
+class SaturnPigeon(parentTalon: TalonSRX) : GyroBase(), Source<Rotation2d> {
     // Accessors for Yaw, Pitch, and Roll.
     // fusedHeading is equivalent to yaw
     private var pitchOffset = Double.NaN
     private var rollOffset = Double.NaN
+
+    private val pigeon = PigeonIMU(parentTalon)
 
     init {
         val p = pitch
@@ -41,12 +44,12 @@ class SaturnPigeon(parentTalon: TalonSRX) : PigeonIMU(parentTalon), Source<Rotat
     }
 
     val fusedHeading: Rotation2d
-        get() = Rotation2d.fromDegrees(getFusedHeading())
+        get() = Rotation2d.fromDegrees(pigeon.fusedHeading)
 
     val pitch: Double
         get() {
             val ypr = DoubleArray(3)
-            getYawPitchRoll(ypr)
+            pigeon.getYawPitchRoll(ypr)
             return if (pitchOffset.isFinite()) {
                 ypr[1] - pitchOffset
             } else {
@@ -57,7 +60,7 @@ class SaturnPigeon(parentTalon: TalonSRX) : PigeonIMU(parentTalon), Source<Rotat
     val roll: Double
         get() {
             val ypr = DoubleArray(3)
-            getYawPitchRoll(ypr)
+            pigeon.getYawPitchRoll(ypr)
 
             return if(rollOffset.isFinite()) {
                 ypr[2] - rollOffset
@@ -69,7 +72,7 @@ class SaturnPigeon(parentTalon: TalonSRX) : PigeonIMU(parentTalon), Source<Rotat
     val quaternion: Quaternion
         get() {
             val arr = DoubleArray(4)
-            get6dQuaternion(arr)
+            pigeon.get6dQuaternion(arr)
 
             return Quaternion(arr[0], arr[1], arr[2], arr[3])
         }
@@ -77,4 +80,24 @@ class SaturnPigeon(parentTalon: TalonSRX) : PigeonIMU(parentTalon), Source<Rotat
     override fun invoke() = fusedHeading
 
     data class Quaternion(val w: Double, val x: Double, val y: Double, val z: Double)
+
+    override fun calibrate() {
+        pigeon.enterCalibrationMode(PigeonIMU.CalibrationMode.BootTareGyroAccel)
+    }
+
+    override fun getAngle(): Double = -pigeon.fusedHeading // pigeon is ccw positive
+
+    override fun getRate(): Double {
+        val gyro = DoubleArray(3)
+        pigeon.getRawGyro(gyro)
+
+        return -gyro[2] // z axis rotation
+    }
+
+    override fun reset() {
+        pigeon.fusedHeading = 0.0
+    }
+
+    override fun close() {
+    }
 }
