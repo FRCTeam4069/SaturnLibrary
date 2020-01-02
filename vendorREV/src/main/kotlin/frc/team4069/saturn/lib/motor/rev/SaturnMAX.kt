@@ -16,33 +16,35 @@
 
 package frc.team4069.saturn.lib.motor.rev
 
-import com.revrobotics.CANPIDController
-import com.revrobotics.CANSparkMax
-import com.revrobotics.CANSparkMaxLowLevel
-import com.revrobotics.ControlType
-import frc.team4069.saturn.lib.mathematics.units.Key
-import frc.team4069.saturn.lib.mathematics.units.SIUnit
-import frc.team4069.saturn.lib.mathematics.units.acceleration
+import com.revrobotics.*
+import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.derived.Acceleration
 import frc.team4069.saturn.lib.mathematics.units.derived.Velocity
 import frc.team4069.saturn.lib.mathematics.units.derived.Volt
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitModel
-import frc.team4069.saturn.lib.mathematics.units.velocity
 import frc.team4069.saturn.lib.motor.AbstractSaturnMotor
 import frc.team4069.saturn.lib.motor.SaturnMotor
 import kotlin.properties.Delegates
 
 class SaturnMAX<T : Key>(
         val canSparkMax: CANSparkMax,
-        val model: NativeUnitModel<T>
+        val model: NativeUnitModel<T>,
+        encoderConfig: SaturnMAXEncoderConfig
 ) : AbstractSaturnMotor<T>() {
-    constructor(id: Int, motorType: CANSparkMaxLowLevel.MotorType, model: NativeUnitModel<T>) : this(CANSparkMax(id, motorType), model)
+    constructor(id: Int, motorType: CANSparkMaxLowLevel.MotorType, model: NativeUnitModel<T>) : this(CANSparkMax(id, motorType), model, SaturnMAXEncoderConfig.HallEffectEncoder)
 
     val controller: CANPIDController = canSparkMax.pidController
-    override val encoder = SaturnMAXEncoder(canSparkMax.encoder, model)
 
-    override val voltageOutput: Double
-        get() = canSparkMax.appliedOutput * canSparkMax.busVoltage
+    override val encoder = when(encoderConfig) {
+        SaturnMAXEncoderConfig.HallEffectEncoder -> SaturnMAXEncoder(canSparkMax.encoder, model)
+        is SaturnMAXEncoderConfig.AlternateEncoder -> SaturnMAXEncoder(canSparkMax.getAlternateEncoder(AlternateEncoderType.kQuadrature, encoderConfig.cpr), model)
+    }
+
+    override val voltageOutput: SIUnit<Volt>
+        get() = canSparkMax.appliedOutput * canSparkMax.busVoltage.volt
+
+    override val drawnCurrent: SIUnit<Ampere>
+        get() = canSparkMax.outputCurrent.amp
 
     override var outputInverted: Boolean by Delegates.observable(false) { _, _, newValue ->
         canSparkMax.inverted = newValue
@@ -52,8 +54,8 @@ class SaturnMAX<T : Key>(
         canSparkMax.idleMode = if (newValue) CANSparkMax.IdleMode.kBrake else CANSparkMax.IdleMode.kCoast
     }
 
-    override var voltageCompSaturation: Double by Delegates.observable(12.0) { _, _, newValue ->
-        canSparkMax.enableVoltageCompensation(newValue)
+    override var voltageCompSaturation: SIUnit<Volt> by Delegates.observable(12.volt) { _, _, newValue ->
+        canSparkMax.enableVoltageCompensation(newValue.value)
     }
 
     override var motionProfileCruiseVelocity: SIUnit<Velocity<T>> by Delegates.observable(model.zero.velocity) { _, _, newValue ->
