@@ -39,13 +39,13 @@ data class DifferentialDriveModel(
     }
 
     private fun inverseKinematics(output: TrajectoryTrackerOutput): WheelState {
-        val leftVel = ((-wheelBase * output.angularVelocity + 2 * output.linearVelocity) / 2.0)
-        val rightVel = ((wheelBase * output.angularVelocity + 2 * output.linearVelocity) / 2.0)
+        val leftVel = ((-wheelBase.value * output.angularVelocity.value + 2 * output.linearVelocity.value) / 2.0)
+        val rightVel = ((wheelBase.value * output.angularVelocity.value + 2 * output.linearVelocity.value) / 2.0)
 
         val leftAcc = ((-wheelBase * output.angularAcceleration + 2 * output.linearAcceleration) / 2.0)
         val rightAcc = ((wheelBase * output.angularAcceleration + 2 * output.linearAcceleration) / 2.0)
 
-        return WheelState(leftVel, rightVel, leftAcc, rightAcc)
+        return WheelState(leftVel.meter.velocity, rightVel.meter.velocity, leftAcc, rightAcc)
     }
 
     private data class WheelState(

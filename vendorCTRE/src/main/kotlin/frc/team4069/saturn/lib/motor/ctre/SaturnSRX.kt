@@ -17,6 +17,7 @@
 package frc.team4069.saturn.lib.motor.ctre
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.amp
@@ -35,6 +36,7 @@ class SaturnSRX<T: Key>(
 
     init {
         talon.configFactoryDefault()
+        talon.selectedSensorVelocity
     }
 
     var feedbackSensor by Delegates.observable(FeedbackDevice.QuadEncoder) { _, _, newValue ->
