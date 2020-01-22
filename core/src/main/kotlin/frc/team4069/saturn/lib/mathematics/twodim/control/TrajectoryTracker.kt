@@ -17,6 +17,7 @@
 package frc.team4069.saturn.lib.mathematics.twodim.control
 
 import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj.trajectory.Trajectory
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryIterator
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.iterator
@@ -93,3 +94,4 @@ data class TrajectoryTrackerOutput(
         val angularAcceleration: SIUnit<AngularAcceleration>
 )
 
+fun TrajectoryTrackerOutput.asChassisSpeeds() = ChassisSpeeds(linearVelocity.value, 0.0, angularVelocity.value)

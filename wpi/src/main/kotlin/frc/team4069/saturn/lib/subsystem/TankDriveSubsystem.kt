@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.debug.LiveDashboard
@@ -48,7 +49,7 @@ abstract class TankDriveSubsystem : SaturnSubsystem() {
     abstract val gyro: Source<Rotation2d>
 
     abstract val trajectoryTracker: TrajectoryTracker
-    abstract val driveModel: DifferentialDriveModel
+    abstract val driveModel: DifferentialDriveKinematics
 
     var robotPosition
         get() = localization.poseMeters
