@@ -16,6 +16,8 @@
 
 package frc.team4069.saturn.lib.mathematics.units
 
+import frc.team4069.saturn.lib.mathematics.TAU
+import frc.team4069.saturn.lib.mathematics.units.conversions.minute
 import frc.team4069.saturn.lib.mathematics.units.derived.*
 
 val <T : Key> SIUnit<T>.velocity get() = SIUnit<Velocity<T>>(
@@ -71,6 +73,9 @@ inline class UnitBuilder internal constructor(val value: Double) {
     )
     val degree get() = SIUnit<Unitless>(
             Math.toRadians(value)
+    )
+    val revolution get() = SIUnit<Unitless>(
+            value * TAU
     )
 }
 
@@ -144,3 +149,7 @@ val Number.radian get() = SIUnit<Unitless>(
 val Number.degree get() = SIUnit<Unitless>(
         Math.toRadians(toDouble())
 )
+val Number.revolution get() = SIUnit<Unitless>(
+        toDouble() * TAU
+)
+val Number.rpm get() = this.revolution / 1.minute

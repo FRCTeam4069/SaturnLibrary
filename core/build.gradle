@@ -15,7 +15,6 @@
  */
 
 dependencies {
-    api "com.github.FRCTeam4069:Keigen:1.4.0"
     api wpi.deps.wpilib()
 }
 

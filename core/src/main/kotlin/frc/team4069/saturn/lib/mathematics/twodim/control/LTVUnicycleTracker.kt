@@ -17,7 +17,10 @@
 package frc.team4069.saturn.lib.mathematics.twodim.control
 
 import edu.wpi.first.wpilibj.geometry.Pose2d
-import frc.team4069.keigen.*
+import edu.wpi.first.wpiutil.math.Matrix
+import edu.wpi.first.wpiutil.math.numbers.N2
+import edu.wpi.first.wpiutil.math.numbers.N3
+import frc.team4069.saturn.lib.mathematics.*
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryIterator
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.curvature
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.velocity
@@ -61,7 +64,7 @@ class LTVUnicycleTracker(val kX: Double,
         return TrajectoryTrackerVelocityOutput(u[0].meter.velocity, u[1].radian.velocity)
     }
 
-    private fun K(v: SIUnit<LinearVelocity>): Matrix<`2`, `3`> {
+    private fun K(v: SIUnit<LinearVelocity>): Matrix<N2, N3> {
         return mat(`2`, `3`).fill(kX, 0.0, 0.0,
                 0.0, kY(v) * sign(v), kTheta * sqrt(v.value.absoluteValue))
     }

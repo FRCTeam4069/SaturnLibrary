@@ -30,6 +30,7 @@ typealias Ohm = Fraction<Volt, Ampere>
 
 typealias Newton = Mult<Kilogram, Acceleration<Meter>>
 typealias Joule = Mult<Newton, Meter>
+typealias Torque = Mult<Newton, Meter> // Dimensionally identical to energy, but different typealias to enforce it isn't energy
 typealias Watt = Fraction<Joule, Second>
 
 typealias VelocityFeedforward = Fraction<Volt, Velocity<Meter>>
