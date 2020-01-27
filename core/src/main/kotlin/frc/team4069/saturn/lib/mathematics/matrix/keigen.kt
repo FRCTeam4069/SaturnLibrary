@@ -1,4 +1,4 @@
-package frc.team4069.saturn.lib.mathematics
+package frc.team4069.saturn.lib.mathematics.matrix
 
 import edu.wpi.first.wpiutil.math.Matrix
 import edu.wpi.first.wpiutil.math.Nat

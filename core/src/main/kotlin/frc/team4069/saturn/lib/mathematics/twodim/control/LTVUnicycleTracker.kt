@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpiutil.math.Matrix
 import edu.wpi.first.wpiutil.math.numbers.N2
 import edu.wpi.first.wpiutil.math.numbers.N3
-import frc.team4069.saturn.lib.mathematics.*
+import frc.team4069.saturn.lib.mathematics.matrix.*
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryIterator
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.curvature
 import frc.team4069.saturn.lib.mathematics.twodim.trajectory.velocity
