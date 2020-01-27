@@ -22,7 +22,7 @@ typealias Velocity<T> = Fraction<T, Second>
 typealias Acceleration<T> = Fraction<Velocity<T>, Second>
 
 typealias Hertz = Fraction<Unitless, Second>
-typealias Curvature = Fraction<Unitless, Meter> // Not strictly correct but radians are unitless and it makes conversions easier
+typealias Curvature = Fraction<Unitless, Meter>
 
 typealias Coulomb = Mult<Ampere, Second>
 typealias Volt = Fraction<Joule, Coulomb>
