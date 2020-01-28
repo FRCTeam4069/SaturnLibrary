@@ -15,7 +15,7 @@ data class DCMotor(val nominalVoltage: SIUnit<Volt>, val stallTorque: SIUnit<Tor
     /**
      * The resistance of the motor in ohms
      */
-    val R = nominalVoltage / freeCurrent
+    val R = nominalVoltage / stallCurrent
 
     /**
      * The speed constant of the motor in rad/s/V
