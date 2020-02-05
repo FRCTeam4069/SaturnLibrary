@@ -30,26 +30,26 @@ class LimelightCamera {
 
     val targetBBVertical by llTable["tvert"].delegate(0.0)
 
-    private val cameraPoseEntry = llTable["camtran"]
+    private val _cameraPose = llTable["camtran"]
 
     val cameraPose: Pose2d
         get() {
-            val poseStr = cameraPoseEntry.value.string.split(",")
+            val poseStr = _cameraPose.value.string.split(",")
 
             return Pose2d(poseStr[0].toDouble(), poseStr[1].toDouble(), Rotation2d.fromDegrees(poseStr[4].toDouble()))
         }
 
 
-    private val ledEntry = llTable["ledMode"]
+    private val _ledState = llTable["ledMode"]
 
     var ledState: LEDState by Delegates.observable(LEDState.PipelineValue) { _, _, new ->
-        ledEntry.setNumber(new.toInt())
+        _ledState.setNumber(new.toInt())
     }
 
-    private val camModeEntry = llTable["camMode"]
+    private val _cameraMode = llTable["camMode"]
 
     var cameraMode: CameraMode by Delegates.observable(CameraMode.VisionProcessor) { _, _, new ->
-        camModeEntry.setNumber(new.toInt())
+        _cameraMode.setNumber(new.toInt())
     }
 
     var pipeline by llTable["pipeline"].delegate(0.0)
