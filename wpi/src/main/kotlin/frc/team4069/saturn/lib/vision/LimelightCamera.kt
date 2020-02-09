@@ -2,6 +2,9 @@ package frc.team4069.saturn.lib.vision
 
 import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
+import frc.team4069.saturn.lib.mathematics.units.conversions.inch
+import frc.team4069.saturn.lib.mathematics.units.degree
 import frc.team4069.saturn.lib.nt.SaturnNetworkTable
 import frc.team4069.saturn.lib.nt.delegate
 import frc.team4069.saturn.lib.nt.get
@@ -10,7 +13,8 @@ import kotlin.properties.Delegates
 class LimelightCamera {
     private val llTable = SaturnNetworkTable.getTable("limelight")
 
-    val hasTargets by llTable["tv"].delegate(false)
+    private val _hasTargets = llTable["tv"]
+    val hasTargets: Boolean get() = _hasTargets.value.double == 1.0
 
     val xOffset by llTable["tx"].delegate(0.0)
 
@@ -34,9 +38,9 @@ class LimelightCamera {
 
     val cameraPose: Pose2d
         get() {
-            val poseStr = _cameraPose.value.string.split(",")
+            val poseStr = _cameraPose.value.doubleArray
 
-            return Pose2d(poseStr[0].toDouble(), poseStr[1].toDouble(), Rotation2d.fromDegrees(poseStr[4].toDouble()))
+            return Pose2d(poseStr[2].inch, poseStr[0].inch, poseStr[4].degree)
         }
 
 

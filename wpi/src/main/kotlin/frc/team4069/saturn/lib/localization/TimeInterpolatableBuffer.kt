@@ -26,22 +26,19 @@ import frc.team4069.saturn.lib.util.Source
 import java.util.*
 
 class TimeInterpolatableBuffer<T : Interpolatable<T>>(
-        historySpan: SIUnit<Second> = 1.second,
+        private val historySpan: SIUnit<Second> = 1.second,
         private val timeSource: Source<SIUnit<Second>> = { Timer.getFPGATimestamp().second }
 ) {
 
-    private val historySpan = historySpan.second
-    private val bufferMap = TreeMap<Double, T>()
+    private val bufferMap = TreeMap<SIUnit<Second>, T>()
 
-    operator fun set(time: SIUnit<Second>, value: T) = set(time.second, value)
-
-    internal operator fun set(time: Double, value: T): T? {
+    operator fun set(time: SIUnit<Second>, value: T): T? {
         cleanUp()
         return bufferMap.put(time, value)
     }
 
     private fun cleanUp() {
-        val currentTime = timeSource().second
+        val currentTime = timeSource()
         val iterator = bufferMap.iterator()
         iterator.forEach {
             if (currentTime - it.key >= historySpan) {
@@ -54,9 +51,7 @@ class TimeInterpolatableBuffer<T : Interpolatable<T>>(
         bufferMap.clear()
     }
 
-    operator fun get(time: SIUnit<Second>) = get(time.second)
-
-    internal operator fun get(time: Double): T {
+    operator fun get(time: SIUnit<Second>): T {
         bufferMap[time]?.let { return it }
 
         val topBound = bufferMap.ceilingEntry(time)
@@ -71,4 +66,6 @@ class TimeInterpolatableBuffer<T : Interpolatable<T>>(
             )
         }
     }
+
+    fun indexOf(state: T): Int? = bufferMap.values.indexOf(state)
 }
