@@ -9,8 +9,8 @@ import frc.team4069.saturn.lib.mathematics.units.*
 fun Translation2d(x: SIUnit<Meter> = 0.meter, y: SIUnit<Meter> = 0.meter)
     = edu.wpi.first.wpilibj.geometry.Translation2d(x.value, y.value)
 
-fun Translation2d.x() = this.x.meter
-fun Translation2d.y() = this.y.meter
+val Translation2d.xU get() = this.x.meter
+val Translation2d.yU get() = this.y.meter
 
 fun Rotation2d(theta: SIUnit<Unitless>)
     = Rotation2d(theta.value)

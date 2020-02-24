@@ -24,14 +24,13 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.debug.LiveDashboard
-import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTracker
-import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTrackerOutput
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.x
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.y
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.xU
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.yU
 import frc.team4069.saturn.lib.mathematics.units.Meter
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
-import frc.team4069.saturn.lib.mathematics.units.Unitless
+import frc.team4069.saturn.lib.mathematics.units.conversions.LinearVelocity
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
+import frc.team4069.saturn.lib.mathematics.units.derived.Volt
 import frc.team4069.saturn.lib.mathematics.units.volt
 import frc.team4069.saturn.lib.motor.SaturnMotor
 import frc.team4069.saturn.lib.util.Source
@@ -48,8 +47,10 @@ abstract class TankDriveSubsystem : SaturnSubsystem() {
 
     abstract val gyro: Source<Rotation2d>
 
-    abstract val trajectoryTracker: TrajectoryTracker
-    abstract val driveModel: DifferentialDriveKinematics
+    abstract val leftVelocity: Source<SIUnit<LinearVelocity>>
+    abstract val rightVelocity: Source<SIUnit<LinearVelocity>>
+
+    abstract val kinematics: DifferentialDriveKinematics
 
     var robotPosition
         get() = localization.poseMeters
@@ -68,11 +69,14 @@ abstract class TankDriveSubsystem : SaturnSubsystem() {
 
     override fun periodic() {
         LiveDashboard.robotHeading = robotPosition.rotation.radians
-        LiveDashboard.robotX = robotPosition.translation.x().feet
-        LiveDashboard.robotY = robotPosition.translation.y().feet
+        LiveDashboard.robotX = robotPosition.translation.xU.feet
+        LiveDashboard.robotY = robotPosition.translation.yU.feet
     }
 
-    abstract fun setOutput(output: TrajectoryTrackerOutput)
+    fun setVoltages(left: SIUnit<Volt>, right: SIUnit<Volt>) {
+        leftMotor.setVoltage(left, 0.volt)
+        rightMotor.setVoltage(right, 0.volt)
+    }
 
     fun curvatureDrive(
             linearPercent: Double,
