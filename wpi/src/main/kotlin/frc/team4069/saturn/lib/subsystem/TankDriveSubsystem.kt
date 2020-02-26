@@ -47,8 +47,8 @@ abstract class TankDriveSubsystem : SaturnSubsystem() {
 
     abstract val gyro: Source<Rotation2d>
 
-    abstract val leftVelocity: Source<SIUnit<LinearVelocity>>
-    abstract val rightVelocity: Source<SIUnit<LinearVelocity>>
+    abstract val leftVelocity: SIUnit<LinearVelocity>
+    abstract val rightVelocity: SIUnit<LinearVelocity>
 
     abstract val kinematics: DifferentialDriveKinematics
 

@@ -85,10 +85,12 @@ class TrajectoryTrackerCommand(val driveSubsystem: TankDriveSubsystem,
         val leftAccel = (targetWheelSpeeds.leftMetersPerSecond - prevSpeeds.leftMetersPerSecond) / dt.value
         val rightAccel = (targetWheelSpeeds.rightMetersPerSecond - prevSpeeds.rightMetersPerSecond) / dt.value
 
-        val leftOutput = feedforward.calculate(targetWheelSpeeds.leftMetersPerSecond, leftAccel) + leftPid.calculate(driveSubsystem.leftVelocity().value)
-        val rightOutput = feedforward.calculate(targetWheelSpeeds.rightMetersPerSecond, rightAccel) + rightPid.calculate(driveSubsystem.rightVelocity().value)
+        val leftOutput = feedforward.calculate(targetWheelSpeeds.leftMetersPerSecond, leftAccel) + leftPid.calculate(driveSubsystem.leftVelocity.value)
+        val rightOutput = feedforward.calculate(targetWheelSpeeds.rightMetersPerSecond, rightAccel) + rightPid.calculate(driveSubsystem.rightVelocity.value)
         driveSubsystem.setVoltages(leftOutput.volt, rightOutput.volt)
         velocityConsumer?.invoke(targetWheelSpeeds.leftMetersPerSecond.meter.velocity, targetWheelSpeeds.rightMetersPerSecond.meter.velocity)
+
+        prevSpeeds = targetWheelSpeeds
     }
 
     override fun end(interrupted: Boolean) {
