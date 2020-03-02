@@ -38,7 +38,7 @@ class LimelightCamera {
 
     val cameraPose: Pose2d
         get() {
-            val poseStr = _cameraPose.value.doubleArray
+            val poseStr = _cameraPose.getDoubleArray(doubleArrayOf(.0, .0, .0, .0, .0))
 
             return Pose2d(poseStr[2].inch, poseStr[0].inch, poseStr[4].degree)
         }
